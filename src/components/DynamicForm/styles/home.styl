@@ -1,0 +1,282 @@
+$selectedColor = #f6f7ff;
+$lighterBlue = #409EFF;
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: white;
+}
+
+.components-list {
+  box-sizing: border-box;
+  height: 100%;
+  padding-left: 8px;
+  padding-right: 8px;
+  .components-item {
+    display: inline-block;
+    width: 48%;
+    margin: 1%;
+    transition: transform 0ms !important;
+  }
+}
+.components-draggable{
+  padding-bottom: 10px;
+}
+.components-title{
+  font-size: 14px;
+  color: #222;
+  margin: 6px 2px;
+  .svg-icon{
+    color: #666;
+    font-size: 18px;
+  }
+}
+
+.components-body {
+  padding: 8px 18px;
+  background: #FFF;
+  font-size: 12px;
+  line-height: 18px;
+  cursor: move;
+  border: 1px solid #d9d9d9;
+  border-radius: 3px;
+  .svg-icon{
+    color: #777;
+    font-size: 15px;
+  }
+  &:hover {
+    border: 1px dashed #787be8;
+    color: #787be8;
+    .svg-icon {
+      color: #787be8;
+    }
+  }
+}
+
+.left-board {
+  width: 300px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+.left-scrollbar{
+  height: 100%;
+  padding:0 0 8px 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-right: 1px solid #f1e8e8;
+}
+.center-scrollbar {
+  text-align:left;
+  height: calc(100vh - 170px);
+  overflow: hidden;
+  border-left: 1px solid #f1e8e8;
+  border-right: 1px solid #f1e8e8;
+  box-sizing: border-box;
+}
+.center-board {
+  height: 100vh;
+  width: auto;
+  margin: 0 350px 0 300px;
+  box-sizing: border-box;
+}
+.empty-info{
+  position: absolute;
+  top: 46%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 18px;
+  color: #ccb1ea;
+  letter-spacing: 4px;
+}
+.action-bar{
+  float: right;
+  margin-right: 1.5rem;
+  height: 42px;
+  text-align: right;
+  padding: 0 15px;
+  box-sizing: border-box;;
+  border-top: none;
+  border-left: none;
+  .delete-btn{
+    color: #F56C6C;
+  }
+}
+.logo-wrapper{
+  position: relative;
+  height: 42px;
+  background: #fff;
+  border-bottom: 1px solid #f1e8e8;
+  box-sizing: border-box;
+}
+.logo{
+  position: absolute;
+  left: 12px;
+  top: 6px;
+  line-height: 30px;
+  color: #00afff;
+  font-weight: 600;
+  font-size: 17px;
+  white-space: nowrap;
+  > img{
+    width: 30px;
+    height: 30px;
+    vertical-align: top;
+  }
+  .github{
+    display: inline-block;
+    vertical-align: sub;
+    margin-left: 15px;
+    > img{
+      height: 22px;
+    }
+  }
+}
+
+.center-board-row {
+  padding: 12px 12px 15px 1px;
+  box-sizing: border-box;
+  & > .el-form {
+    // 69 = 12+15+42
+    height: calc(100vh - 69px);
+  }
+}
+.drawing-board {
+  height: 100%;
+  position: relative;
+  .components-body {
+    padding: 0;
+    margin: 0;
+    font-size: 0;
+    min-height 60px
+  }
+  .sortable-ghost {
+    position: relative;
+    display: block;
+    height: 60px;
+    overflow: hidden;
+    background white
+    &::before {
+      content: " ";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      background: rgb(89, 89, 223);
+      z-index: 2;
+    }
+    
+  }
+  .components-item.sortable-ghost {
+    width: 100%;
+    height: 60px;
+    overflow hidden
+    background-color: $selectedColor;
+  }
+  .active-from-item {
+    & > .el-form-item{
+      background: $selectedColor;
+      border-radius: 6px;
+      outline: 1px solid #38adff;
+    }
+    & > .drawing-item-copy, & > .drawing-item-delete{
+      display: initial;
+    }
+    & > .component-name{
+      color: $lighterBlue;
+    }
+  }
+  .el-form-item{
+    margin-bottom: 12px !important;
+  }
+}
+.drawing-item{
+  position: relative;
+  cursor: move;
+  &.unfocus-bordered:not(.active-from-item) > div:first-child {
+    border: 1px dashed #ccc;
+  }
+  .el-form-item{
+    padding: 8px 10px;
+  }
+}
+.drawing-row-item{
+  position: relative;
+  cursor: move;
+  box-sizing: border-box;
+  outline: 1px dashed #ccc;
+  border-radius: 3px;
+  margin-bottom: 15px;
+  .drawing-row-item {
+    margin-bottom: 2px;
+  }
+  .el-col{
+    
+  }
+  .el-form-item{
+    margin-bottom: 0;
+  }
+  .drag-wrapper{
+    min-height: 80px;
+    padding: 20px 0;
+    overflow: hidden;
+  }
+  &.active-from-item{
+    border: 1px dashed $lighterBlue;
+  }
+  .component-name{
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 12px;
+    color: #bbb;
+    display: inline-block;
+    padding: 0 6px;
+  }
+}
+.drawing-item, .drawing-row-item{
+  &:hover {
+    & > .el-form-item{
+      background: $selectedColor;
+      border-radius: 6px;
+      outline: 1px dashed #38adff;
+    }
+    & > .drawing-item-copy, & > .drawing-item-delete{
+      display: initial;
+      background: #38adff;
+
+    }
+  }
+  & > .drawing-item-copy, & > .drawing-item-delete{
+    display: none;
+    position: absolute;
+    top: 0px;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1;
+  }
+  & > .drawing-item-copy{
+    right: 56px;
+    border-color: $lighterBlue;
+    color: $lighterBlue;
+    &:hover{
+      background: $lighterBlue;
+      color: #fff;
+    }
+  }
+  & > .drawing-item-delete{
+    right: 6px;
+    border-color: #F56C6C;
+    color: #fff;
+    &:hover{
+    }
+  }
+}

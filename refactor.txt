@@ -1,0 +1,47 @@
+iconfont link
+
+  "devDependencies": {
+    "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
+    "@vue/babel-preset-jsx": "^1.1.2",
+    "svg-sprite-loader": "^4.1.6"
+  },
+
+
+bable.config.js
+module.exports = {
+    presets: [
+      '@vue/cli-plugin-babel/preset',
+      "@vue/babel-preset-jsx"
+    ]
+  }
+  
+
+vue.config.js
+
+  module.exports = {
+  runtimeCompiler: true,
+  chainWebpack(config) {
+    // set svg-sprite-loader
+    config.module
+      .rule('svg')
+      .exclude.add(resolve('src/views/DynamicForm/icons'))
+      .end()
+    config.module
+      .rule('icons')
+      .test(/\.svg$/)
+      .include.add(resolve('src/views/DynamicForm/icons'))
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'icon-[name]'
+      })
+      .end()
+  }
+}
+
+
+
+main.js
+import '@/views/DynamicForm/styles/index.styl'
+import '@/views/DynamicForm/icons'
