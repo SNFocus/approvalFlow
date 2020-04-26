@@ -261,10 +261,10 @@ export default {
   components: {
     draggable,
     render,
-    // FormDrawer,
     RightPanel,
-    // CodeTypeDialog,
     DraggableItem
+    // FormDrawer,
+    // CodeTypeDialog,
   },
   data() {
     return {

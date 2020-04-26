@@ -1,4 +1,14 @@
 /* eslint-disable max-len */
+
+/**
+ *Copyright: Copyright (c) 2020
+ *Author:JakHuang
+ *Version 1.0 
+ *Title: form-generator/Element UI表单设计及代码生成器 
+ *GitHub: https://github.com/JakHuang/form-generator
+ */
+
+
 import { trigger } from './config'
 import { isArray } from 'util'
 

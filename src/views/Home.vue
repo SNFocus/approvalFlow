@@ -11,9 +11,9 @@
         <div
           v-for="(item, index) in steps"
           :key="index"
-          @click="changeSteps(item)"
           class="step"
           :class="[activeStep==item.key?'active':'']"
+          @click="changeSteps(item)"
         >
           <span class="step-index">{{index+1}}</span>
           {{item.label}}

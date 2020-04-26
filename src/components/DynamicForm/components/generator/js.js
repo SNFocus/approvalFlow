@@ -1,3 +1,10 @@
+/**
+ *Copyright: Copyright (c) 2020
+ *Author:JakHuang
+ *Version 1.0 
+ *Title: form-generator/Element UI表单设计及代码生成器 
+ *GitHub: https://github.com/JakHuang/form-generator
+ */
 import { isArray } from 'util'
 import { exportDefault, titleCase } from '../../utils'
 import { trigger } from './config'

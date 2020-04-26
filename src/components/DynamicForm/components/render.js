@@ -1,3 +1,11 @@
+/**
+ *Copyright: Copyright (c) 2020
+ *Author:JakHuang
+ *Version 1.0 
+ *Title: form-generator/Element UI表单设计及代码生成器 
+ *GitHub: https://github.com/JakHuang/form-generator
+ */
+
 import { makeMap } from '../utils'
 
 // 参考https://github.com/vuejs/vue/blob/v2.6.10/src/platforms/web/server/util.js
@@ -17,65 +25,65 @@ const isAttr = makeMap(
   + 'target,title,type,usemap,value,width,wrap'
 )
 
-function vModel(self, dataObject, defaultValue) {
+function vModel ( self, dataObject, defaultValue ) {
   dataObject.props.value = defaultValue
 
   dataObject.on.input = val => {
-    self.$emit('input', val)
+    self.$emit( 'input', val )
   }
 }
 
 const componentChild = {
   'el-input': {
-    prepend(h, conf, key) {
+    prepend ( h, conf, key ) {
       return <template slot="prepend">{conf[key]}</template>
     },
-    append(h, conf, key) {
+    append ( h, conf, key ) {
       return <template slot="append">{conf[key]}</template>
     }
   },
   'el-select': {
-    options(h, conf, key) {
+    options ( h, conf, key ) {
       const list = []
-      conf.options.forEach(item => {
-        list.push(<el-option label={item.label} value={item.value} disabled={item.disabled}></el-option>)
-      })
+      conf.options.forEach( item => {
+        list.push( <el-option label={item.label} value={item.value} disabled={item.disabled}></el-option> )
+      } )
       return list
     }
   },
   'el-radio-group': {
-    options(h, conf, key) {
+    options ( h, conf, key ) {
       const list = []
-      conf.options.forEach(item => {
-        if (conf.optionType === 'button') list.push(<el-radio-button label={item.value}>{item.label}</el-radio-button>)
-        else list.push(<el-radio label={item.value} border={conf.border}>{item.label}</el-radio>)
-      })
+      conf.options.forEach( item => {
+        if ( conf.optionType === 'button' ) list.push( <el-radio-button label={item.value}>{item.label}</el-radio-button> )
+        else list.push( <el-radio label={item.value} border={conf.border}>{item.label}</el-radio> )
+      } )
       return list
     }
   },
   'el-checkbox-group': {
-    options(h, conf, key) {
+    options ( h, conf, key ) {
       const list = []
-      conf.options.forEach(item => {
-        if (conf.optionType === 'button') {
-          list.push(<el-checkbox-button label={item.value}>{item.label}</el-checkbox-button>)
+      conf.options.forEach( item => {
+        if ( conf.optionType === 'button' ) {
+          list.push( <el-checkbox-button label={item.value}>{item.label}</el-checkbox-button> )
         } else {
-          list.push(<el-checkbox label={item.value} border={conf.border}>{item.label}</el-checkbox>)
+          list.push( <el-checkbox label={item.value} border={conf.border}>{item.label}</el-checkbox> )
         }
-      })
+      } )
       return list
     }
   },
   'el-upload': {
-    'list-type': (h, conf, key) => {
+    'list-type': ( h, conf, key ) => {
       const list = []
-      if (conf['list-type'] === 'picture-card') {
-        list.push(<i class="el-icon-plus"></i>)
+      if ( conf['list-type'] === 'picture-card' ) {
+        list.push( <i class="el-icon-plus"></i> )
       } else {
-        list.push(<el-button size="small" type="primary" icon="el-icon-upload">{conf.buttonText}</el-button>)
+        list.push( <el-button size="small" type="primary" icon="el-icon-upload">{conf.buttonText}</el-button> )
       }
-      if (conf.showTip) {
-        list.push(<div slot="tip" class="el-upload__tip">只能上传不超过 {conf.fileSize}{conf.sizeUnit} 的{conf.accept}文件</div>)
+      if ( conf.showTip ) {
+        list.push( <div slot="tip" class="el-upload__tip">只能上传不超过 {conf.fileSize}{conf.sizeUnit} 的{conf.accept}文件</div> )
       }
       return list
     }
@@ -83,39 +91,39 @@ const componentChild = {
 }
 
 export default {
-  render(h) {
+  render ( h ) {
     const dataObject = {
       attrs: {},
       props: {},
       on: {},
       style: {}
     }
-    const confClone = JSON.parse(JSON.stringify(this.conf))
+    const confClone = JSON.parse( JSON.stringify( this.conf ) )
     const children = []
 
     const childObjs = componentChild[confClone.tag]
-    if (childObjs) {
-      Object.keys(childObjs).forEach(key => {
+    if ( childObjs ) {
+      Object.keys( childObjs ).forEach( key => {
         const childFunc = childObjs[key]
-        if (confClone[key]) {
-          children.push(childFunc(h, confClone, key))
+        if ( confClone[key] ) {
+          children.push( childFunc( h, confClone, key ) )
         }
-      })
+      } )
     }
 
-    Object.keys(confClone).forEach(key => {
+    Object.keys( confClone ).forEach( key => {
       const val = confClone[key]
-      if (key === 'vModel') {
-        vModel(this, dataObject, confClone.defaultValue)
-      } else if (dataObject[key]) {
+      if ( key === 'vModel' ) {
+        vModel( this, dataObject, confClone.defaultValue )
+      } else if ( dataObject[key] ) {
         dataObject[key] = val
-      } else if (!isAttr(key)) {
+      } else if ( !isAttr( key ) ) {
         dataObject.props[key] = val
       } else {
         dataObject.attrs[key] = val
       }
-    })
-    return h(this.conf.tag, dataObject, children)
+    } )
+    return h( this.conf.tag, dataObject, children )
   },
   props: ['conf']
 }

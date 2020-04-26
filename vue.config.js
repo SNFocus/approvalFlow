@@ -6,6 +6,9 @@ function resolve ( dir ) {
 
 module.exports = {
   runtimeCompiler: true,
+  devServer: {
+    port: 8084
+  },
   css: {
     loaderOptions: {
       // 给 stylus-loader 传递选项
