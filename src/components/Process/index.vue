@@ -16,6 +16,10 @@ export default {
     };
   },
   methods: {
+    // 给父级组件提供的获取流程数据得方法
+    getData(){
+      return this.data
+    },
     /**
      * 接收所有FlowCard事件触发
      * @param { Object } data - 含有event(事件名称)/args(参数)两个属性
@@ -49,7 +53,7 @@ export default {
      * 属性面板提交事件
      * @param { Object } value - 被编辑的节点的properties属性对象
      */
-    onConfirm(value, content) {
+    onPropEditConfirm(value, content) {
       this.activeData.content = content || '请设置条件'
       let oldProp = this.activeData.properties;
       this.activeData.properties = value;
@@ -111,7 +115,7 @@ export default {
         <PropPanel
           value={this.activeData}
           processData={this.data}
-          onConfirm={this.onConfirm}
+          onConfirm={this.onPropEditConfirm}
           onCancel={this.onClosePanel}
         />
       </div>

@@ -26,12 +26,12 @@ export default {
   data() {
     return {
       formData: {
-        autoRepeat: undefined,
-        remarkTip: undefined,
-        myAuditAutoPass: false
+        autoRepeat: false, //审批人去重
+        allFollows: '', //全局抄送人
+        myAuditAutoPass: false, //发起人审批时自动通过
+        remarkTip: '' //审批意见填写提示
       },
       rules: {
-      
         autoRepeat: [{
           required: true,
           message: '请选择选择分组',
@@ -39,11 +39,11 @@ export default {
         }],
       },
       autoRepeatOptions: [{
-        "label": "去重",
-        "value": 1
+        "label": "启用自动去重",
+        "value": true
       }, {
-        "label": "不去重",
-        "value": 2
+        "label": "不启用自动去重",
+        "value": false
       }],
     }
   },
@@ -52,14 +52,8 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    submitForm() {
-      this.$refs['elForm'].validate(valid => {
-        if (!valid) return
-        // TODO 提交表单
-      })
-    },
-    resetForm() {
-      this.$refs['elForm'].resetFields()
+    getData() {
+      return this.formData
     },
   }
 }

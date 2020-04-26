@@ -30,7 +30,7 @@
 <script>
 export default {
   components: {},
-  props: [],
+  props: ['tabName'],
   data() {
     return {
       formData: {
@@ -80,14 +80,17 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    submitForm() {
-      this.$refs['elForm'].validate(valid => {
-        if (!valid) return
-        // TODO 提交表单
+    // 给父级页面提供得获取本页数据得方法
+    getData() {
+      return new Promise((resolve, reject) => {
+        this.$refs['elForm'].validate(valid => {
+          if (!valid) {
+            reject({ target: this.tabName})
+            return
+          }
+          resolve({ formData: this.formData, target: this.tabName})  // TODO 提交表单
+        })
       })
-    },
-    resetForm() {
-      this.$refs['elForm'].resetFields()
     },
   }
 }

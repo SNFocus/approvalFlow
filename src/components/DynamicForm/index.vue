@@ -137,7 +137,7 @@
           class="copy-btn-main"
           icon="el-icon-success"
           type="text"
-          @click="getGeneratedForm"
+          @click="getData"
         >保存</el-button>
         <br>
         <el-button class="delete-btn" icon="el-icon-delete" type="text" @click="empty">清空</el-button>
@@ -266,6 +266,7 @@ export default {
     // FormDrawer,
     // CodeTypeDialog,
   },
+  props:['tabName'],
   data() {
     return {
       // idGlobal,
@@ -448,25 +449,35 @@ export default {
           ...this.formConf
         };
     },
-    getGeneratedForm() {
-      if(this.isEmptyRowContainer()){
-        this.$message.warning('您的行容器中没有表单组件')
-        return
-      }
-      this.AssembleFormData();
-      let htmlCode = makeUpHtml(this.formData, "file");
-      let jsCode = makeUpJs(this.formData, "file");
-      let cssCode = makeUpCss(this.formData);
-      this.$router.push({
-        name: "preview",
-        params: {
-          formData: {
-            htmlCode,
-            jsCode,
-            cssCode
-          }
+    getData() {
+      return new Promise((resolve, reject) => {
+        if(this.drawingList.length === 0){
+          reject({ msg: '表单不允许为空', target: this.tabName})
+          return
         }
-      });
+
+        if(this.isEmptyRowContainer()){
+          reject({ msg: '您得行容器中没有组件', target: this.tabName})
+          return
+        }
+        this.AssembleFormData();
+        resolve({ formData: this.formData, target: this.tabName})
+      })
+      
+      
+      // let htmlCode = makeUpHtml(this.formData, "file");
+      // let jsCode = makeUpJs(this.formData, "file");
+      // let cssCode = makeUpCss(this.formData);
+      // this.$router.push({
+      //   name: "preview",
+      //   params: {
+      //     formData: {
+      //       htmlCode,
+      //       jsCode,
+      //       cssCode
+      //     }
+      //   }
+      // });
     },
     generate(data) {
       const func = this[`exec${titleCase(this.operationType)}`];

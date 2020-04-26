@@ -20,13 +20,13 @@
         </div>
         <div class="ghost-step step" :style="{transform: `translateX(${steps.findIndex(t => t.key === activeStep) * 100}%)`}"></div>
       </div>
-      <el-button size="small" class="publish-btn">发 布</el-button>
+      <el-button size="small" class="publish-btn" @click="publish">发 布</el-button>
     </header>
     <section class="page__content">
-      <BasicSetting v-show="activeStep === 'basicSetting'" /> 
-      <DynamicForm v-show="activeStep === 'formDesign'" />
-      <Process v-show="activeStep === 'processDesign'" />
-      <AdvancedSetting v-show="activeStep === 'advancedSetting'"/>
+      <BasicSetting v-show="activeStep === 'basicSetting'" tabName="basicSetting" ref="basicSetting" /> 
+      <DynamicForm v-show="activeStep === 'formDesign'" tabName="formDesign" ref="formDesign"/>
+      <Process v-show="activeStep === 'processDesign'" ref="processDesign"/>
+      <AdvancedSetting v-show="activeStep === 'advancedSetting'" ref="advancedSetting"/>
     </section>
   </div>
 </template>
@@ -50,28 +50,52 @@ export default {
       ]
     };
   },
+  mounted(){
+    window.addEventListener("beforeunload", function (e) {
+      var confirmationMessage = "离开网站可能会丢失您编辑得内容";
+      (e || window.event).returnValue = confirmationMessage;     // Gecko and Trident
+      return confirmationMessage;                                // Gecko and WebKit
+    });
+  },
   methods: {
     changeSteps(item) {
       this.activeStep = item.key;
     },
+    publish() {
+      const getCmpData = name => this.$refs[name].getData()
+      // basicSetting  formDesign 返回的是Promise 因为要做校验
+      // 其他返回的就是值
+      const p1 = getCmpData('basicSetting') 
+      const p2 = getCmpData('formDesign')
+      Promise.all([p1, p2])
+      .then(res => {
+        const param = {
+          userTasks: this.$refs['processDesign'].getData(),
+          approvalForm: JSON.stringify(res[1].formData),
+          expandAttr: Object.assign({}, res[0].formData, getCmpData('advancedSetting'))
+        }
+        debugger
+        this.sendServer(param)
+      })
+      .catch(err => {
+        err.target && (this.activeStep = err.target)
+        err.msg && this.$message.warning(err.msg)
+      })
+    },
+    sendServer(param){
+      console.log(param)
+    },
     exit() {
-      console.log(this.$store.state.hasEdited)
-      if(!this.$store.state.hasEdited) console.log('exit')
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      this.$confirm('离开此页面您得修改将会丢失, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: '模拟返回!'
           });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
+        }).catch(() => { });
     }
   },
   components: {
