@@ -5,6 +5,7 @@ import { NodeUtils, getMockData } from "./FlowCard/util.js";
 
 export default {
   name: 'Process',
+  props:['tabName'],
   data() {
     return {
       data: getMockData(), // 流程图数据
@@ -12,16 +13,19 @@ export default {
       step: 5, // 缩放步长
       updateId: 0, // key值 用于模拟$forceUpdate
       activeData: null, // 被激活的流程卡片数据，用于属性面板编辑
-      isProcessCmp: true
+      isProcessCmp: true,
+      verifyMode: false
     };
   },
   methods: {
     // 给父级组件提供的获取流程数据得方法
     getData(){
-      return this.data
-    },
-    dataValid(){
-      
+      this.verifyMode = true
+      if(NodeUtils.checkAllNode(this.data)) {
+        return Promise.resolve({formData: this.data})
+      }else{
+        return Promise.reject({target: this.tabName})
+      }
     },
     /**
      * 接收所有FlowCard事件触发
@@ -110,6 +114,7 @@ export default {
           ></i>
         </div>
         <FlowCard
+          verifyMode={this.verifyMode}
           key={this.updateId}
           data={this.data}
           onEmits={this.eventReciver}

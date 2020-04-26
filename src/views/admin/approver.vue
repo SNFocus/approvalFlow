@@ -25,7 +25,7 @@
     <section class="page__content">
       <BasicSetting v-show="activeStep === 'basicSetting'" tabName="basicSetting" ref="basicSetting" /> 
       <DynamicForm v-show="activeStep === 'formDesign'" tabName="formDesign" ref="formDesign"/>
-      <Process v-show="activeStep === 'processDesign'" ref="processDesign"/>
+      <Process v-show="activeStep === 'processDesign'" tabName="processDesign" ref="processDesign"/>
       <AdvancedSetting v-show="activeStep === 'advancedSetting'" ref="advancedSetting"/>
     </section>
   </div>
@@ -63,14 +63,15 @@ export default {
     },
     publish() {
       const getCmpData = name => this.$refs[name].getData()
-      // basicSetting  formDesign 返回的是Promise 因为要做校验
+      // basicSetting  formDesign processDesign 返回的是Promise 因为要做校验
       // 其他返回的就是值
       const p1 = getCmpData('basicSetting') 
       const p2 = getCmpData('formDesign')
-      Promise.all([p1, p2])
+      const p3 = getCmpData('processDesign')
+      Promise.all([p1, p2, p3])
       .then(res => {
         const param = {
-          userTasks: this.$refs['processDesign'].getData(),
+          userTasks: res[1].formData,
           approvalForm: JSON.stringify(res[1].formData),
           expandAttr: Object.assign({}, res[0].formData, getCmpData('advancedSetting'))
         }

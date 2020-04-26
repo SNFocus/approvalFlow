@@ -232,7 +232,7 @@ export class NodeUtils {
     }
   }
   /**
-   * 校验节点必填项完整性
+   * 校验单个节点必填项完整性
    * @param {Node} node - 节点数据
    */
   static checkNode ( node ) {
@@ -248,6 +248,23 @@ export class NodeUtils {
     if ( this.isApproverNode( node ) && isEmptyArray( node.properties.approvers ) ) {
       valid = false
     }
+    return valid
+  }
+  /**
+   * 判断所有节点是否信息完整
+   * @param {Node} processData - 整个流程图数据
+   * @returns {Boolean}
+   */
+  static checkAllNode ( processData ) {
+    let valid = true
+    const loop = ( node, callback ) => {
+      !this.checkNode( node ) && callback()
+      if ( node.childNode ) loop( node.childNode, callback )
+      if ( !isEmptyArray( node.conditionNodes ) ) {
+        node.conditionNodes.forEach( n => loop( n, callback ) )
+      }
+    }
+    loop( processData, () => valid = false )
     return valid
   }
 }

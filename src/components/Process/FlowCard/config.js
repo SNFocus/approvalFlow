@@ -2,8 +2,7 @@ export default {
   start: {
     type: "start",
     content: "所有人",
-    initiator: null,
-    properties: { title: '发起人' }
+    properties: { title: '发起人', initiator: 'ALL' }
   },
   approver: {
     type: "approver",

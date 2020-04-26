@@ -179,14 +179,13 @@ function NodeFactory(ctx, data, h) {
     return;
   }
   const showErrorTip = ctx.verifyMode && NodeUtils.checkNode(data) === false
-  console.log(data)
   let res = [],
     branchNode = "",
     selfNode = (
       <div class="node-wrap">
         <div class={`node-wrap-box ${data.type} ${showErrorTip ? 'error' : ''}` }>
           <el-tooltip content="未设置条件" placement="top" effect="dark">
-            <div class="error-tip">!!!</div>
+            <div class="error-tip" onClick={this.eventLancher.bind(ctx, "edit", data)}>!!!</div>
           </el-tooltip>
           {nodes[data.type].call(ctx, ctx, data, h)}
           {addNodeButton.call(ctx, ctx, data, h)}
@@ -258,7 +257,6 @@ export default {
     }
   },
   render(h) {
-    console.log('render')
     return (
       <div style="display: inline-flex; flex-direction: column; align-items: center;">
         {this.data && NodeFactory.call(this, this, this.data, h)}
