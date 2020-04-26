@@ -8,7 +8,6 @@
     style="text-align:left;"
     @close="cancel"
     v-if="properties"
-    
   >
     <!-- 标题 -->
     <header slot="title" class="header"  v-if="value && value.type=='start' && properties.title">{{properties.title}}</header>

@@ -1,4 +1,5 @@
 <script>
+import { NodeUtils } from "./util.js";
 const isCondition = data => data.type === "condition";
 const notEmptyArray = arr => Array.isArray(arr) && arr.length > 0;
 const hasBranch = data => notEmptyArray(data.conditionNodes);
@@ -177,12 +178,16 @@ function NodeFactory(ctx, data, h) {
   if (!data) {
     return;
   }
-
+  const showErrorTip = ctx.verifyMode && NodeUtils.checkNode(data) === false
+  console.log(data)
   let res = [],
     branchNode = "",
     selfNode = (
       <div class="node-wrap">
-        <div class={`node-wrap-box ${data.type}`}>
+        <div class={`node-wrap-box ${data.type} ${showErrorTip ? 'error' : ''}` }>
+          <el-tooltip content="未设置条件" placement="top" effect="dark">
+            <div class="error-tip">!!!</div>
+          </el-tooltip>
           {nodes[data.type].call(ctx, ctx, data, h)}
           {addNodeButton.call(ctx, ctx, data, h)}
         </div>
@@ -234,7 +239,12 @@ function addEndNode(h) {
 
 export default {
   props: {
-    data: { type: Object, required: true }
+    data: { type: Object, required: true },
+    // 点击发布时需要校验节点数据完整性 此时打开校验模式
+    verifyMode: {type: Boolean, default: true},
+  },
+  watch:{
+    
   },
   methods: {
     /**
@@ -248,6 +258,7 @@ export default {
     }
   },
   render(h) {
+    console.log('render')
     return (
       <div style="display: inline-flex; flex-direction: column; align-items: center;">
         {this.data && NodeFactory.call(this, this, this.data, h)}

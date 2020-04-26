@@ -1,4 +1,6 @@
 import nodeConfig from "./config.js";
+const isEmpty = data => data === null || data === undefined || data === ''
+const isEmptyArray = data => Array.isArray( data ) ? data.length === 0 : true
 export class NodeUtils {
   static globalID = 10000
   /**
@@ -19,15 +21,15 @@ export class NodeUtils {
     return res.join( '' )
   }
   static isConditionNode ( node ) {
-    return node.type === 'condition'
+    return node && node.type === 'condition'
   }
 
   static isStartNode ( node ) {
-    return node.type === 'start'
+    return node && node.type === 'start'
   }
 
   static isApproverNode ( node ) {
-    return node.type === 'approver'
+    return node && node.type === 'approver'
   }
   /**
    * 创建指定节点
@@ -228,6 +230,25 @@ export class NodeUtils {
       branchData[index].properties.priority = index + 1
       branchData[index + 1] = branchData.splice( index, 1, branchData[index + 1] )[0]
     }
+  }
+  /**
+   * 校验节点必填项完整性
+   * @param {Node} node - 节点数据
+   */
+  static checkNode ( node ) {
+    let valid = true
+    if ( this.isStartNode( node ) && !node.properties.initiator ) {
+      valid = false
+    }
+    if ( this.isConditionNode( node ) ) {
+      if ( !node.initiator && isEmptyArray( node.properties.conditions ) ) {
+        valid = false
+      }
+    }
+    if ( this.isApproverNode( node ) && isEmptyArray( node.properties.approvers ) ) {
+      valid = false
+    }
+    return valid
   }
 }
 /**
