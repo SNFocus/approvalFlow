@@ -1,29 +1,33 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from "@/views/home.vue"
+import Home from "@/views/admin/approver.vue"
 
-Vue.use(VueRouter)
+Vue.use( VueRouter )
 
 const routes = [
   {
     path: '/',
-    name: 'home',
+    redirect: '/approver'
+  },
+  {
+    path: '/approver',
+    name: 'approver',
     component: Home
   },
   {
-    path:'/preview',
-    name:'preview',
-    component:()=>import("@/views/preview")
+    path: '/preview',
+    name: 'preview',
+    component: () => import( "@/views/custom" )
   },
   {
-    path:'/test',
-    name:'test',
-    component:()=>import("@/views/preview/test.vue")
+    path: '/test',
+    name: 'test',
+    component: () => import( "@/views/custom/test.vue" )
   },
 ]
 
-const router = new VueRouter({
+const router = new VueRouter( {
   routes
-})
+} )
 
 export default router
