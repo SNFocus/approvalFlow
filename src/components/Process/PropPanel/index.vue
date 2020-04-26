@@ -13,7 +13,7 @@
     <!-- 标题 -->
     <header slot="title" class="header"  v-if="value && value.type=='start' && properties.title">{{properties.title}}</header>
     <header slot="title" class="header" v-else>
-      <span @click="onTitleEdit" v-show="!titleInputVisible" style="cursor:pointer;">
+      <span @click="titleInputVisible = true" v-show="!titleInputVisible" style="cursor:pointer;">
         {{properties.title}}
         <i class="el-icon-edit"></i>
       </span>
@@ -35,8 +35,20 @@
     </header>
 
     <!-- 属性面板编辑区 -->
+    <!-- 发起人 -->
+    <section style="height: 100%;" v-if="value && value.type === 'start'">
+      <el-row style="padding: 10px;">
+        <el-col :span="4" style="font-size: 14px;padding-left: 16px;">发起人</el-col>
+        <el-col :span="18"><el-input v-model="initiator" size="small" /></el-col>
+      </el-row>
+    </section>
+
     <!-- 条件  -->
-    <section  tabindex="1" style="height:100%;" v-if="isConditionNode()">
+    <section style="height: 100%;" v-if="value && isConditionNode()">
+      <el-row style="padding: 10px;" v-if="showingPCons.includes(-1)">
+        <el-col :span="4" style="font-size: 14px;padding-left: 16px;">发起人</el-col>
+        <el-col :span="18"><el-input v-model="initiator" size="small" /></el-col>
+      </el-row>
       <template v-for="(item,index) in pconditions">
         <!-- 计数 -->
         <num-input
@@ -72,34 +84,34 @@
     </section>
 
     <!-- 审批人 -->
-    <section  tabindex="1" class="approver-pane" style="height:100%;" v-else>
+    <section class="approver-pane" style="height:100%;" v-if="value && value.type === 'approver'">
       <el-tabs v-model="activeName" style="height:100%;">
         <el-tab-pane label="设置审批人" name="approverConf">
           <div style="padding: 12px;">
-            <el-radio-group v-model="assigneeType" style="line-height: 32px;">
+            <el-radio-group v-model="approverForm.assigneeType" style="line-height: 32px;">
               <el-radio v-for="item in assigneeTypeOptions" :label="item.value" :key="item.value" class="radio-item">{{item.label}}</el-radio>
             </el-radio-group>
           </div>
           <div style="border-bottom: 1px solid #e5e5e5;padding-bottom: 1rem;">
-            <div v-if="assigneeType === 'myself'"  class="option-box" style="color: #a5a5a5;">发起人自己将作为审批人处理审批单</div>
-            <div v-else-if="assigneeType === 'optional'"  class="option-box">
+            <div v-if="approverForm.assigneeType === 'myself'"  class="option-box" style="color: #a5a5a5;">发起人自己将作为审批人处理审批单</div>
+            <div v-else-if="approverForm.assigneeType === 'optional'"  class="option-box">
               <p>可选多人</p>
-              <el-switch v-model="optionalMultiUser" active-color="#13ce66"> </el-switch>
+              <el-switch v-model="approverForm.optionalMultiUser" active-color="#13ce66"> </el-switch>
               <p>选择范围</p>
-              <el-select v-model="optionalRange" size="mini">
+              <el-select v-model="approverForm.optionalRange" size="mini">
                 <el-option v-for="(item, index) in rangeOptions" :key="index" :label="item.label" :value="item.value"
                   :disabled="item.disabled"></el-option>
               </el-select>
             </div>
             <div v-else class="option-box">
-              <el-button type="primary" icon="el-icon-plus" size="small">添加{{assigneeTypeOptions.find(t=>t.value == assigneeType).label}}</el-button>
+              <el-button type="primary" icon="el-icon-plus" size="small" @click="addMenber"> 添加{{getAssignTypeLabel()}} </el-button>
             </div>
           </div>
-          <div class="option-box" style="border-bottom: 1px solid #e5e5e5;" v-if="!['optional','myself'].includes(assigneeType)">
+          <div class="option-box" style="border-bottom: 1px solid #e5e5e5;" v-if="approverForm.approvers.length > 1 && !['optional','myself'].includes(approverForm.assigneeType)">
             <p>多人审批时采用的审批方式</p>
-            <el-radio v-model="counterSign" :label="true" class="radio-item">会签（须所有审批人同意）</el-radio>
+            <el-radio v-model="approverForm.counterSign" :label="true" class="radio-item">会签（须所有审批人同意）</el-radio>
             <br>
-            <el-radio  v-model="counterSign"  :label="false" class="radio-item">或签（一名审批人同意或拒绝即可）</el-radio>
+            <el-radio  v-model="approverForm.counterSign"  :label="false" class="radio-item">或签（一名审批人同意或拒绝即可）</el-radio>
           </div>
           <div class="option-box">
             <p>抄送人</p>
@@ -120,7 +132,7 @@
               </div>
             </header>
             <div class="auth-table-body">
-              <div v-for="item in formOperates" :key="item.formId" class="row">
+              <div v-for="item in approverForm.formOperates" :key="item.formId" class="row">
                 <div class="label">
                   <span class="required" v-show="item.required">*</span>
                   {{item.label}}
@@ -139,7 +151,11 @@
 
     <el-dialog title="选择条件" :visible.sync="dialogVisible" width="500px" :append-to-body="true" custom-class="condition-dialog">
       <el-checkbox-group v-model="showingPCons">
-        <el-checkbox v-for="(item,index) in pconditions" :key="index" :label="item.formId">{{item.label}}</el-checkbox>
+        <!-- 发起人默认就有 -->
+        <el-checkbox :label="-1">发起人</el-checkbox>
+        <el-checkbox v-for="(item,index) in pconditions" :key="index" :label="item.formId">
+         {{item.label}}
+        </el-checkbox>
       </el-checkbox-group>
     </el-dialog>
     <div class="actions">
@@ -165,60 +181,67 @@ export default {
   props: [/*当前节点数据*/"value", /*整个节点数据*/"processData"],
   data() {
     return {
-      properties: {},  // 当前节点数据
       visible: false,  // 控制面板显隐
+      globalFormOperate: null,  // 统一设置节点表单权限
       titleInputVisible: false, // 是否显示标题输入框  startNode 不显示
       activeName: "approverConf", // or formAuth  Tab面板key
-      assigneeType: "user", // 指定审批人
-      priorityLength: 0, // 当为条件节点时  显示节点优先级选项的数据
-      pconditions: [], // 从vuex中获取的可以作为流程图条件的集合
       showingPCons: [], // 用户选择了得条件  被选中的才会被展示在面板上编辑
+      pconditions: [], // 从vuex中获取的可以作为流程图条件的集合
       dialogVisible: false, // 控制流程条件选项Dialog显隐
-      formOperates:[], // 表单操作权限集合
-      counterSign: true, //是否为会签
-      globalFormOperate: null,
-      // 只有审批类型为自选 才有这两个选项 optionalMultiUser optionalRange
-      optionalMultiUser: false,
-      optionalRange: 'ALL', // USER<最多十个> / ALL / ROLE 
+      // 当前节点数据
+      properties: {},
+      // 发起人  start节点和condition节点需要
+      initiator:null, 
+      priorityLength: 0, // 当为条件节点时  显示节点优先级选项的数据
+      
+      approverForm: {
+        approvers:[], // 审批人集合
+        assigneeType: "user", // 指定审批人
+        formOperates:[], // 表单操作权限集合
+        counterSign: true, //是否为会签
+        // 审批类型为自选 出现 optionalMultiUser optionalRange
+        optionalMultiUser: false,
+        optionalRange: 'ALL', // USER<最多十个> / ALL / ROLE 
+      },
 
       optionalOptions: [{
-        label: '自选一个人',
-        value: false
-      }, {
-        label: '自选多个人',
-        value: true
-      }],
-      rangeOptions: [{
-        label: '全公司',
-        value: 'ALL'
-      }, {
-        label: '指定成员',
-        value: 'USER'
-      }, {
-        label: '角色',
-        value: 'ROLE'
+          label: '自选一个人',
+          value: false
+        }, {
+          label: '自选多个人',
+          value: true
+        }],
+        rangeOptions: [{
+          label: '全公司',
+          value: 'ALL'
+        }, {
+          label: '指定成员',
+          value: 'USER'
+        }, {
+          label: '角色',
+          value: 'ROLE'
       }],
       assigneeTypeOptions:[{
         label:'指定成员',
         value: 'user'
-      },
-      {
-        label:'主管',
-        value: 'director'
-      },
-      {
-        label:'角色',
-        value: 'role'
-      },
-      {
-        label:'岗位',
-        value: 'position'
-      },
-      {
-        label:'发起人自己',
-        value: 'myself'
-      },
-      {
+        },
+        {
+          label:'主管',
+          value: 'director'
+        },
+        {
+          label:'角色',
+          value: 'role'
+        },
+        {
+          label:'岗位',
+          value: 'position'
+        },
+        {
+          label:'发起人自己',
+          value: 'myself'
+        },
+        {
         label:'发起人自选',
         value: 'optional'
       }]
@@ -227,7 +250,8 @@ export default {
   computed: {
     // 未使用的条件个数
     notUseConNum() {
-      return this.pconditions.length - this.showingPCons.length;
+      // 发起人是默认就有得  所以需要加 1
+      return this.pconditions.length - this.showingPCons.length + 1;
     },
     usedFormItems(){
       return this.$store.state.formItemList
@@ -237,39 +261,59 @@ export default {
     Clickoutside
   },
   methods: {
+    addMenber(){
+      if(this.approverForm.assigneeType){
+        this.$message.success('打开组织机构弹窗')
+      }
+    },
+    getAssignTypeLabel(){
+      const res = this.assigneeTypeOptions.find(t => t.value === this.approverForm.assigneeType)
+      return res ? res.label : ''
+    },
     changeAllFormOperate(val){
-      this.formOperates.forEach(t => t.formOperate = val)
+      this.approverForm.formOperates.forEach(t => t.formOperate = val)
     },
     // 是否可以显示当前条件组件
     couldShowIt(item, tag) {
       return tag === item.tag && this.showingPCons.includes(item.formId);
     },
-    // 打开title输入框
-    onTitleEdit() {
-      this.titleInputVisible = true;
-    },
-    initFormOperates(){
+    /**
+     * 初始化审批节点所需数据
+     */
+    initApproverNodeData() {
+      // 表单权限数据初始化
+      if(!this.value.properties) return
+      Object.assign(this.approverForm, this.value.properties)
       const formOperates = this.value.properties && this.value.properties.formOperates || []
       const defaultType = this.isApproverNode() ? 1 : 2 // 操作权限 0 隐藏 1 只读 2 可编辑
       const getPermissionById = id => {
         const permission = formOperates.find(t => t.formId === id)
         return permission !== undefined ? permission.formOperate : defaultType
       }
+      const format = (list, parentName = '') => list.map(t => {
+        const data = {
+            formId: t.formId, 
+            required: t.required,
+            label: [parentName, t.label].join('.'), 
+            formOperate: getPermissionById(t.formId)
+        }
+        this.approverForm.formOperates.push(data)
+        Array.isArray(t.children) && format(t.children, t.label)
+      })
 
-      this.formOperates = this.$store.state.formItemList.map(t => ({
-        required: t.required,
-        label: t.label, 
-        formId: t.formId, 
-        formOperate: getPermissionById(t.formId)
-      }))
-      console.log(this.formOperates )
+      this.approverForm.formOperates = []
+      format(this.$store.state.formItemList)
     },
-    conditionNodeComfirm(){
+    /**
+     * 条件节点确认保存得回调
+     */
+    conditionNodeComfirm() {
       let nodeContent = ''
       const conditions = []
       this.showingPCons
       .map(fid => this.pconditions.find(t => t.formId === fid))
       .forEach((t)=> {
+        if(!t) return // 发起人条件时 t 为空 发起人在其他地方获取
         const cValue = t.conditionValue
         if(cValue === undefined || cValue === null){
           return 
@@ -294,25 +338,49 @@ export default {
       }, [])
 
       this.properties.conditions = conditions
+      // 发起人虽然是条件 但是这里把发起人放到外部单独判断
+      this.properties.initiator = this.initiator
       this.$emit("confirm", this.properties, nodeContent);
       this.visible = false;
     },
-    approverNodeComfirm(){
-      this.properties.formOperates = this.formOperates.map(t=>({formId: t.formId, formOperate: t.formOperate}))
-      this.$emit("confirm", this.properties);
+    /**
+     * 开始节点确认保存
+     */
+    startNodeComfirm() {
+      this.properties.initiator = this.initiator
+      this.$emit("confirm", this.properties, this.initiator);
+      this.visible = false;
+    },
+    /**
+     * 审批节点确认保存
+     */
+    approverNodeComfirm() {
+      const content = this.getAssignTypeLabel()
+      const formOperates = this.approverForm.formOperates.map(t=>({formId: t.formId, formOperate: t.formOperate}))
+      Object.assign(this.properties, this.approverForm, {formOperates})
+      this.$emit("confirm", this.properties, content)
       this.visible = false;
     },
     // 确认修改
     confirm() {
-      this.value.type === 'condition' ? this.conditionNodeComfirm() : this.approverNodeComfirm()
+      if(this.isConditionNode()){
+        this.conditionNodeComfirm() 
+      }else if(this.isApproverNode()) {
+        this.approverNodeComfirm()
+      }else{
+        this.startNodeComfirm()
+      }
     },
-    // 关闭抽提面板
+    // 关闭抽屉
     cancel() {
       setTimeout(()=>{
         this.$emit("cancel");
         this.visible = false;
       }, 0)
     },
+    /**
+     * 删除流程条件
+     */
     onDelCondition(condition){
       const index = this.showingPCons.findIndex(id => id === condition.formId)
       if(index > -1){
@@ -332,10 +400,18 @@ export default {
     isConditionNode() {
       return this.value ? NodeUtils.isConditionNode(this.value) : false;
     },
+    /** 判断是否是审批节点*/
     isApproverNode(){
       return this.value ? NodeUtils.isApproverNode(this.value) : false;
     },
-    initPConditionValues(){
+    initInitiator(){
+      this.initiator = this.value.initiator
+    },
+    /**
+     * 初始化条件节点数据
+     */
+    initConditionNodeData(){
+      // 初始化条件表单数据
       let nodeConditions = this.value.properties && this.value.properties.conditions
       this.pconditions = JSON.parse(JSON.stringify(this.$store.state.processConditions));
       if(Array.isArray(this.pconditions)){
@@ -354,8 +430,8 @@ export default {
   watch: {
     visible(val) {
       if (!val) return 
-      this.initFormOperates()
-      this.initPConditionValues()
+      this.isApproverNode() ? this.initApproverNodeData() : this.initInitiator()
+      this.isConditionNode() && this.initConditionNodeData()
     },
 
     value(newVal) {
@@ -363,9 +439,6 @@ export default {
         this.visible = true;
         this.properties = JSON.parse(JSON.stringify(newVal.properties));
         if (this.properties) {  
-          this.activeName = NodeUtils.isConditionNode(newVal)
-            ? ""
-            : "approverConf";
           NodeUtils.isConditionNode(newVal) && this.getPriorityLength();
         }
       } 
@@ -401,6 +474,10 @@ export default {
     padding-left: 20px;
   }
 
+  >>> .el-tabs__item:focus{
+    box-shadow: none !important;
+  }
+
   >>> .el-tabs__header {
     margin-bottom: 0;
   }
@@ -422,6 +499,7 @@ export default {
   padding: 6px 12px;
   width: 100%;
   box-sizing: border-box;
+  text-align: right;
 }
 
 .radio-item {
@@ -436,6 +514,7 @@ export default {
 }
 
 .form-auth-table{
+  font-size: 14px;
   .auth-table-header{
     background: #fafafa
     line-height: 40px;

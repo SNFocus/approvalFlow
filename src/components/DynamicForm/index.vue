@@ -408,7 +408,7 @@ export default {
         clone.placeholder !== undefined && (clone.placeholder += clone.label);
         tempActiveData = clone;
       } else if (clone.layout === "rowFormItem") {
-        delete clone.label;
+        // delete clone.label;
         clone.componentName = `row${clone.formId}`;
         clone.gutter = this.formConf.gutter;
         this.cloneChildrenOfRowFormItem(clone);

@@ -2,7 +2,7 @@
   <div class="page">
     <header class="page__header">
       <div class="page-actions">
-        <div style="border-right:1px solid #c5c5c5;" @click="exit">
+        <div style="border-right:1px solid #c5c5c5;cursor: poiner;" @click="exit">
           <i class="el-icon-arrow-left"></i>
         </div>
         <div>补卡申请</div>
