@@ -10,10 +10,11 @@ import draggable from 'vuedraggable'
 import render from './components/render'
 
 const components = {
-  itemBtns(h, element, index, parent) {
+  itemBtns(h, element, index, parent, root) {
     const { copyItem, deleteItem } = this.$listeners
-    return [
-      <span class="drawing-item-delete" title="删除" onClick={event => {
+    const visibility ='visibility:' + (root && root.cmpType === 'custom' ? 'hidden;' : 'visible;')
+    return  [
+      <span class="drawing-item-delete" style={visibility} title="删除" onClick={event => {
         deleteItem(index, parent); event.stopPropagation()
       }}>
         <i class="el-icon-close" />
@@ -22,7 +23,7 @@ const components = {
   }
 }
 const layouts = {
-  colFormItem(h, element, index, parent) {
+  colFormItem(h, element, index, parent, root) {
     const { activeItem } = this.$listeners
     let className = this.activeId === element.formId ? 'drawing-item active-from-item' : 'drawing-item'
     if (this.formConf.unFocusedComponentBorder) className += ' unfocus-bordered'
@@ -74,7 +75,7 @@ function renderChildren(h, element, index, parent) {
   return element.children.map((el, i) => {
     const layout = layouts[el.layout]
     if (layout) {
-      return layout.call(this, h, el, i, element.children)
+      return layout.call(this, h, el, i, element.children, element)
     }
     return layoutIsNotFound()
   })
