@@ -98,7 +98,8 @@ function mixinMethod ( type ) {
           this.$refs['${confGlobal.formRef}'].resetFields()
         },`,
         addRowComponent: `addRowComponent(rowCmpName) {
-          this.${confGlobal.formModel}[rowCmpName].forEach(t => this.${confGlobal.formModel}[rowCmpName].push(Object.assign({}, t)))
+          const rowData = this.${confGlobal.formModel}[rowCmpName]
+          rowData.push(Object.assign({}, rowData[0]))
       },`
       } : null,
       dialog: {
