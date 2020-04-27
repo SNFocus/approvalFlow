@@ -140,12 +140,14 @@ const layouts = {
     const align = element.type === 'default' ? '' : `align="${element.align}"`
     const gutter = element.gutter ? `:gutter="${element.gutter}"` : ''
     const children = element.children.map( ( el ) => layouts[el.layout]( el, true, element ) )
-
-    let str = `<el-row v-for="(row_form_item, index) in formData.${element.componentName}" :key="index" ${type} ${justify} ${align} ${gutter}>
+    let str = `
+    <el-divider content-position="left">${element.label}</el-divider>
+    <el-row class="form-container"  v-for="(row_form_item, index) in formData.${element.componentName}" :key="'${element.componentName}' + index" ${type} ${justify} ${align} ${gutter}>
       ${children.join( '\n' )}
     </el-row>
-    <el-form-item  >
+    <el-form-item class="container-add-btn">
         <el-button @click="addRowComponent('${element.componentName}')">添加</el-button>
+        <div class="line"></div>
     </el-form-item>
     `
     str = colWrapper( element, str )

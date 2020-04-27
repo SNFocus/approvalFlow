@@ -16,5 +16,4 @@ div,section
     outline 0
 *, *::before, *::after 
   box-sizing border-box
-  box-shadow none
 </style>

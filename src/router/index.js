@@ -17,7 +17,7 @@ const routes = [
   {
     path: '/preview',
     name: 'preview',
-    component: () => import( "@/views/custom" )
+    component: () => import( "@/views/custom/preview.vue" )
   },
   {
     path: '/test',

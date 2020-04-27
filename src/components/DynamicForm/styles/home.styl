@@ -81,6 +81,7 @@ $lighterBlue = #409EFF;
   width: auto;
   margin: 0 350px 0 300px;
   box-sizing: border-box;
+  position: relative;
 }
 .empty-info{
   position: absolute;
@@ -93,17 +94,16 @@ $lighterBlue = #409EFF;
   letter-spacing: 4px;
 }
 .action-bar{
-  float: right;
-  margin-right: 1.5rem;
-  height: 42px;
-  text-align: right;
-  padding: 0 15px;
-  box-sizing: border-box;;
-  border-top: none;
-  border-left: none;
+  position: absolute;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+
   .delete-btn{
     color: #F56C6C;
+    margin-left: 0 !important;
   }
+  z-index: 99;
 }
 .logo-wrapper{
   position: relative;

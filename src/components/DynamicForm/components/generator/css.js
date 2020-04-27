@@ -5,7 +5,9 @@
  *Title: form-generator/Element UI表单设计及代码生成器 
  *GitHub: https://github.com/JakHuang/form-generator
  */
+const defaultCss = `
 
+`
 const styles = {
   'el-rate': '.el-rate{display: inline-block; vertical-align: text-top;}',
   'el-upload': '.el-upload__tip{line-height: 1.2;}'
@@ -22,5 +24,5 @@ function addCss ( cssList, el ) {
 export function makeUpCss ( conf ) {
   const cssList = []
   conf.fields.forEach( el => addCss( cssList, el ) )
-  return cssList.join( '\n' )
+  return defaultCss + cssList.join( '\n' )
 }

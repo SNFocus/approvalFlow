@@ -137,9 +137,8 @@
           class="copy-btn-main"
           icon="el-icon-success"
           type="text"
-          @click="getData"
-        >保存</el-button>
-        <br>
+          @click="preview"
+        >预览</el-button>
         <el-button class="delete-btn" icon="el-icon-delete" type="text" @click="empty">清空</el-button>
       </div>
       <div id="ipad">
@@ -492,20 +491,23 @@ export default {
         resolve({ formData: this.formData, target: this.tabName})
       })
       
-      
-      // let htmlCode = makeUpHtml(this.formData, "file");
-      // let jsCode = makeUpJs(this.formData, "file");
-      // let cssCode = makeUpCss(this.formData);
-      // this.$router.push({
-      //   name: "preview",
-      //   params: {
-      //     formData: {
-      //       htmlCode,
-      //       jsCode,
-      //       cssCode
-      //     }
-      //   }
-      // });
+     
+    },
+    preview(){
+      this.AssembleFormData();
+      let htmlCode = makeUpHtml(this.formData, "file");
+      let jsCode = makeUpJs(this.formData, "file");
+      let cssCode = makeUpCss(this.formData);
+      this.$router.push({
+        name: "preview",
+        params: {
+          formData: {
+            htmlCode,
+            jsCode,
+            cssCode
+          }
+        }
+      });
     },
     generate(data) {
       const func = this[`exec${titleCase(this.operationType)}`];
