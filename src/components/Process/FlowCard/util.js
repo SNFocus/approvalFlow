@@ -4,7 +4,7 @@ const isEmptyArray = data => Array.isArray( data ) ? data.length === 0 : true
 export class NodeUtils {
   static globalID = 10000
   /**
-   * 根据自增数生成六进制id
+   * 根据自增数生成64进制id
    * @returns 64进制id字符串
    */
   static idGenerator () {

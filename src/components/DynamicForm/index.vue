@@ -390,11 +390,20 @@ export default {
       this.drawingList.push(clone);
       this.activeFormItem(clone);
     },
-    getNextId(){
+    getMaxId(){
       if(this.drawingList.length){
-        return this.drawingList.reduce((max, cur) => cur.formId > max ? cur.formId : max, 0) + 1
+        return this.drawingList.reduce((maxId, cmp) => {
+          cmp.formId > maxId && (maxId = cmp.formId )
+          if(Array.isArray(cmp.children)){
+            maxId = cmp.children.reduce((max, child) => Math.max(max, child.formId), maxId)
+          }
+          return maxId
+        }, 0)
       }
-      return 100
+      return 0
+    },
+    getNextId(){
+      return this.getMaxId() + 1
     },
     cloneComponent(origin) {
       const clone = JSON.parse(JSON.stringify(origin));
@@ -419,8 +428,8 @@ export default {
     cloneChildrenOfRowFormItem(rowFormItem) {
       if (rowFormItem.children && rowFormItem.children.length) {
         let children = rowFormItem.children;
-        children.forEach(clone => {
-          clone.formId = this.getNextId();
+        children.forEach((clone, index) => {
+          clone.formId = rowFormItem.formId + index + 1;
           clone.span = formConf.span;
           clone.renderKey = +new Date(); // 改变renderKey后可以实现强制更新组件
           if (!clone.layout) clone.layout = "colFormItem";
@@ -449,6 +458,9 @@ export default {
           ...this.formConf
         };
     },
+    /**
+     * 供父组件使用 获取表单JSON
+     */
     getData() {
       return new Promise((resolve, reject) => {
         if(this.drawingList.length === 0){
