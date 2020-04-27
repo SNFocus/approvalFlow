@@ -42,20 +42,22 @@ const layouts = {
   },
   rowFormItem(h, element, index, parent) {
     const { activeItem } = this.$listeners
+    const { put } = this.$attrs
     const className = this.activeId === element.formId ? 'drawing-row-item active-from-item' : 'drawing-row-item'
    
     let child = renderChildren.apply(this, arguments)
     if (element.type === 'flex') {
-      child = <el-row type={element.type} justify={element.justify} align={element.align}>
+      child = <el-row type={element.type} justify={element.justify} align={element.align} >
               {child}
             </el-row>
     }
+    const group = {name: 'componentsGroup', put:put}
     return (
       <el-col span={element.span}>
         <el-row gutter={element.gutter} class={className} style="margin-left:0;"
           nativeOnClick={event => { (activeItem(element), event.stopPropagation()) }}>
           <span class="component-name" >{element.componentName}</span>
-          <draggable list={element.children} animation={0} group="componentsGroup" class="drag-wrapper">
+          <draggable list={element.children} animation={0} group={group} class="drag-wrapper">
             {child}
           </draggable>
           <div style="padding:8px;background:white;text-align:center;color:#409EFE;">添加<i class="el-icon-plus"></i></div>

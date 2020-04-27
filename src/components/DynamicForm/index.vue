@@ -169,6 +169,7 @@
                         :index="index"
                         :active-id="activeId"
                         :form-conf="formConf"
+                        :put="shouldClone"
                         @activeItem="activeFormItem"
                         @copyItem="drawingItemCopy"
                         @deleteItem="drawingItemDelete"
@@ -358,6 +359,12 @@ export default {
     // })
   },
   methods: {
+    /**
+     * 阻止行容器中嵌套行容器
+     */
+    shouldClone(to, from, target){
+      return target.innerText !== '行容器'
+    },
     activeFormItem(element) {
       this.activeData = element;
       this.activeId = element.formId;
