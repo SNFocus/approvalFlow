@@ -51,12 +51,12 @@ const layouts = {
               {child}
             </el-row>
     }
-    const group = {name: 'componentsGroup', put:put}
+    const group = {name: 'componentsGroup', put:(...arg) => put(...arg, element)}
     return (
       <el-col span={element.span}>
         <el-row gutter={element.gutter} class={className} style="margin-left:0;"
           nativeOnClick={event => { (activeItem(element), event.stopPropagation()) }}>
-          <span class="component-name" >{element.componentName}</span>
+          <span class="component-name" >{element.label}</span>
           <draggable list={element.children} animation={0} group={group} class="drag-wrapper">
             {child}
           </draggable>

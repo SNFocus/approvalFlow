@@ -360,10 +360,19 @@ export default {
   },
   methods: {
     /**
-     * 阻止行容器中嵌套行容器
+     * 判断是否是常用组件
+     * 非常用组件即套餐组件  不能新填或删除子组件
      */
-    shouldClone(to, from, target){
-      return target.innerText !== '行容器'
+    isCommonCmp(name){
+      return this.commonComponents.findIndex(t => t.label === name) > -1
+    },
+    /**
+     * 阻止行容器中嵌套行容器
+     * 定制组件不能添加子组件
+     */
+    shouldClone(to, from ,target, event, conf){
+      // console.log(to, from ,target, event, conf)
+      return conf.cmpType !== 'custom' && target.innerText !== '行容器' && this.isCommonCmp(target.innerText)
     },
     activeFormItem(element) {
       this.activeData = element;

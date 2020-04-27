@@ -420,8 +420,11 @@ export const layoutComponents = [{
 }]
 
 export const commonComponents = [...inputComponents, ...selectComponents, ...layoutComponents]
+  .map( t => Object.assign( { cmpType: 'common' }, t ) )
 
+// 定制组件添加cmpType = custom
 export const customMadeComponents = [{
+  cmpType: 'custom',
   layout: 'rowFormItem',
   tagIcon: 'row',
   type: 'default',
@@ -456,6 +459,7 @@ export const customMadeComponents = [{
     asSummary: false
   }],
 }]
+// .map( t => Object.assign( { cmpType: 'custom', t } ) )
 
 // 组件rule的触发方式，无触发方式的组件不生成rule
 export const trigger = {
