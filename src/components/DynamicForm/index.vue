@@ -490,8 +490,6 @@ export default {
         this.AssembleFormData();
         resolve({ formData: this.formData, target: this.tabName})
       })
-      
-     
     },
     preview(){
       this.AssembleFormData();

@@ -37,6 +37,13 @@ import Process from "@/components/Process";
 import DynamicForm from "@/components/DynamicForm";
 import BasicSetting from '@/components/BasicSettingForm'
 import AdvancedSetting from '@/components/AdvancedSetting'
+
+const beforeUnload = function (e) {
+  var confirmationMessage = '离开网站可能会丢失您编辑得内容';
+  (e || window.event).returnValue = confirmationMessage;     // Gecko and Trident
+  return confirmationMessage;                                // Gecko and WebKit
+}
+
 export default {
   name: "Home",
   data() {
@@ -50,12 +57,13 @@ export default {
       ]
     };
   },
-  mounted(){
-    window.addEventListener("beforeunload", function (e) {
-      var confirmationMessage = "离开网站可能会丢失您编辑得内容";
-      (e || window.event).returnValue = confirmationMessage;     // Gecko and Trident
-      return confirmationMessage;                                // Gecko and WebKit
-    });
+  beforeRouteEnter(to, from, next){
+    window.addEventListener('beforeunload', beforeUnload)
+    next()
+  },
+  beforeRouteLeave(to, from, next){
+    window.removeEventListener('beforeunload', beforeUnload)
+    next()
   },
   methods: {
     changeSteps(item) {
@@ -75,7 +83,6 @@ export default {
           approvalForm: JSON.stringify(res[1].formData),
           expandAttr: Object.assign({}, res[0].formData, getCmpData('advancedSetting'))
         }
-        debugger
         this.sendServer(param)
       })
       .catch(err => {
