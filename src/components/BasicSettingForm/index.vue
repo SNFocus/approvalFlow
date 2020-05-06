@@ -16,15 +16,29 @@
         <el-button  plain size="mini">选择发起人</el-button>
       </el-form-item>
       <el-form-item label="模板图标" prop="icon">
-        <i style="font-size: 2rem;vertical-align: middle; " class="iconfont el-icon-camera-solid"></i>
-        &nbsp;
-        <el-button  plain size="mini">选择图标</el-button>
+        <img :src="activeIconSrc" style="width: 28px;height: 28px;vertical-align: middle;">
+        <el-button  plain size="mini" @click="dialogVisible = true" style="margin-left: 10px;">选择图标</el-button>
       </el-form-item>
       <el-form-item label="审批说明" prop="flowRemark">
         <el-input v-model="formData.flowRemark" type="textarea" placeholder="请输入审批说明" :maxlength="100"
           show-word-limit :autosize="{minRows: 4, maxRows: 4}" :style="{width: '100%'}"></el-input>
       </el-form-item>
     </el-form>
+    <el-dialog
+      title="选择图标"
+      :visible.sync="dialogVisible"
+      width="612px">
+      <img 
+      v-for="(icon, index) in iconList" 
+      :key="index" :src="icon.src" 
+      class="icon-item" 
+      :class="{active: selectedIcon === icon.id}"
+      @click="selectedIcon = icon.id">
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false; selectedIcon = activeIcon" size="small">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false; activeIcon = selectedIcon" size="small">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -32,7 +46,12 @@ export default {
   components: {},
   props: ['tabName'],
   data() {
+    const req = require.context( '@/assets/approverIcon', false, /\.png$/ )
+    const iconList = req.keys().map((t, idx) => ({src: req(t), id: idx}))
     return {
+      dialogVisible: false,
+      activeIcon: iconList[0].id,
+      selectedIcon: iconList[0].id,
       formData: {
         flowName: '',
         flowImg: '',
@@ -51,6 +70,7 @@ export default {
           trigger: 'change'
         }],
       },
+      iconList,
       flowGroupOptions: [{
         "label": "假勤管理",
         "value": 1
@@ -75,10 +95,17 @@ export default {
       }],
     }
   },
-  computed: {},
+  computed: {
+    activeIconSrc(){
+      const icon = this.iconList.find(t => t.id === this.activeIcon)
+      return icon ? icon.src : ''
+    }
+  },
   watch: {},
-  created() {},
-  mounted() {},
+  created() {
+    
+  },
+  mounted() { },
   methods: {
     // 给父级页面提供得获取本页数据得方法
     getData() {
@@ -97,6 +124,22 @@ export default {
 
 </script>
 <style lang="stylus" scoped>
+.icon-item{
+  width 40px
+  height 40px 
+  margin: 6px;
+  position relative
+  cursor pointer
+  opacity .5
+
+  &.active{
+    opacity 1
+  }
+  &:hover{
+    opacity 1
+  }
+}
+
 .setting-container{
   width: 600px;
   height: 100%;

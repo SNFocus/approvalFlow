@@ -5,7 +5,7 @@
         <div style="border-right:1px solid #c5c5c5;cursor: poiner;" @click="exit">
           <i class="el-icon-arrow-left"></i>
         </div>
-        <div>补卡申请</div>
+        <div>{{ title }}</div>
       </div>
       <div class="step-tab">
         <div
@@ -46,6 +46,12 @@ const beforeUnload = function (e) {
 
 export default {
   name: "Home",
+  props: {
+    title: {
+      type: String,
+      default: '补卡申请'
+    }
+  },
   data() {
     return {
       activeStep: "basicSetting", // 激活的步骤面板
@@ -72,7 +78,7 @@ export default {
     publish() {
       const getCmpData = name => this.$refs[name].getData()
       // basicSetting  formDesign processDesign 返回的是Promise 因为要做校验
-      // 其他返回的就是值
+      // advancedSetting返回的就是值
       const p1 = getCmpData('basicSetting') 
       const p2 = getCmpData('formDesign')
       const p3 = getCmpData('processDesign')
