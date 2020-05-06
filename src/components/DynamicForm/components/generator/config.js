@@ -424,40 +424,334 @@ export const commonComponents = [...inputComponents, ...selectComponents, ...lay
 
 // 定制组件添加cmpType = custom
 export const customMadeComponents = [{
-  cmpType: 'custom',
-  layout: 'rowFormItem',
-  tagIcon: 'row',
-  type: 'default',
-  justify: 'start',
-  align: 'top',
-  label: '自定义组件1',
-  layoutTree: true,
-  children: [{
-    label: '下拉选择',
-    tag: 'el-select',
-    tagIcon: 'select',
-    placeholder: '请选择',
-    defaultValue: undefined,
-    span: 24,
-    labelWidth: null,
-    style: { width: '100%' },
-    clearable: true,
-    disabled: false,
-    required: false,
-    filterable: false,
-    multiple: false,
-    options: [{
-      label: '选项一',
-      value: 1
-    }, {
-      label: '选项二',
-      value: 2
-    }],
-    regList: [],
-    changeTag: true,
-    proCondition: false,
-    asSummary: false
-  }],
+  "cmpType": "custom",
+  "layout": "rowFormItem",
+  "tagIcon": "row",
+  "type": "default",
+  "justify": "start",
+  "align": "top",
+  "label": "请假组件",
+  "layoutTree": true,
+  "children": [
+    {
+      "cmpType": "common",
+      "label": "请假类型",
+      "tag": "el-select",
+      "tagIcon": "select",
+      "placeholder": "请选择请假类型",
+      "span": 24,
+      "labelWidth": null,
+      "style": {
+        "width": "100%"
+      },
+      "clearable": true,
+      "disabled": false,
+      "required": true,
+      "filterable": false,
+      "multiple": false,
+      "options": [
+        {
+          "label": "病假",
+          "value": "病假"
+        },
+        {
+          "label": "事假",
+          "value": "事假"
+        },
+        {
+          "label": "婚假",
+          "value": "婚假"
+        },
+        {
+          "label": "丧假",
+          "value": "丧假"
+        },
+        {
+          "label": "产假",
+          "value": "产假"
+        },
+        {
+          "label": "年假",
+          "value": "年假"
+        }
+      ],
+      "regList": [],
+      "changeTag": true,
+      "proCondition": true,
+      "layout": "colFormItem",
+    },
+    {
+      "cmpType": "common",
+      "label": "日期范围",
+      "tag": "el-date-picker",
+      "tagIcon": "date-range",
+      "defaultValue": null,
+      "span": 24,
+      "labelWidth": null,
+      "style": {
+        "width": "100%"
+      },
+      "type": "datetimerange",
+      "range-separator": "至",
+      "start-placeholder": "开始日期",
+      "end-placeholder": "结束日期",
+      "disabled": false,
+      "clearable": true,
+      "required": true,
+      "format": "yyyy-MM-dd HH:mm:ss",
+      "value-format": "yyyy-MM-dd HH:mm:ss",
+      "readonly": false,
+      "regList": [],
+      "changeTag": true,
+      "proCondition": false,
+      "asSummary": false,
+      "layout": "colFormItem",
+    }
+  ]
+},
+{
+  "cmpType": "custom",
+  "layout": "rowFormItem",
+  "tagIcon": "row",
+  "type": "default",
+  "justify": "start",
+  "align": "top",
+  "label": "出差组件",
+  "layoutTree": true,
+  "children": [
+    {
+      "cmpType": "common",
+      "label": "出差事由",
+      "tag": "el-input",
+      "tagIcon": "textarea",
+      "type": "textarea",
+      "placeholder": "请输入出差事由",
+      "span": 24,
+      "labelWidth": null,
+      "autosize": {
+        "minRows": 4,
+        "maxRows": 4
+      },
+      "style": {
+        "width": "100%"
+      },
+      "maxlength": null,
+      "show-word-limit": false,
+      "readonly": false,
+      "disabled": false,
+      "required": true,
+      "regList": [],
+      "changeTag": true,
+      "proCondition": false,
+      "asSummary": false,
+      "layout": "colFormItem",
+    },
+    {
+      "cmpType": "common",
+      "label": "交通工具",
+      "tag": "el-select",
+      "tagIcon": "select",
+      "placeholder": "请选择交通工具",
+      "span": 24,
+      "labelWidth": null,
+      "style": {
+        "width": "100%"
+      },
+      "clearable": true,
+      "disabled": false,
+      "required": true,
+      "filterable": false,
+      "multiple": false,
+      "options": [
+        {
+          "label": "火车",
+          "value": "火车"
+        },
+        {
+          "label": "飞机",
+          "value": "飞机"
+        },
+        {
+          "label": "汽车",
+          "value": "汽车"
+        },
+        {
+          "label": "其他",
+          "value": "其他"
+        }
+      ],
+      "regList": [],
+      "changeTag": true,
+      "proCondition": true,
+      "layout": "colFormItem",
+    },
+    {
+      "cmpType": "common",
+      "label": "单程往返",
+      "tag": "el-select",
+      "tagIcon": "select",
+      "placeholder": "请选择单程往返",
+      "span": 24,
+      "labelWidth": null,
+      "style": {
+        "width": "100%"
+      },
+      "clearable": true,
+      "disabled": false,
+      "required": true,
+      "filterable": false,
+      "multiple": false,
+      "options": [
+        {
+          "label": "单程",
+          "value": "单程"
+        },
+        {
+          "label": "往返",
+          "value": "往返"
+        }
+      ],
+      "regList": [],
+      "changeTag": true,
+      "proCondition": true,
+      "layout": "colFormItem",
+    },
+    {
+      "cmpType": "common",
+      "label": "出发城市",
+      "tag": "el-input",
+      "tagIcon": "input",
+      "placeholder": "请输入出发城市",
+      "span": 24,
+      "labelWidth": null,
+      "style": {
+        "width": "100%"
+      },
+      "clearable": true,
+      "prepend": "",
+      "append": "",
+      "prefix-icon": "",
+      "suffix-icon": "",
+      "maxlength": null,
+      "show-word-limit": false,
+      "readonly": false,
+      "disabled": false,
+      "required": true,
+      "regList": [],
+      "changeTag": true,
+      "proCondition": false,
+      "asSummary": false,
+      "layout": "colFormItem",
+    },
+    {
+      "cmpType": "common",
+      "label": "目的城市",
+      "tag": "el-input",
+      "tagIcon": "input",
+      "placeholder": "请输入目的城市",
+      "span": 24,
+      "labelWidth": null,
+      "style": {
+        "width": "100%"
+      },
+      "clearable": true,
+      "prepend": "",
+      "append": "",
+      "prefix-icon": "",
+      "suffix-icon": "",
+      "maxlength": null,
+      "show-word-limit": false,
+      "readonly": false,
+      "disabled": false,
+      "required": true,
+      "regList": [],
+      "changeTag": true,
+      "proCondition": false,
+      "asSummary": false,
+      "layout": "colFormItem",
+    },
+    {
+      "cmpType": "common",
+      "label": "日期范围",
+      "tag": "el-date-picker",
+      "tagIcon": "date-range",
+      "defaultValue": null,
+      "span": 24,
+      "labelWidth": null,
+      "style": {
+        "width": "100%"
+      },
+      "type": "daterange",
+      "range-separator": "至",
+      "start-placeholder": "开始日期",
+      "end-placeholder": "结束日期",
+      "disabled": false,
+      "clearable": true,
+      "required": true,
+      "format": "yyyy-MM-dd",
+      "value-format": "yyyy-MM-dd",
+      "readonly": false,
+      "regList": [],
+      "changeTag": true,
+      "proCondition": false,
+      "asSummary": false,
+      "layout": "colFormItem",
+    },
+    {
+      "cmpType": "common",
+      "label": "出差备注",
+      "tag": "el-input",
+      "tagIcon": "textarea",
+      "type": "textarea",
+      "placeholder": "请输入出差备注",
+      "span": 24,
+      "labelWidth": null,
+      "autosize": {
+        "minRows": 4,
+        "maxRows": 4
+      },
+      "style": {
+        "width": "100%"
+      },
+      "maxlength": null,
+      "show-word-limit": false,
+      "readonly": false,
+      "disabled": false,
+      "required": false,
+      "regList": [],
+      "changeTag": true,
+      "proCondition": false,
+      "asSummary": false,
+      "layout": "colFormItem",
+    },
+    {
+      "cmpType": "common",
+      "label": "同行人",
+      "tag": "el-input",
+      "tagIcon": "input",
+      "placeholder": "请输入同行人",
+      "span": 24,
+      "labelWidth": null,
+      "style": {
+        "width": "100%"
+      },
+      "clearable": true,
+      "prepend": "",
+      "append": "",
+      "prefix-icon": "",
+      "suffix-icon": "",
+      "maxlength": null,
+      "show-word-limit": false,
+      "readonly": false,
+      "disabled": false,
+      "required": false,
+      "regList": [],
+      "changeTag": true,
+      "proCondition": false,
+      "asSummary": false,
+      "layout": "colFormItem",
+    }
+  ]
 }]
 // .map( t => Object.assign( { cmpType: 'custom', t } ) )
 

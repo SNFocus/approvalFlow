@@ -13,7 +13,7 @@
         <div class="logo">创建表单</div>
       </div>-->
       <el-scrollbar class="left-scrollbar">
-        <el-tabs v-model="activeName" :stretch="true">
+        <el-tabs v-model="activeTabName" :stretch="true">
           <el-tab-pane label="常用组件" name="common">
             <div class="components-list">
               <!-- <div class="components-title">
@@ -286,7 +286,7 @@ export default {
       generateConf: null,
       showFileName: false,
       activeData: drawingDefalut[0],
-      activeName: "common"
+      activeTabName: "common"
     };
   },
   computed: {},
@@ -424,7 +424,7 @@ export default {
       const clone = JSON.parse(JSON.stringify(origin));
       clone.formId = this.getNextId();
       clone.span = formConf.span;
-      clone.renderKey = +new Date(); // 改变renderKey后可以实现强制更新组件
+      clone.renderKey = clone.formId + new Date().getTime(); // 改变renderKey后可以实现强制更新组件
       if (!clone.layout) clone.layout = "colFormItem";
       if (clone.layout === "colFormItem") {
         clone.label = this.createCmpLabel(clone)
@@ -446,7 +446,7 @@ export default {
         children.forEach((clone, index) => {
           clone.formId = rowFormItem.formId + index + 1;
           clone.span = formConf.span;
-          clone.renderKey = +new Date(); // 改变renderKey后可以实现强制更新组件
+          clone.renderKey = clone.formId + new Date().getTime(); // 改变renderKey后可以实现强制更新组件
           if (!clone.layout) clone.layout = "colFormItem";
           if (clone.layout === "colFormItem") {
             clone.vModel = `field${clone.formId}`;
@@ -541,7 +541,7 @@ export default {
     },
     createIdAndKey(item) {
       item.formId = this.getNextId();
-      item.renderKey = +new Date();
+      item.renderKey = clone.formId + new Date().getTime();
       if (item.layout === "colFormItem") {
         item.vModel = `field${item.formId}`;
       } else if (item.layout === "rowFormItem") {

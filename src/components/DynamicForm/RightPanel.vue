@@ -868,7 +868,7 @@ export default {
     colorFormatChange(val) {
       this.activeData.defaultValue = null;
       this.activeData["show-alpha"] = val.indexOf("a") > -1;
-      this.activeData.renderKey = +new Date(); // 更新renderKey,重新渲染该组件
+      this.activeData.renderKey = this.activeData.formId + new Date().getTime(); // 更新renderKey,重新渲染该组件
     },
     openIconsDialog(model) {
       this.iconsVisible = true;
