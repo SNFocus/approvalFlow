@@ -37,8 +37,8 @@ export default {
         return;
       }
       // 本实例只监听了第一层数据（startNode）变动
-      // 为了实时更新  采用$forceUpdate刷新 但是由于某些条件下触发失效（原因不明）
-      // 使用key + 监听父组件updateId方式模拟$forceUpdate
+      // 为了实时更新  采用$forceUpdate刷新 但是由于某些条件下触发失效（未排除清除原因）
+      // 使用key + 监听父组件updateId方式强制刷新
       NodeUtils[event](...args);
       this.forceUpdate();
     },
@@ -65,13 +65,16 @@ export default {
       let oldProp = this.activeData.properties;
       this.activeData.properties = value;
       // 修改优先级
-      NodeUtils.isConditionNode(this.activeData) &&
-      value.priority !== oldProp.priority &&
-      NodeUtils.resortPrioByCNode(
-        this.activeData,
-        oldProp.priority,
-        this.data
-      );
+      if (NodeUtils.isConditionNode(this.activeData)) {
+        value.priority !== oldProp.priority
+        NodeUtils.resortPrioByCNode(
+          this.activeData,
+          oldProp.priority,
+          this.data
+        );
+        NodeUtils.setDefaultCondition(this.activeData, this.data)
+      }
+      
       this.onClosePanel();
       this.forceUpdate();
     },

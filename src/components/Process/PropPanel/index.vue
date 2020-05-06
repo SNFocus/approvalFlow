@@ -339,6 +339,7 @@ export default {
       this.properties.conditions = conditions
       // 发起人虽然是条件 但是这里把发起人放到外部单独判断
       this.properties.initiator = this.initiator
+      this.initiator && (nodeContent = `[发起人: ${this.initiator}]` + nodeContent)
       this.$emit("confirm", this.properties, nodeContent);
       this.visible = false;
     },
@@ -413,9 +414,10 @@ export default {
       // 初始化条件表单数据
       let nodeConditions = this.value.properties && this.value.properties.conditions
       this.pconditions = JSON.parse(JSON.stringify(this.$store.state.processConditions));
+      this.initiator = this.value.properties.initiator
       if(Array.isArray(this.pconditions)){
         let temp = undefined
-        this.showingPCons = []
+        this.showingPCons = [-1] // 默认显示发起人
         this.pconditions.forEach(t => {
           if(Array.isArray(nodeConditions)){
             const con = nodeConditions.find(item => item.formId == t.formId)

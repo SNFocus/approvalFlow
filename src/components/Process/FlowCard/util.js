@@ -75,8 +75,31 @@ export class NodeUtils {
     let delNode = prevNode.conditionNodes.splice( newIndex, 1, cnode )[0]
     delNode.properties.priority = oldIndex
     prevNode.conditionNodes[oldIndex] = delNode
-
   }
+
+  static setDefaultCondition ( cnode, processData ) {
+    const defaultText = '其他情况进入此流程'
+    const prevNode = this.getPreviousNode( cnode.prevId, processData )
+    const conditions = prevNode.conditionNodes
+    const hasCondition = node => node.properties && ( node.properties.initiator || !isEmptyArray( node.properties.conditions ) )
+    const isLastNode = index => index === conditions.length - 1
+    const clearDefault = node => {
+      node.properties.isDefault = false
+      node.content === defaultText && ( node.content = '请设置条件' )
+    }
+    const setDefault = node => {
+      node.properties.isDefault = true
+      node.content = defaultText
+    }
+    let count = 0
+    conditions.forEach( ( node, index ) => {
+      const hasSeted = hasCondition( node ) // 当前节点是否设置了条件
+      hasSeted && ( count++ )
+      // 只有设置了多于一个条件节点 才能设置默认节点
+      count > 0 && isLastNode( index ) ? setDefault( node ) : clearDefault( node )
+    } )
+  }
+
   /**
    * 删除节点
    * @param { Object  } nodeData - 被删除节点的数据
@@ -163,9 +186,18 @@ export class NodeUtils {
    * @param { Object } data - 目标节点所在分支数据，在该分支最后添加条件节点
    */
   static appendConditionNode ( data ) {
+    const conditions = data.conditionNodes
     let node = this.createNode( 'condition', data.nodeId )
-    node.properties.priority = data.conditionNodes.length
-    data.conditionNodes.push( node )
+    let defaultNodeIndex = conditions.findIndex( node => node.properties.isDefault )
+    node.properties.priority = conditions.length
+    if ( defaultNodeIndex > -1 ) {
+      conditions.splice( -1, 0, node ) // 插在倒数第二个
+      //更新优先级
+      node.properties.priority = conditions.length - 2
+      conditions[conditions.length - 1].properties.priority = conditions.length - 1
+    } else {
+      conditions.push( node )
+    }
   }
   /**
    * 添加条件分支 branch 
@@ -235,13 +267,16 @@ export class NodeUtils {
    * 校验单个节点必填项完整性
    * @param {Node} node - 节点数据
    */
-  static checkNode ( node ) {
+  static checkNode ( node, parent ) {
     let valid = true
     if ( this.isStartNode( node ) && !node.properties.initiator ) {
       valid = false
     }
     if ( this.isConditionNode( node ) ) {
-      if ( !node.initiator && isEmptyArray( node.properties.conditions ) ) {
+      if ( !node.properties.initiator && isEmptyArray( node.properties.conditions ) ) {
+        if ( this.isDefaultCondition( node, parent ) ) {
+
+        }
         valid = false
       }
     }
@@ -257,17 +292,22 @@ export class NodeUtils {
    */
   static checkAllNode ( processData ) {
     let valid = true
-    const loop = ( node, callback ) => {
-      !this.checkNode( node ) && callback()
-      if ( node.childNode ) loop( node.childNode, callback )
+    const loop = ( node, callback, parent ) => {
+      !this.checkNode( node, parent ) && callback()
+      if ( node.childNode ) loop( node.childNode, callback, parent )
       if ( !isEmptyArray( node.conditionNodes ) ) {
-        node.conditionNodes.forEach( n => loop( n, callback ) )
+        node.conditionNodes.forEach( n => loop( n, callback, node ) )
       }
     }
     loop( processData, () => valid = false )
     return valid
   }
+
+  static isDefaultCondition ( node, conditions ) {
+
+  }
 }
+
 /**
  * 添模拟数据
  */
