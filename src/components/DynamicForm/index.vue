@@ -370,10 +370,13 @@ export default {
      * 定制组件不能添加子组件
      */
     shouldClone(to, from ,target, event, conf){
-      // console.log(to, from ,target, event, conf)
-      return conf.cmpType !== 'custom' && target.innerText !== '行容器' && this.isCommonCmp(target.innerText)
+      // .drawing-row-item —— 行容器的类名
+      const isRow = target.classList.contains('.drawing-row-item') // 直接拖拽的行容器 最外层含有.drawing-row-item
+      const hasRow = target.querySelector('.drawing-row-item') !== null // 定制组件 内部含有.drawing-row-item
+      return !isRow && !hasRow
     },
     activeFormItem(element) {
+      console.log(element)
       this.activeData = element;
       this.activeId = element.formId;
     },
@@ -384,7 +387,7 @@ export default {
       }
     },
     onMianDragEnd(obj, a) {
-      this.activeFormItem(this.drawingList[obj.newIndex]);
+      // this.activeFormItem(this.drawingList[obj.newIndex]);
     },
     getSameTagCmpNum(tag){
       return this.drawingList.reduce((count, item) => {
