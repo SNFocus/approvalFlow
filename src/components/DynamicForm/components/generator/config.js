@@ -1,3 +1,5 @@
+import PROVINCE from './province.js'
+
 export const formConf = {
   formRef: 'elForm',
   formModel: 'formData',
@@ -181,6 +183,36 @@ export const selectComponents = [{
       label: '选项1-1'
     }]
   }],
+  dataType: 'static',
+  labelKey: 'label',
+  valueKey: 'value',
+  childrenKey: 'children',
+  separator: '/',
+  regList: [],
+  changeTag: true,
+  proCondition: false,
+  asSummary: false
+},
+{
+  label: '省市区',
+  tag: 'el-cascader',
+  tagIcon: 'cascader',
+  placeholder: '请选择省市区',
+  defaultValue: [],
+  span: 24,
+  labelWidth: null,
+  style: { width: '100%' },
+  props: {
+    props: {
+      multiple: false,
+    }
+  },
+  'show-all-levels': true,
+  disabled: false,
+  clearable: true,
+  filterable: false,
+  required: false,
+  options: PROVINCE,
   dataType: 'static',
   labelKey: 'label',
   valueKey: 'value',
