@@ -20,14 +20,27 @@ export class NodeUtils {
     } while ( qutient );
     return res.join( '' )
   }
+  /**
+   * 判断是否是条件节点
+   * @param {Node} node - 节点数据
+   * @returns Boolean
+   */
   static isConditionNode ( node ) {
     return node && node.type === 'condition'
   }
-
+  /**
+    * 判断是否是开始节点
+    * @param {Node} node - 节点数据
+    * @returns Boolean
+    */
   static isStartNode ( node ) {
     return node && node.type === 'start'
   }
-
+  /**
+    * 判断是否是审批节点
+    * @param {Node} node - 节点数据
+    * @returns Boolean
+    */
   static isApproverNode ( node ) {
     return node && node.type === 'approver'
   }
@@ -69,36 +82,6 @@ export class NodeUtils {
     }
   }
 
-  static resortPrioByCNode ( cnode, oldIndex, processData ) {
-    let prevNode = this.getPreviousNode( cnode.prevId, processData )
-    let newIndex = cnode.properties.priority
-    let delNode = prevNode.conditionNodes.splice( newIndex, 1, cnode )[0]
-    delNode.properties.priority = oldIndex
-    prevNode.conditionNodes[oldIndex] = delNode
-  }
-
-  static setDefaultCondition ( cnode, processData ) {
-    const defaultText = '其他情况进入此流程'
-    const prevNode = this.getPreviousNode( cnode.prevId, processData )
-    const conditions = prevNode.conditionNodes
-    const hasCondition = node => node.properties && ( node.properties.initiator || !isEmptyArray( node.properties.conditions ) )
-    const isLastNode = index => index === conditions.length - 1
-    const clearDefault = node => {
-      node.properties.isDefault = false
-      node.content === defaultText && ( node.content = '请设置条件' )
-    }
-    const setDefault = node => {
-      node.properties.isDefault = true
-      node.content = defaultText
-    }
-    let count = 0
-    conditions.forEach( ( node, index ) => {
-      const hasSeted = hasCondition( node ) // 当前节点是否设置了条件
-      hasSeted && ( count++ )
-      // 只有设置了多于一个条件节点 才能设置默认节点
-      count > 0 && isLastNode( index ) ? setDefault( node ) : clearDefault( node )
-    } )
-  }
 
   /**
    * 删除节点
@@ -198,6 +181,7 @@ export class NodeUtils {
     } else {
       conditions.push( node )
     }
+    this.setDefaultCondition( node, data )
   }
   /**
    * 添加条件分支 branch 
@@ -229,6 +213,20 @@ export class NodeUtils {
     } )
     nodeData.conditionNodes = conditionNodes
   }
+  /**
+   * 重设节点优先级（条件节点）
+   * @param {Node} cnode - 当前节点
+   * @param {Number} oldIndex - 替换前的优先级（在数组中的顺序）
+   * @param {Node} processData - 整个流程图节点数据
+   */
+  static resortPrioByCNode ( cnode, oldIndex, processData ) {
+    let prevNode = this.getPreviousNode( cnode.prevId, processData )
+    let newIndex = cnode.properties.priority
+    let delNode = prevNode.conditionNodes.splice( newIndex, 1, cnode )[0]
+    delNode.properties.priority = oldIndex
+    prevNode.conditionNodes[oldIndex] = delNode
+  }
+
   /**
    * 提升条件节点优先级——排序在前
    * @param { Object } data - 目标节点数据
@@ -262,6 +260,31 @@ export class NodeUtils {
       branchData[index].properties.priority = index + 1
       branchData[index + 1] = branchData.splice( index, 1, branchData[index + 1] )[0]
     }
+  }
+  /**
+ * 当有其他条件节点设置条件后 检查并设置最后一个节点为默认节点
+ * @param {Node} cnode  - 当前节点
+ * @param {Node} processData - 整个流程图节点数据或父级节点数据
+ */
+  static setDefaultCondition ( cnode, processData ) {
+    const DEFAULT_TEXT = '其他情况进入此流程'
+    const conditions = this.getPreviousNode( cnode.prevId, processData ).conditionNodes
+    const hasCondition = node => node.properties && ( node.properties.initiator || !isEmptyArray( node.properties.conditions ) )
+    const clearDefault = node => {
+      node.properties.isDefault = false
+      node.content === DEFAULT_TEXT && ( node.content = '请设置条件' )
+    }
+    const setDefault = node => {
+      node.properties.isDefault = true
+      node.content = DEFAULT_TEXT
+    }
+    let count = 0
+    conditions.slice( 0, -1 ).forEach( node => {
+      hasCondition( node ) && count++
+      clearDefault( node )
+    } )
+    const lastNode = conditions[conditions.length - 1]
+    count > 0 && !hasCondition( lastNode ) ? setDefault( lastNode ) : clearDefault( lastNode )
   }
   /**
    * 校验单个节点必填项完整性
@@ -301,10 +324,6 @@ export class NodeUtils {
     }
     loop( processData, () => valid = false )
     return valid
-  }
-
-  static isDefaultCondition ( node, conditions ) {
-
   }
 }
 
