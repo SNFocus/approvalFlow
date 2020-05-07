@@ -256,7 +256,6 @@ let tempActiveData;
 const drawingListInDB = getDrawingList();
 const formConfInDB = getFormConf();
 // const idGlobal = getIdGlobal();
-// console.log("getID", idGlobal);
 export default {
   components: {
     draggable,
@@ -373,12 +372,14 @@ export default {
       // .drawing-row-item —— 行容器的类名
       const isRow = target.classList.contains('.drawing-row-item') // 直接拖拽的行容器 最外层含有.drawing-row-item
       const hasRow = target.querySelector('.drawing-row-item') !== null // 定制组件 内部含有.drawing-row-item
-      return !isRow && !hasRow
+      // target.innerText !== '行容器' 是阻止从左侧拖拽嵌套
+      return !isRow && !hasRow && target.innerText !== '行容器'
     },
     activeFormItem(element) {
-      console.log(element)
-      this.activeData = element;
-      this.activeId = element.formId;
+      if(element){
+        this.activeData = element;
+        this.activeId = element.formId;
+      }
     },
     onEnd(obj, a) {
       if (obj.from !== obj.to) {
@@ -387,7 +388,7 @@ export default {
       }
     },
     onMianDragEnd(obj, a) {
-      // this.activeFormItem(this.drawingList[obj.newIndex]);
+      this.activeFormItem(this.drawingList[obj.newIndex]);
     },
     getSameTagCmpNum(tag){
       return this.drawingList.reduce((count, item) => {

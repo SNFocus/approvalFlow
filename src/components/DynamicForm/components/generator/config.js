@@ -12,7 +12,7 @@ export const formConf = {
 }
 
 export const inputComponents = [{
-  label: '单行文本',
+  label: '单行输入框',
   tag: 'el-input',
   tagIcon: 'input',
   placeholder: '请输入',
@@ -36,7 +36,7 @@ export const inputComponents = [{
   asSummary: false
 },
 {
-  label: '多行文本',
+  label: '多行输入框',
   tag: 'el-input',
   tagIcon: 'textarea',
   type: 'textarea',
@@ -85,7 +85,7 @@ export const inputComponents = [{
 // asSummary: false
 //   },
 {
-  label: '计数',
+  label: '数字输入框',
   tag: 'el-input-number',
   tagIcon: 'number',
   placeholder: '',
@@ -103,7 +103,27 @@ export const inputComponents = [{
   regList: [],
   changeTag: true,
   proCondition: true
-
+},
+{
+  label: '金额',
+  tag: 'fc-amount',
+  tagIcon: 'amount',
+  placeholder: '请输入金额',
+  defaultValue: undefined,
+  span: 24,
+  labelWidth: null,
+  min: undefined,
+  max: undefined,
+  step: undefined,
+  'step-strictly': false,
+  precision: undefined,
+  'controls-position': 'right',
+  disabled: false,
+  required: false,
+  regList: [],
+  changeTag: true,
+  proCondition: true,
+  showChinese: true
 }
 ]
 
@@ -384,7 +404,7 @@ export const selectComponents = [{
 // asSummary: false
 //   },
 {
-  label: '上传',
+  label: '附件',
   tag: 'el-upload',
   tagIcon: 'upload',
   action: 'https://jsonplaceholder.typicode.com/posts/',
@@ -396,7 +416,7 @@ export const selectComponents = [{
   name: 'file',
   'auto-upload': true,
   showTip: false,
-  buttonText: '点击上传',
+  buttonText: '点击上传附件',
   fileSize: 2,
   sizeUnit: 'MB',
   'list-type': 'text',
@@ -765,5 +785,6 @@ export const trigger = {
   'el-cascader': 'change',
   'el-time-picker': 'change',
   'el-date-picker': 'change',
-  'el-rate': 'change'
+  'el-rate': 'change',
+  'fc-amount': 'change'
 }

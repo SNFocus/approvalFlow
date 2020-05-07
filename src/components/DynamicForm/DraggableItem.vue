@@ -49,8 +49,8 @@ const layouts = {
     let child = renderChildren.apply(this, arguments)
     if (element.type === 'flex') {
       child = <el-row type={element.type} justify={element.justify} align={element.align} >
-              {child}
-            </el-row>
+                {child}
+              </el-row>
     }
     const group = {name: 'componentsGroup', put:(...arg) => put(...arg, element)}
     const isCustom = element.cmpType === 'custom'

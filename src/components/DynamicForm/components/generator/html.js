@@ -155,6 +155,19 @@ const layouts = {
   }
 }
 
+const createTagHTML = ( tag, ...props ) => {
+  return `<${tag} ${props.join( ' ' )}></${tag}>`
+}
+
+const addPropToTag = ( tag, ...props ) => {
+  const insetIndex = tag.search( />\s*<\// )
+  if ( insetIndex > -1 ) {
+    return tag.slice( 0, insetIndex ) + props.join( ' ' ) + tag.slice( insetIndex )
+  } else {
+    return tag
+  }
+}
+
 const tags = {
   'el-input': el => {
     const {
@@ -185,6 +198,11 @@ const tags = {
     const precision = el.precision ? `:precision='${el.precision}'` : ''
 
     return `<${el.tag} ${vModel} ${placeholder} ${step} ${stepStrictly} ${precision} ${controlsPosition} ${min} ${max} ${disabled}></${el.tag}>`
+  },
+  'fc-amount': function ( el ) {
+    const tag = this['el-input-number']( el )
+    const showChinese = el.showChinese ? `:showChinese='${el.showChinese}'` : ''
+    return addPropToTag( tag, showChinese )
   },
   'el-select': el => {
     const {

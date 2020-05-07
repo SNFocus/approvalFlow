@@ -101,10 +101,6 @@ export default {
       return icon ? icon.src : ''
     }
   },
-  watch: {},
-  created() {
-    
-  },
   mounted() { },
   methods: {
     // 给父级页面提供得获取本页数据得方法
@@ -121,7 +117,6 @@ export default {
     },
   }
 }
-
 </script>
 <style lang="stylus" scoped>
 .icon-item{

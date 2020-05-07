@@ -74,7 +74,6 @@ export default {
         );
         NodeUtils.setDefaultCondition(this.activeData, this.data)
       }
-      
       this.onClosePanel();
       this.forceUpdate();
     },

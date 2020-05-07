@@ -430,6 +430,7 @@
           <el-form-item v-if="activeData.showTip !== undefined" label="显示提示">
             <el-switch v-model="activeData.showTip" />
           </el-form-item>
+          
           <el-form-item
             v-if="activeData.tag === 'el-upload' && activeData.multiple !== undefined"
             label="多选文件"
@@ -461,15 +462,23 @@
               >&nbsp;(勾选后可作为流程条件)</span>
             </el-tooltip>
           </el-form-item>
+
+          <el-form-item v-if="activeData.showChinese !== undefined" label="显示大写">
+            <el-switch v-model="activeData.showChinese" />
+          </el-form-item>
+
           <el-form-item label="作为摘要">
             <el-switch v-model="activeData.asSummary"  />
           </el-form-item>
+
           <el-form-item v-if="activeData.tag === 'el-select'" label="是否可搜索">
             <el-switch v-model="activeData.filterable" />
           </el-form-item>
+          
           <el-form-item v-if="activeData.tag === 'el-select'" label="是否多选">
             <el-switch v-model="activeData.multiple" @change="multipleChange" />
           </el-form-item>
+          
           <template v-if="activeData.layoutTree">
             <el-divider>布局结构树</el-divider>
             <!-- draggable -->
