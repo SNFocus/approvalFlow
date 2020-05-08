@@ -572,7 +572,7 @@ export const customMadeComponents = [{
       "readonly": false,
       "regList": [],
       "changeTag": true,
-      "proCondition": false,
+      "proCondition": true,
       "asSummary": false,
       "layout": "colFormItem",
     }
@@ -763,7 +763,7 @@ export const customMadeComponents = [{
       "readonly": false,
       "regList": [],
       "changeTag": true,
-      "proCondition": false,
+      "proCondition": true,
       "asSummary": false,
       "layout": "colFormItem",
     },

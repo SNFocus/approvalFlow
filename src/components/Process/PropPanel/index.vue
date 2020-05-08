@@ -51,7 +51,7 @@
       <template v-for="(item,index) in pconditions">
         <!-- 计数 -->
         <num-input
-          v-if="couldShowIt(item,'el-input-number')"
+          v-if="couldShowIt(item,'el-input-number','fc-date-duration','fc-time-duration','fc-amount')"
           v-model="item.conditionValue"
           :title="item.label"
           :key="index"
@@ -273,8 +273,8 @@ export default {
       this.approverForm.formOperates.forEach(t => t.formOperate = val)
     },
     // 是否可以显示当前条件组件
-    couldShowIt(item, tag) {
-      return tag === item.tag && this.showingPCons.includes(item.formId);
+    couldShowIt(item, ...tag) {
+      return tag.includes(item.tag)  && this.showingPCons.includes(item.formId);
     },
     /**
      * 初始化审批节点所需数据

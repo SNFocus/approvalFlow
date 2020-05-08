@@ -268,7 +268,7 @@
             />
           </el-form-item>
           <el-form-item v-if="activeData['showDuration'] !== undefined" label="计算时长">
-            <el-switch v-model="activeData['showDuration']" placeholder="自动计算时长" />
+            <el-switch v-model="activeData['showDuration']" placeholder="自动计算时长" @change="requireChange" />
           </el-form-item>
           <template
             v-if="['el-checkbox-group', 'el-radio-group', 'el-select'].indexOf(activeData.tag) > -1"
@@ -743,16 +743,20 @@ export default {
   },
   methods: {
     requireChange(required) {
+       
       // 下拉 单选 计数 日期区间 时间区间 需要写进流程条件中
       if (!this.activeData.proCondition) return;
       if (required && !this.activeData.multiple) {
         // 没有设置时长的时间范围组件不能作为流程条件
         if(['fc-date-duration','fc-time-duration'].includes(this.activeData.tag) && !this.activeData.showDuration){
+           
           this.$store.commit("delPCondition", this.activeData.formId);
           return 
         }
+         
         this.$store.commit("addPCondition", this.activeData);
       } else {
+         
         this.$store.commit("delPCondition", this.activeData.formId);
       }
     },

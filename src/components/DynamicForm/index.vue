@@ -311,17 +311,22 @@ export default {
     drawingList: {
       handler(val) {
         const canUsedAsPCon = d => {
-          if(!d.proCondition || !d.required || d.multiple) return false
+          debugger
+          if(!d.proCondition || !d.required) return false
+          if(d.tag === 'el-select' && d.multiple) return false
           const isRangeCmp = ['fc-date-duration','fc-time-duration'].includes(d.tag)
           if(isRangeCmp && !d.showDuration) return false
-          console.log(d)
           return true 
         }
         const loop = (data, callback) => {
           if(Array.isArray(data.children)){
-            data.children.forEach(t => loop(data, callback))
+            data.children.forEach(t => loop(t, callback))
           }
-          canUsedAsPCon(data) && callback(data)
+          if(Array.isArray(data)){
+            data.forEach(t => loop(t, callback))
+          }else{
+            canUsedAsPCon(data) && callback(data)
+          }
         }
         loop(val, data => this.$store.commit("addPCondition", data))
         saveDrawingList(val);

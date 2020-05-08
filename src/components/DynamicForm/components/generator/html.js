@@ -161,7 +161,7 @@ const createTagHTML = ( tag, ...props ) => {
 
 const addPropToTag = ( tag, ...props ) => {
   const insetIndex = tag.search( />\s*<\// )
-  debugger
+
   if ( insetIndex > -1 ) {
     return tag.slice( 0, insetIndex ) + props.join( ' ' ) + tag.slice( insetIndex )
   } else {
