@@ -76,7 +76,7 @@ export default {
   props: ["value", "title"],
   data() {
     let cloneData = JSON.parse(JSON.stringify(this.value || {}));
-    cloneData = Object.assign({ type: "lt", value: null }, cloneData);
+    cloneData = Object.assign({ type: "gt", value: null }, cloneData);
     return {
       cloneData
     };

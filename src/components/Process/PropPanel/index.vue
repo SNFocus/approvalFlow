@@ -36,24 +36,24 @@
     <!-- 属性面板编辑区 -->
     <!-- 发起人 -->
     <section style="height: 100%;" v-if="value && value.type === 'start'">
-      <el-row style="padding: 10px;">
-        <el-col :span="4" style="font-size: 14px;padding-left: 16px;">发起人</el-col>
-        <el-col :span="18"><el-input v-model="initiator" size="small" /></el-col>
+      <el-row style="padding: 10px;" :gutter="12">
+        <el-col :span="4" style="font-size: 12px;">发起人</el-col>
+        <el-col :span="18" style="padding-left: 12px;"><el-input v-model="initiator" size="small" /></el-col>
       </el-row>
     </section>
 
     <!-- 条件  -->
     <section style="height: 100%;" v-if="value && isConditionNode()">
-      <el-row style="padding: 10px;" v-if="showingPCons.includes(-1)">
-        <el-col :span="4" style="font-size: 14px;padding-left: 16px;">发起人</el-col>
-        <el-col :span="18"><el-input v-model="initiator" size="small" /></el-col>
+      <el-row style="padding: 10px;" v-if="showingPCons.includes(-1)" :gutter="12">
+        <el-col :span="4" style="font-size: 12px;">发起人</el-col>
+        <el-col :span="18" style="padding-left: 12px;"><el-input v-model="initiator" size="small" /></el-col>
       </el-row>
       <template v-for="(item,index) in pconditions">
         <!-- 计数 -->
         <num-input
           v-if="couldShowIt(item,'el-input-number','fc-date-duration','fc-time-duration','fc-amount')"
           v-model="item.conditionValue"
-          :title="item.label"
+          :title="timeTangeLabel(item)"
           :key="index"
           @delete="onDelCondition(item)"
         ></num-input>
@@ -252,7 +252,7 @@ export default {
       // 发起人是默认就有得  所以需要加 1
       return this.pconditions.length - this.showingPCons.length + 1;
     },
-    usedFormItems(){
+        usedFormItems(){
       return this.$store.state.formItemList
     }
   },
@@ -260,6 +260,14 @@ export default {
     Clickoutside
   },
   methods: {
+    timeTangeLabel(item){
+      const index = ['fc-time-duration','fc-date-duration'].findIndex(t => t === item.tag)
+      if(index > -1){
+        return '时长' + ['(小时)','(天)'][index]
+      }else{  
+        return item.label
+      }
+    },
     addMenber(){
       if(this.approverForm.assigneeType){
         this.$message.success('打开组织机构弹窗')
