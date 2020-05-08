@@ -490,341 +490,147 @@ export const layoutComponents = [{
 export const commonComponents = [...inputComponents, ...selectComponents, ...layoutComponents]
   .map( t => Object.assign( { cmpType: 'common' }, t ) )
 
+const getConfigByTag = ( targetList, tag ) => targetList.find( t => t.tag === tag )
+const copyConfigAsCustom = ( rowConf, childrenConf ) => {
+  const clone = ( target, conf = {} ) => {
+    const template = JSON.parse( JSON.stringify( target ) )
+    return Object.assign( {}, template, { cmpType: 'custom' }, conf )
+  }
+  const defaultRow = clone( layoutComponents[0], rowConf )
+  defaultRow.children = childrenConf.map( t => clone( t.target, t.config ) )
+  return defaultRow
+}
 // 定制组件添加cmpType = custom
-export const customMadeComponents = [{
-  "cmpType": "custom",
-  "layout": "rowFormItem",
-  "tagIcon": "row",
-  "type": "default",
-  "justify": "start",
-  "align": "top",
-  "label": "请假组件",
-  "layoutTree": true,
-  "children": [
+export const customMadeComponents = [
+  copyConfigAsCustom( { label: '请假组件' }, [
     {
-      "cmpType": "custom",
-      "label": "请假类型",
-      "tag": "el-select",
-      "tagIcon": "select",
-      "placeholder": "请选择请假类型",
-      "span": 24,
-      "labelWidth": null,
-      "style": {
-        "width": "100%"
-      },
-      "clearable": true,
-      "disabled": false,
-      "required": true,
-      "filterable": false,
-      "multiple": false,
-      "options": [
-        {
-          "label": "病假",
-          "value": "病假"
-        },
-        {
-          "label": "事假",
-          "value": "事假"
-        },
-        {
-          "label": "婚假",
-          "value": "婚假"
-        },
-        {
-          "label": "丧假",
-          "value": "丧假"
-        },
-        {
-          "label": "产假",
-          "value": "产假"
-        },
-        {
-          "label": "年假",
-          "value": "年假"
-        }
-      ],
-      "regList": [],
-      "changeTag": true,
-      "proCondition": true,
-      "layout": "colFormItem",
+      target: getConfigByTag( selectComponents, 'el-select' ),
+      config: {
+        "label": "请假类型",
+        "options": [
+          {
+            "label": "病假",
+            "value": "病假"
+          },
+          {
+            "label": "事假",
+            "value": "事假"
+          },
+          {
+            "label": "婚假",
+            "value": "婚假"
+          },
+          {
+            "label": "丧假",
+            "value": "丧假"
+          },
+          {
+            "label": "产假",
+            "value": "产假"
+          },
+          {
+            "label": "年假",
+            "value": "年假"
+          }
+        ],
+      }
     },
     {
-      "cmpType": "custom",
-      "label": "日期范围",
-      "tag": "fc-date-duration",
-      "showDuration": false,
-      "tagIcon": "date-range",
-      "defaultValue": null,
-      "span": 24,
-      "labelWidth": null,
-      "style": {
-        "width": "100%"
-      },
-      "type": "datetimerange",
-      "range-separator": "至",
-      "start-placeholder": "开始日期",
-      "end-placeholder": "结束日期",
-      "disabled": false,
-      "clearable": true,
-      "required": true,
-      "format": "yyyy-MM-dd HH:mm:ss",
-      "value-format": "yyyy-MM-dd HH:mm:ss",
-      "readonly": false,
-      "regList": [],
-      "changeTag": true,
-      "proCondition": true,
-      "asSummary": false,
-      "layout": "colFormItem",
+      target: getConfigByTag( selectComponents, 'fc-date-duration' ),
+      config: {
+        "label": "日期范围",
+      }
     }
-  ]
-},
-{
-  "cmpType": "custom",
-  "layout": "rowFormItem",
-  "tagIcon": "row",
-  "type": "default",
-  "justify": "start",
-  "align": "top",
-  "label": "出差组件",
-  "layoutTree": true,
-  "children": [
+  ] ),
+  copyConfigAsCustom( { label: "出差组件" }, [
     {
-      "cmpType": "custom",
-      "label": "出差事由",
-      "tag": "el-input",
-      "tagIcon": "textarea",
-      "type": "textarea",
-      "placeholder": "请输入出差事由",
-      "span": 24,
-      "labelWidth": null,
-      "autosize": {
-        "minRows": 4,
-        "maxRows": 4
-      },
-      "style": {
-        "width": "100%"
-      },
-      "maxlength": null,
-      "show-word-limit": false,
-      "readonly": false,
-      "disabled": false,
-      "required": true,
-      "regList": [],
-      "changeTag": true,
-      "proCondition": false,
-      "asSummary": false,
-      "layout": "colFormItem",
+      target: getConfigByTag( inputComponents, 'el-input' ),
+      config: {
+        label: "出差事由",
+        required: true
+      }
     },
     {
-      "cmpType": "custom",
-      "label": "交通工具",
-      "tag": "el-select",
-      "tagIcon": "select",
-      "placeholder": "请选择交通工具",
-      "span": 24,
-      "labelWidth": null,
-      "style": {
-        "width": "100%"
-      },
-      "clearable": true,
-      "disabled": false,
-      "required": true,
-      "filterable": false,
-      "multiple": false,
-      "options": [
-        {
-          "label": "火车",
-          "value": "火车"
-        },
-        {
-          "label": "飞机",
-          "value": "飞机"
-        },
-        {
-          "label": "汽车",
-          "value": "汽车"
-        },
-        {
-          "label": "其他",
-          "value": "其他"
-        }
-      ],
-      "regList": [],
-      "changeTag": true,
-      "proCondition": true,
-      "layout": "colFormItem",
+      target: getConfigByTag( selectComponents, 'el-select' ),
+      config: {
+        label: "交通工具",
+        required: true,
+        options: [
+          {
+            label: "火车",
+            value: "火车"
+          },
+          {
+            label: "飞机",
+            value: "飞机"
+          },
+          {
+            label: "汽车",
+            value: "汽车"
+          },
+          {
+            label: "其他",
+            value: "其他"
+          }
+        ]
+      }
     },
     {
-      "cmpType": "custom",
-      "label": "单程往返",
-      "tag": "el-select",
-      "tagIcon": "select",
-      "placeholder": "请选择单程往返",
-      "span": 24,
-      "labelWidth": null,
-      "style": {
-        "width": "100%"
-      },
-      "clearable": true,
-      "disabled": false,
-      "required": true,
-      "filterable": false,
-      "multiple": false,
-      "options": [
-        {
-          "label": "单程",
-          "value": "单程"
-        },
-        {
-          "label": "往返",
-          "value": "往返"
-        }
-      ],
-      "regList": [],
-      "changeTag": true,
-      "proCondition": true,
-      "layout": "colFormItem",
+      target: getConfigByTag( selectComponents, 'el-select' ),
+      config: {
+        label: "单程往返",
+        required: true,
+        options: [
+          {
+            label: "单程",
+            value: "单程"
+          },
+          {
+            label: "往返",
+            value: "往返"
+          }
+        ]
+      }
     },
     {
-      "cmpType": "custom",
-      "label": "出发城市",
-      "tag": "el-input",
-      "tagIcon": "input",
-      "placeholder": "请输入出发城市",
-      "span": 24,
-      "labelWidth": null,
-      "style": {
-        "width": "100%"
-      },
-      "clearable": true,
-      "prepend": "",
-      "append": "",
-      "prefix-icon": "",
-      "suffix-icon": "",
-      "maxlength": null,
-      "show-word-limit": false,
-      "readonly": false,
-      "disabled": false,
-      "required": true,
-      "regList": [],
-      "changeTag": true,
-      "proCondition": false,
-      "asSummary": false,
-      "layout": "colFormItem",
+      target: getConfigByTag( inputComponents, 'el-input' ),
+      config: {
+        label: "出发城市",
+        required: true
+      }
     },
     {
-      "cmpType": "custom",
-      "label": "目的城市",
-      "tag": "el-input",
-      "tagIcon": "input",
-      "placeholder": "请输入目的城市",
-      "span": 24,
-      "labelWidth": null,
-      "style": {
-        "width": "100%"
-      },
-      "clearable": true,
-      "prepend": "",
-      "append": "",
-      "prefix-icon": "",
-      "suffix-icon": "",
-      "maxlength": null,
-      "show-word-limit": false,
-      "readonly": false,
-      "disabled": false,
-      "required": true,
-      "regList": [],
-      "changeTag": true,
-      "proCondition": false,
-      "asSummary": false,
-      "layout": "colFormItem",
+      target: getConfigByTag( inputComponents, 'el-input' ),
+      config: {
+        label: "目的城市",
+        required: true
+      }
     },
     {
-      "cmpType": "custom",
-      "label": "日期范围",
-      "tag": "fc-date-duration",
-      "showDuration": false,
-      "tagIcon": "date-range",
-      "defaultValue": null,
-      "span": 24,
-      "labelWidth": null,
-      "style": {
-        "width": "100%"
-      },
-      "type": "daterange",
-      "range-separator": "至",
-      "start-placeholder": "开始日期",
-      "end-placeholder": "结束日期",
-      "disabled": false,
-      "clearable": true,
-      "required": true,
-      "format": "yyyy-MM-dd",
-      "value-format": "yyyy-MM-dd",
-      "readonly": false,
-      "regList": [],
-      "changeTag": true,
-      "proCondition": true,
-      "asSummary": false,
-      "layout": "colFormItem",
+      target: getConfigByTag( selectComponents, 'fc-date-duration' ),
+      config: {
+        label: "日期范围",
+        tag: "fc-date-duration",
+        showDuration: true,
+        required: true
+      }
     },
     {
-      "cmpType": "custom",
-      "label": "出差备注",
-      "tag": "el-input",
-      "tagIcon": "textarea",
-      "type": "textarea",
-      "placeholder": "请输入出差备注",
-      "span": 24,
-      "labelWidth": null,
-      "autosize": {
-        "minRows": 4,
-        "maxRows": 4
-      },
-      "style": {
-        "width": "100%"
-      },
-      "maxlength": null,
-      "show-word-limit": false,
-      "readonly": false,
-      "disabled": false,
-      "required": false,
-      "regList": [],
-      "changeTag": true,
-      "proCondition": false,
-      "asSummary": false,
-      "layout": "colFormItem",
+      target: getConfigByTag( inputComponents, 'el-input' ),
+      config: {
+        label: "出差备注",
+        required: false
+      }
     },
     {
-      "cmpType": "custom",
-      "label": "同行人",
-      "tag": "el-input",
-      "tagIcon": "input",
-      "placeholder": "请输入同行人",
-      "span": 24,
-      "labelWidth": null,
-      "style": {
-        "width": "100%"
-      },
-      "clearable": true,
-      "prepend": "",
-      "append": "",
-      "prefix-icon": "",
-      "suffix-icon": "",
-      "maxlength": null,
-      "show-word-limit": false,
-      "readonly": false,
-      "disabled": false,
-      "required": false,
-      "regList": [],
-      "changeTag": true,
-      "proCondition": false,
-      "asSummary": false,
-      "layout": "colFormItem",
+      target: getConfigByTag( inputComponents, 'el-input' ),
+      config: {
+        label: "同行人",
+        required: false
+      }
     }
-  ]
-}]
+  ] )]
 // .map( t => Object.assign( { cmpType: 'custom', t } ) )
-
 // 组件rule的触发方式，无触发方式的组件不生成rule
 export const trigger = {
   'el-input': 'blur',

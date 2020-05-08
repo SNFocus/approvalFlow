@@ -311,7 +311,6 @@ export default {
     drawingList: {
       handler(val) {
         const canUsedAsPCon = d => {
-          debugger
           if(!d.proCondition || !d.required) return false
           if(d.tag === 'el-select' && d.multiple) return false
           const isRangeCmp = ['fc-date-duration','fc-time-duration'].includes(d.tag)
