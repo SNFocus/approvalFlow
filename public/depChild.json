@@ -1,0 +1,31 @@
+{
+  "code": 200,
+  "msg": "获取成功",
+  "data": [
+    {
+      "deptId": 2,
+      "deptName": "子节点1",
+      "parentDeptId": 1
+    },
+    {
+      "deptId": 3,
+      "deptName": "子节点2",
+      "parentDeptId": 1
+    },
+    {
+      "deptId": 4,
+      "deptName": "子节点3",
+      "parentDeptId": 1
+    },
+    {
+      "deptId": 5,
+      "deptName": "子节点4",
+      "parentDeptId": 1
+    },
+    {
+      "deptId": 6,
+      "deptName": "子节点5",
+      "parentDeptId": 1
+    }
+  ]
+}

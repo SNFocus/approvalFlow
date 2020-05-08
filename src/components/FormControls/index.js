@@ -2,11 +2,13 @@ import Amount from './Amount'
 import Calculation from './Calculation'
 import TimeDuration from './TimeDuration'
 import DateDuration from './DateDuration'
+import DepTransfer from './DepTransfer'
 const components = [
   Amount,
   Calculation,
   TimeDuration,
-  DateDuration
+  DateDuration,
+  DepTransfer
 ]
 
 const install = function ( Vue ) {

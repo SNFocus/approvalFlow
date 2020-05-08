@@ -1,0 +1,31 @@
+{
+  "code": 200,
+  "msg": "获取成功",
+  "data": [
+    {
+      "userId": 2,
+      "userName": "子节点1",
+      "deptId": 1
+    },
+    {
+      "userId": 3,
+      "userName": "子节点2",
+      "deptId": 1
+    },
+    {
+      "userId": 4,
+      "userName": "子节点3",
+      "deptId": 1
+    },
+    {
+      "userId": 5,
+      "userName": "子节点4",
+      "deptId": 1
+    },
+    {
+      "userId": 6,
+      "userName": "子节点5",
+      "deptId": 1
+    }
+  ]
+}

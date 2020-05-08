@@ -1,9 +1,12 @@
 .DS_Store
 node_modules
 /dist
-/src/http
-/src/api
 
+
+# /src/api
+# /src/axios
+# /src/components/FormControls/DepTransfer
+# /src/components/FormControls/index.js
 # local env files
 .env.local
 .env.*.local
