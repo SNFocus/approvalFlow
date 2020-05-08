@@ -461,19 +461,19 @@ export const selectComponents = [{
   proCondition: false,
   asSummary: false
 },
-{
-  label: '计算公式',
-  tag: 'fc-calculation',
-  tagIcon: 'upload',
-  defaultValue: null,
-  labelWidth: null,
-  disabled: false,
-  required: true,
-  changeTag: true,
-  calculationTarget: [],
-  proCondition: true,
-  asSummary: false
-}
+  // {
+  //   label: '计算公式',
+  //   tag: 'fc-calculation',
+  //   tagIcon: 'upload',
+  //   defaultValue: null,
+  //   labelWidth: null,
+  //   disabled: false,
+  //   required: true,
+  //   changeTag: true,
+  //   calculationTarget: [],
+  //   proCondition: true,
+  //   asSummary: false
+  // }
 ]
 
 export const layoutComponents = [{
@@ -506,31 +506,32 @@ export const customMadeComponents = [
     {
       target: getConfigByTag( selectComponents, 'el-select' ),
       config: {
-        "label": "请假类型",
-        "options": [
+        label: "请假类型",
+        required: true,
+        options: [
           {
-            "label": "病假",
-            "value": "病假"
+            label: "病假",
+            value: "病假"
           },
           {
-            "label": "事假",
-            "value": "事假"
+            label: "事假",
+            value: "事假"
           },
           {
-            "label": "婚假",
-            "value": "婚假"
+            label: "婚假",
+            value: "婚假"
           },
           {
-            "label": "丧假",
-            "value": "丧假"
+            label: "丧假",
+            value: "丧假"
           },
           {
-            "label": "产假",
-            "value": "产假"
+            label: "产假",
+            value: "产假"
           },
           {
-            "label": "年假",
-            "value": "年假"
+            label: "年假",
+            value: "年假"
           }
         ],
       }
@@ -538,7 +539,9 @@ export const customMadeComponents = [
     {
       target: getConfigByTag( selectComponents, 'fc-date-duration' ),
       config: {
-        "label": "日期范围",
+        required: true,
+        label: "日期范围",
+        showDuration: true
       }
     }
   ] ),
