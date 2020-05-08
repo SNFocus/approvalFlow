@@ -301,7 +301,8 @@ export default {
       })
 
       this.approverForm.formOperates = []
-      format(this.$store.state.formItemList)
+      // 自定义组件不加入权限控制
+      format(this.$store.state.formItemList.filter(t => t.cmpType !== 'custom'))
     },
     /**
      * 条件节点确认保存得回调

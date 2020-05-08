@@ -1,6 +1,12 @@
 import Amount from './Amount'
+import Calculation from './Calculation'
+import TimeDuration from './TimeDuration'
+import DateDuration from './DateDuration'
 const components = [
-  Amount
+  Amount,
+  Calculation,
+  TimeDuration,
+  DateDuration
 ]
 
 const install = function ( Vue ) {

@@ -10,8 +10,8 @@ export default {
     prop: 'value',
     event: 'change'
   },
-  props:["cmpType", "tag", "tagIcon", "labelWidth", "step-strictly", "controls-position", "regList", "changeTag", "proCondition", "showChinese", "formId", "renderKey", "layout", "value"],
-  name: 'fc-amount',
+  props:["cmpType", "tag", "tagIcon", "labelWidth", "calculationTarget", "regList", "changeTag", "proCondition", "formId", "renderKey", "layout", "value"],
+  name: 'fc-calculation',
   data(){
     return {
       innerValue: this.value

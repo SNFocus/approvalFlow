@@ -161,6 +161,7 @@ const createTagHTML = ( tag, ...props ) => {
 
 const addPropToTag = ( tag, ...props ) => {
   const insetIndex = tag.search( />\s*<\// )
+  debugger
   if ( insetIndex > -1 ) {
     return tag.slice( 0, insetIndex ) + props.join( ' ' ) + tag.slice( insetIndex )
   } else {
@@ -277,8 +278,12 @@ const tags = {
     const format = el.format ? `format="${el.format}"` : ''
     const valueFormat = el['value-format'] ? `value-format="${el['value-format']}"` : ''
     const pickerOptions = el['picker-options'] ? `:picker-options='${JSON.stringify( el['picker-options'] )}'` : ''
-
     return `<${el.tag} ${vModel} ${isRange} ${format} ${valueFormat} ${pickerOptions} ${width} ${placeholder} ${startPlaceholder} ${endPlaceholder} ${rangeSeparator} ${clearable} ${disabled}></${el.tag}>`
+  },
+  'fc-time-duration': function ( el ) {
+    const tag = this['el-time-picker']( el )
+    const showDuration = el.showDuration ? `:showDuration='${el.showDuration}'` : ''
+    return addPropToTag( tag, showDuration )
   },
   'el-date-picker': el => {
     const {
@@ -291,8 +296,12 @@ const tags = {
     const valueFormat = el['value-format'] ? `value-format="${el['value-format']}"` : ''
     const type = el.type === 'date' ? '' : `type="${el.type}"`
     const readonly = el.readonly ? 'readonly' : ''
-
     return `<${el.tag} ${type} ${vModel} ${format} ${valueFormat} ${width} ${placeholder} ${startPlaceholder} ${endPlaceholder} ${rangeSeparator} ${clearable} ${readonly} ${disabled}></${el.tag}>`
+  },
+  'fc-date-duration': function ( el ) {
+    const tag = this['el-date-picker']( el )
+    const showDuration = el.showDuration ? `:showDuration='${el.showDuration}'` : ''
+    return addPropToTag( tag, showDuration )
   },
   'el-rate': el => {
     const { disabled, vModel } = attrBuilder( el )

@@ -310,13 +310,20 @@ export default {
     },
     drawingList: {
       handler(val) {
-        val.forEach(d => {
-          // console.log(d, d.formId);
-          d.proCondition &&
-            d.required &&
-            !d.multiple &&
-            this.$store.commit("addPCondition", d);
-        });
+        const canUsedAsPCon = d => {
+          if(!d.proCondition || !d.required || d.multiple) return false
+          const isRangeCmp = ['fc-date-duration','fc-time-duration'].includes(d.tag)
+          if(isRangeCmp && !d.showDuration) return false
+          console.log(d)
+          return true 
+        }
+        const loop = (data, callback) => {
+          if(Array.isArray(data.children)){
+            data.children.forEach(t => loop(data, callback))
+          }
+          canUsedAsPCon(data) && callback(data)
+        }
+        loop(val, data => this.$store.commit("addPCondition", data))
         saveDrawingList(val);
         this.$store.commit('updateFormItemList', val)
         // if (val.length === 0) this.idGlobal = 100;

@@ -157,10 +157,10 @@
           <el-form-item v-if="activeData.step !== undefined" label="步长">
             <el-input-number v-model="activeData.step" placeholder="步数" />
           </el-form-item>
-          <el-form-item v-if="activeData.tag === 'el-input-number'" label="精度">
+          <el-form-item v-if="['el-input-number','fc-amount'].includes(activeData.tag)" label="精度">
             <el-input-number v-model="activeData.precision" :min="0" placeholder="精度" />
           </el-form-item>
-          <el-form-item v-if="activeData.tag === 'el-input-number'" label="按钮位置">
+          <el-form-item v-if="['el-input-number','fc-amount'].includes(activeData.tag)" label="按钮位置">
             <el-radio-group v-model="activeData['controls-position']">
               <el-radio-button label>默认</el-radio-button>
               <el-radio-button label="right">右侧</el-radio-button>
@@ -192,7 +192,7 @@
             />
           </el-form-item>-->
           <el-form-item
-            v-if="activeData.type !== undefined && 'el-date-picker' === activeData.tag"
+            v-if="activeData.type !== undefined && ['el-date-picker','fc-date-duration'].includes(activeData.tag)"
             label="时间类型"
           >
             <el-select
@@ -266,6 +266,9 @@
               placeholder="请输入时间格式"
               @input="setTimeValue($event)"
             />
+          </el-form-item>
+          <el-form-item v-if="activeData['showDuration'] !== undefined" label="计算时长">
+            <el-switch v-model="activeData['showDuration']" placeholder="自动计算时长" />
           </el-form-item>
           <template
             v-if="['el-checkbox-group', 'el-radio-group', 'el-select'].indexOf(activeData.tag) > -1"
@@ -708,7 +711,7 @@ export default {
     dateOptions() {
       if (
         this.activeData.type !== undefined &&
-        this.activeData.tag === "el-date-picker"
+        ['el-date-picker','fc-date-duration'].includes(this.activeData.tag)
       ) {
         if (this.activeData["start-placeholder"] === undefined) {
           return this.dateTypeOptions;
@@ -740,13 +743,16 @@ export default {
   },
   methods: {
     requireChange(required) {
-      // 下拉 单选 计数 需要写进流程条件中
+      // 下拉 单选 计数 日期区间 时间区间 需要写进流程条件中
       if (!this.activeData.proCondition) return;
       if (required && !this.activeData.multiple) {
-        // 排除多选的select
+        // 没有设置时长的时间范围组件不能作为流程条件
+        if(['fc-date-duration','fc-time-duration'].includes(this.activeData.tag) && !this.activeData.showDuration){
+          this.$store.commit("delPCondition", this.activeData.formId);
+          return 
+        }
         this.$store.commit("addPCondition", this.activeData);
       } else {
-        let conditions = this.$store.state.processConditions;
         this.$store.commit("delPCondition", this.activeData.formId);
       }
     },

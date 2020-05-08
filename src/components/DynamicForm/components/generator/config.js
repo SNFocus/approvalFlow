@@ -110,7 +110,7 @@ export const inputComponents = [{
   label: '金额',
   tag: 'fc-amount',
   tagIcon: 'amount',
-  placeholder: '请输入金额',
+  placeholder: '请输入',
   defaultValue: undefined,
   span: 24,
   labelWidth: null,
@@ -197,7 +197,7 @@ export const selectComponents = [{
   label: '省市区',
   tag: 'el-cascader',
   tagIcon: 'cascader',
-  placeholder: '请选择省市区',
+  placeholder: '请选择',
   defaultValue: [],
   span: 24,
   labelWidth: null,
@@ -313,6 +313,7 @@ export const selectComponents = [{
   asSummary: false
 },
 {
+  // el-time-picker
   label: '时间选择',
   tag: 'el-time-picker',
   tagIcon: 'time',
@@ -336,7 +337,8 @@ export const selectComponents = [{
 },
 {
   label: '时间范围',
-  tag: 'el-time-picker',
+  tag: 'fc-time-duration',
+  showDuration: false,
   tagIcon: 'time-range',
   defaultValue: null,
   span: 24,
@@ -353,7 +355,7 @@ export const selectComponents = [{
   'value-format': 'HH:mm:ss',
   regList: [],
   changeTag: true,
-  proCondition: false,
+  proCondition: true,
   asSummary: false
 },
 {
@@ -379,7 +381,8 @@ export const selectComponents = [{
 },
 {
   label: '日期范围',
-  tag: 'el-date-picker',
+  tag: 'fc-date-duration',
+  showDuration: false,
   tagIcon: 'date-range',
   defaultValue: null,
   span: 24,
@@ -397,7 +400,7 @@ export const selectComponents = [{
   readonly: false,
   regList: [],
   changeTag: true,
-  proCondition: false,
+  proCondition: true,
   asSummary: false
 },
 //   {
@@ -457,6 +460,19 @@ export const selectComponents = [{
   changeTag: true,
   proCondition: false,
   asSummary: false
+},
+{
+  label: '计算公式',
+  tag: 'fc-calculation',
+  tagIcon: 'upload',
+  defaultValue: null,
+  labelWidth: null,
+  disabled: false,
+  required: true,
+  changeTag: true,
+  calculationTarget: [],
+  proCondition: true,
+  asSummary: false
 }
 ]
 
@@ -486,7 +502,7 @@ export const customMadeComponents = [{
   "layoutTree": true,
   "children": [
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "请假类型",
       "tag": "el-select",
       "tagIcon": "select",
@@ -533,9 +549,10 @@ export const customMadeComponents = [{
       "layout": "colFormItem",
     },
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "日期范围",
-      "tag": "el-date-picker",
+      "tag": "fc-date-duration",
+      "showDuration": false,
       "tagIcon": "date-range",
       "defaultValue": null,
       "span": 24,
@@ -572,7 +589,7 @@ export const customMadeComponents = [{
   "layoutTree": true,
   "children": [
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "出差事由",
       "tag": "el-input",
       "tagIcon": "textarea",
@@ -599,7 +616,7 @@ export const customMadeComponents = [{
       "layout": "colFormItem",
     },
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "交通工具",
       "tag": "el-select",
       "tagIcon": "select",
@@ -638,7 +655,7 @@ export const customMadeComponents = [{
       "layout": "colFormItem",
     },
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "单程往返",
       "tag": "el-select",
       "tagIcon": "select",
@@ -669,7 +686,7 @@ export const customMadeComponents = [{
       "layout": "colFormItem",
     },
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "出发城市",
       "tag": "el-input",
       "tagIcon": "input",
@@ -696,7 +713,7 @@ export const customMadeComponents = [{
       "layout": "colFormItem",
     },
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "目的城市",
       "tag": "el-input",
       "tagIcon": "input",
@@ -723,9 +740,10 @@ export const customMadeComponents = [{
       "layout": "colFormItem",
     },
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "日期范围",
-      "tag": "el-date-picker",
+      "tag": "fc-date-duration",
+      "showDuration": false,
       "tagIcon": "date-range",
       "defaultValue": null,
       "span": 24,
@@ -750,7 +768,7 @@ export const customMadeComponents = [{
       "layout": "colFormItem",
     },
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "出差备注",
       "tag": "el-input",
       "tagIcon": "textarea",
@@ -777,7 +795,7 @@ export const customMadeComponents = [{
       "layout": "colFormItem",
     },
     {
-      "cmpType": "common",
+      "cmpType": "custom",
       "label": "同行人",
       "tag": "el-input",
       "tagIcon": "input",
@@ -818,5 +836,7 @@ export const trigger = {
   'el-time-picker': 'change',
   'el-date-picker': 'change',
   'el-rate': 'change',
-  'fc-amount': 'change'
+  'fc-amount': 'change',
+  'fc-time-duration': 'change',
+  'fc-date-duration': 'change'
 }

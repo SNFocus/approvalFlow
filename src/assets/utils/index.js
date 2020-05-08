@@ -38,3 +38,21 @@ export function getAmountChinese ( val ) {
   }
   return res
 }
+/**
+ * 计算两个时间差经历的时间的文字描述
+ * @param {*} timestamp - 毫秒
+ */
+export const timeCalculate = ( start, end ) => {
+  const label = ['分钟', '小时', '天', '月', '年']
+  const unit = [60, 60, 24, 30, 12]
+  let restTime = Math.floor( ( end - start ) / 1000 )
+  let res = ''
+  for ( let i = 0, len = unit.length; i < len; i++ ) {
+    const pos = len - i // 从年开始算，分钟换算成年 === Math.pow(60, 4)
+    const temp = unit.slice( 0, pos ).reduce( ( p, c ) => p * c, 1 )
+    const time = Math.floor( restTime / temp )
+    time > 0 && ( res += time + label[pos - 1] )
+    restTime -= time * temp
+  }
+  return res
+}
