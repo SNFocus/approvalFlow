@@ -55,10 +55,6 @@ export const DEP_CONFIG = {
 
   children: 'children', // 子节点标志
 
-  // 判断是否是该选项卡下的数据
-  isTabNode: function ( data ) {
-    return 'userId' in data || 'deptId' in data
-  },
   // 生成每个节点的id 保证唯一
   getNodeId: function ( data ) {
     return data.hasOwnProperty( 'userId' ) ? data.userId : data.deptId
@@ -111,4 +107,5 @@ export const DEP_CONFIG = {
   }
 }
 
-export const DEP_CONFIG1 = Object.assign( {}, DEP_CONFIG, { tabKey: 'role', tabName: '角色' } )
+export const ROLE_CONFIG = Object.assign( {}, DEP_CONFIG, { tabKey: 'role', tabName: '角色' } )
+export const CONFIG_LIST = [DEP_CONFIG, ROLE_CONFIG]

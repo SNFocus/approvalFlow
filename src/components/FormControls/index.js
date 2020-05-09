@@ -2,13 +2,15 @@ import Amount from './Amount'
 import Calculation from './Calculation'
 import TimeDuration from './TimeDuration'
 import DateDuration from './DateDuration'
-import DepTransfer from './DepTransfer'
+import OrgTransfer from './OrgTransfer'
+import OrgSelect from './OrgSelect'
 const components = [
   Amount,
   Calculation,
   TimeDuration,
   DateDuration,
-  DepTransfer
+  OrgTransfer,
+  OrgSelect
 ]
 
 const install = function ( Vue ) {

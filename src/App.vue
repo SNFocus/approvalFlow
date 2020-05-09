@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <fc-dep-transfer v-model="value" title="test" :show.sync="show" @confirm="con"></fc-dep-transfer>
+    <fc-org-select v-model="value"></fc-org-select>
     <router-view/>
   </div>
 </template>
@@ -8,13 +8,12 @@
 export default {
   data(){
     return{
-      show: true,
       value: {
         dep: [{
-          "deptId": 9,
-          "deptName": "子节点8",
-          "parentDeptId": 1
-        }],
+        "deptId": 9,
+        "deptName": "子节点1",
+        "parentDeptId": 1
+      }],
         role: []
       }
     }

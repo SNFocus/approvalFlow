@@ -312,6 +312,28 @@ export const selectComponents = [{
   proCondition: false,
   asSummary: false
 },
+
+// {
+//   label: '组织机构',
+//   tag: 'fc-dep-transfer',
+//   tagIcon: 'slider',
+//   defaultValue: null,
+//   tabList: ['dep'],
+//   title: '组织机构1',
+//   show: false,
+//   searchable: false,
+//   maxNum: 10,
+//   span: 24,
+//   labelWidth: null,
+//   disabled: false,
+//   required: true,
+//   regList: [],
+//   changeTag: true,
+//   proCondition: false,
+//   asSummary: false
+// },
+
+
 {
   // el-time-picker
   label: '时间选择',

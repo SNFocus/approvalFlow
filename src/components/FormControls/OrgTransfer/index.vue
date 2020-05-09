@@ -143,23 +143,24 @@
 /* eslint-disable no-return-assign */
 /* eslint-disable handle-callback-err */
 
-import { DEP_CONFIG, DEP_CONFIG1 } from './config.js'
+import { DEP_CONFIG, ROLE_CONFIG, CONFIG_LIST } from './config.js'
 import { debounce } from '@/assets/utils/index.js'
 
 export default {
   model: {
-    prop: 'selected',
+    prop: 'value',
     event: 'confirm'
   },
-  name: 'fc-dep-transfer',
+  name: 'fc-org-transfer',
   props: {
-    tabConfig: {
+    tabList: {
       type: Array,
-      default: () => [DEP_CONFIG,DEP_CONFIG1]
+      default: () => ['dep', 'role']
     },
     title: {
       type: String,
-      reuired: true
+      default: '组织机构'
+      // reuired: true
     },
     show: {
       type: Boolean,
@@ -171,7 +172,7 @@ export default {
       default: true
     },
     // v-model 已经选择过的数据 用于回显
-    selected: {
+    value: {
       type: Object,
       default: () => ({})
     },
@@ -184,9 +185,12 @@ export default {
   data () {
     const aloneCheckedData = {}
     const selectedData = {}
-    this.tabConfig.forEach(c => {
-      aloneCheckedData[c.tabKey] = []
-      selectedData[c.tabKey] = []
+    const tabConfig = []
+    this.tabList.forEach(key => {
+      aloneCheckedData[key] = []
+      selectedData[key] = []
+      const data = CONFIG_LIST.find(t => t.tabKey === key)
+      data && tabConfig.push(data)
     })
     return {
       searchRes: [],  // 搜索后的结果
@@ -196,8 +200,8 @@ export default {
       searchString: '',  
       searchMode: false,  // 是否展示搜索面板
       searchLoading: false, 
-      activeTabName: this.tabConfig[0].tabKey,
-      tabList: this.tabConfig.map(t => t.tabKey)
+      activeTabName: this.tabList[0],
+      tabConfig
     }
   },
   computed: {
@@ -211,6 +215,9 @@ export default {
       }
       return num
     }
+  },
+  created(){
+    console.log(this)
   },
   mounted () {
     this.isNumEnough()
@@ -318,10 +325,9 @@ export default {
     show: {
       handler: function (show) {
         if (show) {
-          this.tabConfig.forEach((c) => {
+          this.tabConfig.forEach(c => {
             this.selectedData[c.tabKey] = []
-            const data = (this.selected[c.tabKey] || [])
-              .filter(c.isTabNode)
+            const data = (this.value[c.tabKey] || [])
               .map(t => ({ nodeId: c.getNodeId(t), ...t }))
             this.$set(this.aloneCheckedData, c.tabKey, data)
           })
