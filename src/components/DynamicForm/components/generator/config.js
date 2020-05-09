@@ -677,5 +677,6 @@ export const trigger = {
   'el-rate': 'change',
   'fc-amount': 'change',
   'fc-time-duration': 'change',
-  'fc-date-duration': 'change'
+  'fc-date-duration': 'change',
+  'fc-org-select': 'change'
 }

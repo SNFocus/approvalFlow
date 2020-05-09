@@ -11,6 +11,7 @@ export default {
     let { jsCode, htmlCode, cssCode } = this.$route.params.formData
     let main = eval(`(${jsCode.replace("export default", "")})`);
     main.template = `<div style="padding:3rem 2rem 1rem;">${htmlCode}</div>`;
+    debugger
     let Form = Vue.extend({
       components: {
         child: main

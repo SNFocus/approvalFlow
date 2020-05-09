@@ -156,6 +156,7 @@ const layouts = {
 }
 
 const createTagHTML = ( tag, ...props ) => {
+  console.log( `<${tag} ${props.join( ' ' )}></${tag}>` )
   return `<${tag} ${props.join( ' ' )}></${tag}>`
 }
 
@@ -199,6 +200,15 @@ const tags = {
     const precision = el.precision ? `:precision='${el.precision}'` : ''
 
     return `<${el.tag} ${vModel} ${placeholder} ${step} ${stepStrictly} ${precision} ${controlsPosition} ${min} ${max} ${disabled}></${el.tag}>`
+  },
+  'fc-org-select': function ( el ) {
+    const { disabled, vModel, placeholder } = attrBuilder( el )
+    const tabList = Array.isArray( el.tabList ) ? `:tabList='${JSON.stringify( el.tabList )}'` : ''
+    const title = el.title ? `title="${el.title}"` : ''
+    const searchable = el.searchable ? `:searchable="${el.searchable}"` : ''
+    const maxNum = el.maxNum ? `:maxNum="${el.maxNum}"` : ''
+    const tagConfig = el.tagConfig ? `:tagConfig='${JSON.stringify( el.tagConfig )}'` : ''
+    return createTagHTML( el.tag, vModel, tabList, title, searchable, maxNum, tagConfig, disabled, placeholder )
   },
   'fc-amount': function ( el ) {
     const tag = this['el-input-number']( el )

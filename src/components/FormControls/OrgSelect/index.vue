@@ -70,7 +70,6 @@ export default {
     },
   },
   data(){
-    debugger
     let innerValue = {}
     this.tabList.forEach(key => {
       innerValue[key] = this.value ? this.value[key] : []
@@ -103,17 +102,14 @@ export default {
       if(index > -1){
         list.splice(index, 1)
       }
+      this.$emit('change', this.innerValue)
     },
     openTransfer(){
       this.show = true
     },
     onConfirm(data){
       console.log(data)
-    }
-  },
-  watch:{
-    innerValue(val){
-      this.$emit('change', val)
+      this.$emit('change', this.innerValue)
     }
   }
 }

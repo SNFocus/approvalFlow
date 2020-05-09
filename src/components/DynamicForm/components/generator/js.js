@@ -165,7 +165,26 @@ function buildRules ( conf, ruleList ) {
       const type = isArray( conf.defaultValue ) ? 'type: \'array\',' : ''
       let message = isArray( conf.defaultValue ) ? `请至少选择一个` : conf.placeholder
       if ( message === undefined ) message = `${conf.label}不能为空`
-      rules.push( `{ required: true, ${type} message: '${message}', trigger: '${trigger[conf.tag]}' }` )
+      if ( conf.tag === 'fc-org-select' ) {
+
+        let rule = `{ validator: (rule, value, callback) => {
+          debugger
+          const tabList = ${JSON.stringify( conf.tabList )}
+          let count = 0
+          tabList.forEach(t => {
+            Array.isArray(t) && (count += t.length)
+          })
+          if(count > 0){
+            callback()
+          }else{
+            callback(new Error('${conf.title}不能为空'))
+          }
+        }, trigger: ${trigger[conf.tag]} }`
+        rules.push( rule )
+        console.log( rule )
+      } else {
+        rules.push( `{ required: true, ${type} message: '${message}', trigger: '${trigger[conf.tag]}' }` )
+      }
     }
     if ( conf.regList && isArray( conf.regList ) ) {
       conf.regList.forEach( item => {
@@ -174,6 +193,7 @@ function buildRules ( conf, ruleList ) {
         }
       } )
     }
+
     let key = conf.vModel
     // 判断是否是行容器下的组件
     if ( /\w+\[index\].+/.test( conf.vModel ) ) {
