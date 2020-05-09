@@ -49,34 +49,34 @@ async function getRootDept () {
 }
 
 export const DEP_CONFIG = {
-  tabName: '部门',
+  tabName: '部门',  // 选项卡名称
 
-  tabKey: 'dep',
+  tabKey: 'dep', //选项卡键值 传入的selected要和键值保持一致 eg: {dep: [], role: []}
 
-  children: 'children',
+  children: 'children', // 子节点标志
 
+  // 判断是否是该选项卡下的数据
   isTabNode: function ( data ) {
     return 'userId' in data || 'deptId' in data
   },
-
+  // 生成每个节点的id 保证唯一
   getNodeId: function ( data ) {
     return data.hasOwnProperty( 'userId' ) ? data.userId : data.deptId
   },
-
+  // 生成节点的名称 可选值 string | function
   label: function ( data, node ) {
     return data.hasOwnProperty( 'userId' ) ? data.userName : data.deptName
   },
-
+  // 判断是否为叶子节点 可选值 string | function
   isLeaf: function ( data, node ) {
-
     return data.hasOwnProperty( 'userId' ) // 含有empID为人员  且为叶子节点
   },
-
+  // 判断该节点是否可选 例如同时选择部门和部门下的人
   optionalNode: function ( data, node ) {
     // 可选择的节点 return Boolean
     return data.hasOwnProperty( 'userId' )
   },
-
+  // 动态请求后台拿到节点数据
   onload: async function ( node, resolve ) {
     if ( node.level === 0 ) { // 根目录
       const test = await getRootDept()
@@ -85,7 +85,7 @@ export const DEP_CONFIG = {
     const nodeData = await getDepChildNode( node.data.deptId )
     return resolve( nodeData )
   },
-
+  // 搜索节点方法 
   onsearch: function ( searchString, resolve, reject ) {
     const param = {
       page: 1,

@@ -30,6 +30,7 @@
               size="mini"
               type="search"
               placeholder="搜索人员"
+              :disabled="!searchable"
             ></el-input>
           </div>
           <!-- 穿梭框 -->
@@ -115,8 +116,8 @@
                 class="selected-item"
               >
                 <span>
-                  <i v-if="item.deptName" class="iconfont iconbumen"></i>
-                  <i v-else class="iconfont iconyuangong"></i> &nbsp;
+                  <!-- <i v-if="item.deptName" class="iconfont iconbumen"></i>
+                  <i v-else class="iconfont iconyuangong"></i> &nbsp; -->
                   <span>{{ tabConfig.find(t => t.tabKey === activeTabName).label(item) }}</span>
                 </span>
                 <i
@@ -144,7 +145,12 @@
 
 import { DEP_CONFIG, DEP_CONFIG1 } from './config.js'
 import { debounce } from '@/assets/utils/index.js'
+
 export default {
+  model: {
+    prop: 'selected',
+    event: 'confirm'
+  },
   name: 'fc-dep-transfer',
   props: {
     tabConfig: {
@@ -164,11 +170,12 @@ export default {
       type: Boolean,
       default: true
     },
-    // 已经选择过的数据 用于回显
+    // v-model 已经选择过的数据 用于回显
     selected: {
-      type: Array,
-      default: () => []
+      type: Object,
+      default: () => ({})
     },
+    // 可选择的最大数量
     maxNum: {
       type: Number,
       default: 99
@@ -182,14 +189,14 @@ export default {
       selectedData[c.tabKey] = []
     })
     return {
-      isEnough: false,
+      searchRes: [],  // 搜索后的结果
+      selectedData,   // 用户手动选择的节点(在tree里面已经显示的节点)
+      aloneCheckedData, // 已有的 但是未在tree中渲染的数据 例如回显时的数据
+      isEnough: false,  // 是否选择了足够的人数
+      searchString: '',  
+      searchMode: false,  // 是否展示搜索面板
+      searchLoading: false, 
       activeTabName: this.tabConfig[0].tabKey,
-      searchString: '',
-      selectedData,
-      searchLoading: false,
-      searchRes: [],
-      searchMode: false,
-      aloneCheckedData,
       tabList: this.tabConfig.map(t => t.tabKey)
     }
   },
@@ -197,26 +204,21 @@ export default {
     selectedNum () {
       let num = 0
       for (const key of this.tabList) {
-        const data = this.selectedData[key]
-        data && data.length && (num += data.length)
-      }
-      for (const key of this.tabList) {
-        const data = this.aloneCheckedData[key]
-        data && data.length && (num += data.length)
+        const data1 = this.selectedData[key]
+        data1 && data1.length && (num += data1.length)
+        const data2 = this.aloneCheckedData[key]
+        data2 && data2.length && (num += data2.length)
       }
       return num
     }
   },
   mounted () {
-    if (this.selected.length >= this.maxNum) {
-      this.isEnough = true
-    }
+    this.isNumEnough()
     this.debounceSearch = debounce(this.searchDepUser, 500)
   },
   methods: {
     onLoad (node, resolve) {
-      this.tabConfig.find(t => t.tabKey === this.activeTabName)
-        .onload(node, resolve)
+      this.tabConfig.find(t => t.tabKey === this.activeTabName).onload(node, resolve)
     },
 
     searchDepUser () {
@@ -261,8 +263,6 @@ export default {
       let count = 0
       for (const type of this.tabList) {
         count += this.selectedData[type].length
-      }
-      for (const type of this.tabList) {
         count += this.aloneCheckedData[type].length
       }
       this.isEnough = count >= this.maxNum
@@ -275,6 +275,7 @@ export default {
           tree.setCheckedKeys([])
         })
         this.selectedData[type] = []
+        this.aloneCheckedData[type] = []
       }
     },
 
@@ -293,6 +294,7 @@ export default {
       this.$emit('update:show', false)
       Object.keys(this.selectedData).forEach(key => {
         this.selectedData = {}
+        this.aloneCheckedData = {}
       })
       this.isEnough = false
       this.searchString = ''
@@ -304,7 +306,6 @@ export default {
         res[type] = this.selectedData[type].concat(this.aloneCheckedData[type])
       }
       this.$emit('confirm', res)
-      console.log(res)
       this.closeTransfer()
     }
   },
@@ -319,8 +320,8 @@ export default {
         if (show) {
           this.tabConfig.forEach((c) => {
             this.selectedData[c.tabKey] = []
-            const data = this.selected
-              .filter(t => c.isTabNode(t))
+            const data = (this.selected[c.tabKey] || [])
+              .filter(c.isTabNode)
               .map(t => ({ nodeId: c.getNodeId(t), ...t }))
             this.$set(this.aloneCheckedData, c.tabKey, data)
           })
