@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <fc-org-select v-model="value"></fc-org-select>
+    <!-- <fc-org-select v-model="value"></fc-org-select> -->
     <router-view/>
   </div>
 </template>

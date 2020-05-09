@@ -313,25 +313,33 @@ export const selectComponents = [{
   asSummary: false
 },
 
-// {
-//   label: '组织机构',
-//   tag: 'fc-dep-transfer',
-//   tagIcon: 'slider',
-//   defaultValue: null,
-//   tabList: ['dep'],
-//   title: '组织机构1',
-//   show: false,
-//   searchable: false,
-//   maxNum: 10,
-//   span: 24,
-//   labelWidth: null,
-//   disabled: false,
-//   required: true,
-//   regList: [],
-//   changeTag: true,
-//   proCondition: false,
-//   asSummary: false
-// },
+{
+  label: '组织机构',
+  tag: 'fc-org-select',
+  tagIcon: 'slider',
+  defaultValue: null,
+  tabList: ['dep'],
+  title: '组织机构',
+  searchable: true,
+  maxNum: 99,
+  tagConfig: {
+    type: 'info',
+    closable: true,
+    'disable-transitions': false,
+    hit: false,
+    color: undefined,
+    size: 'small',
+    effect: 'light'
+  },
+  span: 24,
+  labelWidth: null,
+  disabled: false,
+  required: true,
+  regList: [],
+  changeTag: true,
+  proCondition: false,
+  asSummary: false
+},
 
 
 {

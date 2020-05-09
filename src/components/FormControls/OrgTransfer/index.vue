@@ -216,16 +216,23 @@ export default {
       return num
     }
   },
-  created(){
-    console.log(this)
-  },
   mounted () {
     this.isNumEnough()
     this.debounceSearch = debounce(this.searchDepUser, 500)
   },
   methods: {
     onLoad (node, resolve) {
-      this.tabConfig.find(t => t.tabKey === this.activeTabName).onload(node, resolve)
+      this.tabConfig
+      .find(t => t.tabKey === this.activeTabName)
+      .onload(node, resolve)
+      .then(res=>{
+        for (const tabKey of this.tabList) {
+         const tree = this.$refs[tabKey][0]
+         this.aloneCheckedData[tabKey].forEach(data => {
+          tree.setChecked(data.nodeId, true)
+         })
+        }
+      })
     },
 
     searchDepUser () {
@@ -241,7 +248,7 @@ export default {
         .then(res => {
           this.searchRes = res.map(t => ({ nodeId: activeConfig.getNodeId(t), ...t }))
         })
-        .catch(err => console.log(err))
+        .catch(err => console.warn(err))
         .finally(() => this.searchLoading = false)
     },
 
@@ -255,6 +262,7 @@ export default {
         const tree = this.$refs[tabKey][0]
         this.selectedData[this.activeTabName] = tree.getCheckedNodes()
         this.isNumEnough()
+        this.$forceUpdate()
       })
     },
 

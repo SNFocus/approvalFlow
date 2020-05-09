@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="tags">
-      <el-button size="small" @click="openTransfer">添加部门</el-button>
+      <el-button size="small" @click="openTransfer">添加{{title}}</el-button>
       <div style="margin-top: 6px;">
         <template v-for="(tabKey) in tabList">
           <el-tag
@@ -15,7 +15,7 @@
         </template>
       </div>
     </div>
-    <fc-org-transfer v-model="innerValue" title="test" :tabList="tabList" :show.sync="show" @confirm="onConfirm"></fc-org-transfer>
+    <fc-org-transfer v-model="innerValue" :title="title" :searchable="searchable" :maxNum="maxNum" :tabList="tabList" :show.sync="show" @confirm="onConfirm"></fc-org-transfer>
   </div>
 </template>
 <script>
@@ -37,12 +37,24 @@ export default {
   name:'fc-org-select',
   props:{
     value:{
-      type: Object,
+      type: Object | null,
       required: true
     },
     tabList: {
       type: Array,
       default: ()=>(['dep', 'role'])
+    },
+    title: {
+      type: String,
+      default: '组织机构'
+    },
+    searchable: {
+      type: Boolean,
+      default: true
+    },
+    maxNum: {
+      type: Number,
+      default: 99
     },
     tagConfig:{
       type: Object,
@@ -55,12 +67,13 @@ export default {
         size: 'small',
         effect: 'light'
       })
-    }
+    },
   },
   data(){
+    debugger
     let innerValue = {}
     this.tabList.forEach(key => {
-      innerValue[key] = this.value[key] || []
+      innerValue[key] = this.value ? this.value[key] : []
     })
     return {
       show: false,
