@@ -2,7 +2,7 @@
   <div>
     <div class="tags">
       <el-button size="small" @click="openTransfer">添加{{title}}</el-button>
-      <div style="margin-top: 6px;">
+      <div style="margin-top: 6px;line-height: 1;">
         <template v-for="(tabKey) in tabList">
           <el-tag
             v-bind="tagConfig"

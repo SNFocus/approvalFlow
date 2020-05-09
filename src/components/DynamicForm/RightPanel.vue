@@ -330,6 +330,7 @@
                 <el-input v-model="activeData.childrenKey" placeholder="请输入子级键名" />
               </el-form-item>
             </template>
+           
 
             <el-tree
               v-if="activeData.dataType === 'static'"
@@ -399,6 +400,62 @@
               />
             </el-select>
           </el-form-item>
+
+          <template v-if="activeData.tag === 'fc-org-select'">
+            <el-form-item label="弹框名称" v-if="activeData.title !== undefined">
+              <el-input v-model="activeData.title" placeholder="请输入弹框名称" />
+            </el-form-item>
+
+            <el-form-item label="可选数量" v-if="activeData.maxNum !== undefined">
+                <el-input-number v-model="activeData.maxNum" placeholder="请输入" />
+            </el-form-item>
+            <el-divider content-position="left">标签展示</el-divider>
+            <template v-if="activeData.tagConfig">
+              
+              <el-form-item label="大小" v-if="activeData.tagConfig.size !== undefined">
+                  <el-radio-group v-model="activeData.tagConfig.size">
+                    <el-radio-button label="medium">中等</el-radio-button>
+                    <el-radio-button label="small">较小</el-radio-button>
+                    <el-radio-button label="mini">迷你</el-radio-button>
+                  </el-radio-group>
+              </el-form-item>
+
+              <el-form-item label="主题" v-if="activeData.tagConfig.effect !== undefined">
+                  <el-select v-model="activeData.tagConfig.effect" placeholder="请选择">
+                  <el-option
+                    v-for="item in themeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    :disabled="item.disabled">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="标签样式" v-if="activeData.tagConfig.type !== undefined">
+                  <el-select v-model="activeData.tagConfig.type" placeholder="请选择">
+                  <el-option
+                    v-for="item in typeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    :disabled="item.disabled">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="渐变动画" v-if="activeData.tagConfig['disable-transitions'] !== undefined">
+                  <el-switch v-model="activeData.tagConfig['disable-transitions']" placeholder="请输入" />
+              </el-form-item>
+
+              <el-form-item label="边框描边" v-if="activeData.tagConfig.hit !== undefined">
+                  <el-switch v-model="activeData.tagConfig.hit" placeholder="请输入" />
+              </el-form-item>
+
+            </template>
+          </template>
+
+
           <el-form-item
             v-if="activeData.size !== undefined &&
               (activeData.optionType === 'button' ||
@@ -449,6 +506,8 @@
           <el-form-item v-if="activeData.disabled !== undefined" label="是否禁用">
             <el-switch v-model="activeData.disabled" />
           </el-form-item>-->
+
+           
    
           
           <el-form-item v-if="activeData.required !== undefined" label="是否必填">
@@ -481,6 +540,8 @@
           <el-form-item v-if="activeData.tag === 'el-select'" label="是否多选">
             <el-switch v-model="activeData.multiple" @change="multipleChange" />
           </el-form-item>
+
+          
           
           <template v-if="activeData.layoutTree">
             <el-divider>布局结构树</el-divider>
@@ -614,6 +675,27 @@ export default {
       dialogVisible: false,
       iconsVisible: false,
       currentIconModel: null,
+      themeOptions:[
+        {value: 'dark', label: '深色'},
+        {value: 'light', label: '亮色'},
+        {value: 'plain', label: '扁平'},
+      ],
+      typeOptions:[{
+        value: 'success',
+        label: 'success'
+      },
+      {
+        value: 'info',
+        label: 'info'
+      },
+      {
+        value: 'warning',
+        label: 'warning'
+      },
+      {
+        value: 'danger',
+        label: 'danger'
+      }],
       dateTypeOptions: [
         {
           label: "日(date)",

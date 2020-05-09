@@ -1,28 +1,9 @@
 <template>
   <div id="app">
-    <!-- <fc-org-select v-model="value"></fc-org-select> -->
     <router-view/>
   </div>
 </template>
-<script>
-export default {
-  data(){
-    return{
-      value: {
-        dep: [{
-        "deptId": 9,
-        "deptName": "子节点1",
-        "parentDeptId": 1
-      }],
-        role: []
-      }
-    }
-  },
-  methods:{
-    con(arg){console.log(arg)}
-  }
-}
-</script>
+
 <style lang="stylus">
 #app
   font-family Avenir, Helvetica, Arial, sans-serif
