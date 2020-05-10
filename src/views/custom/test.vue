@@ -6,60 +6,24 @@
     size="small"
     label-width="100px"
   >
-    <el-divider content-position="left">布局容器</el-divider>
-    <el-row
-      class="form-container"
-      v-for="(row_form_item, index) in formData.row1"
-      :key="'row1' + index"
-      :gutter="15"
-    >
-      <el-form-item
-        :label="'金额' + (index == 0 ? '' : index)"
-        :prop="`row1[${index}]['field4']`"
-      >
-        <fc-amount
-          v-model="formData.row1[index]['field4']"
-          placeholder="请输入金额"
-          controls-position="right"
-          :showChinese="true"
-        ></fc-amount>
-      </el-form-item>
-      <el-form-item
-        :label="'数字输入框' + (index == 0 ? '' : index)"
-        :prop="`row1[${index}]['field3']`"
-      >
-        <el-input-number
-          v-model="formData.row1[index]['field3']"
-          placeholder="数字输入框"
-          controls-position="right"
-        ></el-input-number>
-      </el-form-item>
-      <el-form-item
-        :label="'组织机构' + (index == 0 ? '' : index)"
-        :prop="`row1[${index}]['field2']`"
-      >
-        <fc-org-select
-          v-model="formData.row1[index]['field2']"
-          :tabList="['dep']"
-          title="组织机构"
-          :searchable="true"
-          :maxNum="99"
-          :tagConfig="{
-            type: 'info',
-            closable: true,
-            'disable-transitions': false,
-            hit: false,
-            size: 'small',
-            effect: 'light',
-          }"
-        ></fc-org-select>
-      </el-form-item>
-    </el-row>
-    <el-form-item class="container-add-btn">
-      <el-button @click="addRowComponent('row1')">添加</el-button>
-      <div class="line"></div>
+    <el-form-item label="组织机构" prop="field1">
+      <fc-org-select
+        v-model="formData.field1"
+        :tabList="['dep']"
+        title="组织机构"
+        :searchable="true"
+        :maxNum="99"
+        :tagConfig="{
+          type: 'info',
+          closable: true,
+          'disable-transitions': false,
+          hit: false,
+          size: 'small',
+          effect: 'light',
+        }"
+        :buttonType="button"
+      ></fc-org-select>
     </el-form-item>
-
     <el-form-item style="text-align:right;">
       <el-button type="primary" @click="submitForm">提交</el-button>
       <el-button @click="resetForm">重置</el-button>
@@ -74,19 +38,12 @@ export default {
   data() {
     return {
       formData: {
-        row1: [{ field4: undefined, field3: undefined, field2: null }],
+        field1: null,
       },
       rules: {
-        "row1[0]['field4']": [
-          { required: true, message: "请输入金额", trigger: "change" },
-        ],
-        "row1[0]['field3']": [
-          { required: true, message: "数字输入框", trigger: "blur" },
-        ],
-        "row1[0]['field2']": [
+        field1: [
           {
             validator: (rule, value, callback) => {
-              debugger;
               const val = eval("window._previewVm.vmFormData." + rule.field);
               const tabList = ["dep"];
               let count = 0;
@@ -117,10 +74,10 @@ export default {
     window._previewVm = this;
     this.$watch(
       function() {
-        return this.formData.row1[0]["field2"];
+        return this.formData.field1;
       },
       function(newVal, oldVal) {
-        this.$refs["elForm"].validateField("row1[0]['field2']", () => {});
+        this.$refs["elForm"].validateField("field1", () => {});
       }
     );
   },

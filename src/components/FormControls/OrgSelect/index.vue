@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="tags">
-      <el-button size="small" type="primary" icon="el-icon-plus" @click="show = true">添加{{title}}</el-button>
-      <div style="margin-top: 6px;line-height: 1;">
+      <el-button v-if="buttonType === 'button'" size="small" type="primary" icon="el-icon-plus" @click="show = true">添加{{title}}</el-button>
+      <div v-if="buttonType === 'input'" class="input-box"  @click="show = true">{{selectedLabels || '点击选择' + title}}</div>
+      
+      <div v-if="buttonType === 'button'" style="margin-top: 6px;line-height: 1;">
         <template v-for="(tabKey) in tabList">
           <el-tag
             v-bind="tagConfig"
@@ -55,6 +57,10 @@ export default {
       type: String,
       default: '组织机构'
     },
+    buttonType: {
+      type: String,
+      default: 'input'
+    }, // or input
     searchable: {
       type: Boolean,
       default: true
@@ -93,6 +99,20 @@ export default {
       immediate: true
     }
   },
+  computed:{
+    selectedData(){
+      return this.tabList.reduce((res, key) => {
+        return res.concat(this.innerValue[key].map(t => ({
+          tabKey: key,
+          label: this.getLabel(t, key),
+          key: this.getKey(t, key)
+        })))
+      }, [])
+    },
+    selectedLabels(){
+      return this.selectedData.map(t => t.label).join(',')
+    }
+  },
   methods:{
     getKey(data, tabKey){
       for(let key of config[tabKey].keys){
@@ -125,6 +145,16 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .tags {
+  .input-box{
+    border: 1px solid #DCDFE6;
+    padding-left: 1rem;
+    font-size: 12px;
+    height: 32px;
+    border-radius: 4px;
+    background: white;
+    color #606266
+    cursor pointer
+  }
   .org-tag{
     margin-right: 6px;
     max-width: 6rem;  

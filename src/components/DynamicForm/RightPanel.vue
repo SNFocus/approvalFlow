@@ -41,10 +41,10 @@
           <!-- <el-form-item v-if="activeData.vModel!==undefined" label="字段名">
             <el-input v-model="activeData.vModel" placeholder="请输入字段名（v-model）" />
           </el-form-item>-->
-          <el-form-item
+          <!-- <el-form-item
             v-if="activeData.componentName!==undefined"
             label="组件名"
-          >{{ activeData.componentName }}</el-form-item>
+          >{{ activeData.componentName }}</el-form-item> -->
           <el-form-item v-if="activeData.label!==undefined" label="标题">
             <el-input v-model="activeData.label" placeholder="请输入标题" />
           </el-form-item>
@@ -91,7 +91,7 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="activeData.labelWidth!==undefined" label="标签宽度">
-            <el-input v-model.number="activeData.labelWidth" type="number" placeholder="请输入标签宽度" />
+            <el-input-number v-model.number="activeData.labelWidth"  placeholder="请输入标签宽度" />
           </el-form-item>
           <el-form-item v-if="activeData.style&&activeData.style.width!==undefined" label="组件宽度">
             <el-input v-model="activeData.style.width" placeholder="请输入组件宽度" clearable />
@@ -409,9 +409,15 @@
             <el-form-item label="可选数量" v-if="activeData.maxNum !== undefined">
                 <el-input-number v-model="activeData.maxNum" placeholder="请输入" />
             </el-form-item>
-            <el-divider content-position="left">标签展示</el-divider>
-            <template v-if="activeData.tagConfig">
-              
+            <el-form-item label="按钮类型" >
+              <el-select v-model="activeData.buttonType" size="small">
+                <el-option label="Button" value="button" />
+                <el-option label="Input" value="input" />
+              </el-select>
+            </el-form-item>
+
+            <template v-if="activeData.buttonType === 'button' && activeData.tagConfig">
+              <el-divider content-position="left">标签展示</el-divider>
               <el-form-item label="大小" v-if="activeData.tagConfig.size !== undefined">
                   <el-radio-group v-model="activeData.tagConfig.size">
                     <el-radio-button label="medium">中等</el-radio-button>
@@ -445,7 +451,7 @@
               </el-form-item>
 
               <el-form-item label="渐变动画" v-if="activeData.tagConfig['disable-transitions'] !== undefined">
-                  <el-switch v-model="activeData.tagConfig['disable-transitions']" placeholder="请输入" />
+                  <el-switch v-model="activeData.tagConfig['disable-transitions']" :inactive-value="true" :active-value="false" placeholder="请输入" />
               </el-form-item>
 
               <el-form-item label="边框描边" v-if="activeData.tagConfig.hit !== undefined">
@@ -613,10 +619,10 @@
           <el-form-item label="标签宽度">
             <el-input-number v-model="formConf.labelWidth" placeholder="标签宽度" />
           </el-form-item>
-          <!-- <el-form-item label="栅格间隔">
+          <el-form-item label="栅格间隔">
             <el-input-number v-model="formConf.gutter" :min="0" placeholder="栅格间隔" />
           </el-form-item>
-          <el-form-item label="禁用表单">
+          <!-- <el-form-item label="禁用表单">
             <el-switch v-model="formConf.disabled" />
           </el-form-item> 
           <el-form-item label="表单按钮">

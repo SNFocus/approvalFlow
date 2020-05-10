@@ -62,7 +62,6 @@ function buildWatchInCreated (key,callbackStr, watchFuncList) {
  */
 const setFcOrgSelectRule = (conf, watchFuncList) => {
   let rule = `{ validator: (rule, value, callback) => {
-    debugger
     const val = eval('window._previewVm.vmFormData.' + rule.field)
     const tabList = ${JSON.stringify( conf.tabList )}
     let count = 0

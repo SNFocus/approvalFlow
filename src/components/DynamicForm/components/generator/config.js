@@ -319,6 +319,7 @@ export const selectComponents = [{
   tagIcon: 'dept',
   defaultValue: null,
   tabList: ['dep'],
+  buttonType: 'button',
   title: '组织机构',
   searchable: true,
   maxNum: 99,

@@ -63,7 +63,6 @@ function buildFormTemplate ( conf, child, type ) {
   return str
 }
 
-
 function buildFromBtns ( conf, type ) {
   let str = ''
   if ( conf.formBtns && type === 'file' ) {
@@ -79,27 +78,7 @@ function buildFromBtns ( conf, type ) {
   }
   return str
 }
-function buildRules ( conf, ruleList = [] ) {
-  if ( conf.vModel === undefined ) return
-  const rules = []
-  if ( trigger[conf.tag] ) {
-    if ( conf.required ) {
-      const type = isArray( conf.defaultValue ) ? 'type: \'array\',' : ''
-      let message = isArray( conf.defaultValue ) ? `请至少选择一个` : conf.placeholder
-      if ( message === undefined ) message = `${conf.label}不能为空`
-      rules.push( `{ required: true, ${type} message: '${message}', trigger: '${trigger[conf.tag]}' }` )
-    }
-    if ( conf.regList && isArray( conf.regList ) ) {
-      conf.regList.forEach( item => {
-        if ( item.pattern ) {
-          rules.push( `{ pattern: ${eval( item.pattern )}, message: '${item.message}', trigger: '${trigger[conf.tag]}' }` )
-        }
-      } )
-    }
-    // ruleList.push(`${conf.vModel}: [${rules.join(',')}],`)
-    return `[${rules.join( ',' )}]`;
-  }
-}
+
 // span不为24的用el-col包裹
 function colWrapper ( element, str ) {
   if ( someSpanIsNot24 || element.span !== 24 ) {
@@ -111,22 +90,12 @@ function colWrapper ( element, str ) {
 }
 
 const layouts = {
-  colFormItem ( element, isDynamic = false, rowEle ) {
+  colFormItem ( element ) {
     let labelWidth = ''
     if ( element.labelWidth && element.labelWidth !== confGlobal.labelWidth ) {
       labelWidth = `label-width="${element.labelWidth}px"`
     }
     let rules = '', label = `label="${element.label}"`, prop = `prop="${element.vModel}"`
-    // TO-DELETE
-    // if ( false && isDynamic ) {
-    //   rules = ':rules="' + buildRules( element ) + '"'
-    //   let vModel = element.vModel
-    //   // element.vModel = `${rowEle.componentName}[index]['${vModel}']`
-    //   label = `:label="'${element.label}' + (index == 0 ? '' : index)"`
-    //   prop = ':prop="`' + rowEle.componentName + '[${index}]' + `['${vModel}']` + '`"'
-    //   // prop = `:prop="'${rowEle.componentName}['+index+']['${vModel}]'"`
-    // }
-
     const required = !trigger[element.tag] && element.required ? 'required' : ''
     const tagDom = tags[element.tag] ? tags[element.tag]( element ) : null
 
@@ -141,28 +110,20 @@ const layouts = {
     const justify = element.type === 'default' ? '' : `justify="${element.justify}"`
     const align = element.type === 'default' ? '' : `align="${element.align}"`
     const gutter = element.gutter ? `:gutter="${element.gutter}"` : ''
-    const children = element.children.map( ( el ) => layouts[el.layout]( el, true, element ) )
-    // TO-DELETE
-    // v-for="(row_form_item, index) in formData.${element.componentName}" :key="'${element.componentName}' + index"
+    const children = element.children.map( ( el ) => layouts[el.layout]( el ) )
+    const divider = element.label ? `<el-divider content-position="left">${element.label}</el-divider>` : ''
     let str = `
-    <el-divider content-position="left">${element.label}</el-divider>
+    ${divider}
     <el-row class="form-container"   ${type} ${justify} ${align} ${gutter}>
       ${children.join( '\n' )}
     </el-row>
-  
     `
-    // TO-DELETE
-//     <el-form-item class="container-add-btn">
-//     <el-button @click="addRowComponent('${element.componentName}')">添加</el-button>
-//     <div class="line"></div>
-// </el-form-item>
     str = colWrapper( element, str )
     return str
   }
 }
 
 const createTagHTML = ( tag, ...props ) => {
-  console.log( `<${tag} ${props.join( ' ' )}></${tag}>` )
   return `<${tag} ${props.join( ' ' )}></${tag}>`
 }
 
@@ -214,7 +175,8 @@ const tags = {
     const searchable = el.searchable ? `:searchable="${el.searchable}"` : ''
     const maxNum = el.maxNum ? `:maxNum="${el.maxNum}"` : ''
     const tagConfig = el.tagConfig ? `:tagConfig='${JSON.stringify( el.tagConfig )}'` : ''
-    return createTagHTML( el.tag, vModel, tabList, title, searchable, maxNum, tagConfig, disabled, placeholder )
+    const buttonType = el.buttonType ? `buttonType='${el.buttonType}'` : ''
+    return createTagHTML( el.tag, vModel, tabList, title, searchable, maxNum, tagConfig, buttonType, disabled, placeholder )
   },
   'fc-amount': function ( el ) {
     const tag = this['el-input-number']( el )
