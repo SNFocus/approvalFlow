@@ -129,11 +129,11 @@ export class NodeUtils {
     concatChild( prevNode, nodeData )
   }
   // TODO:
-  static copyNode ( nodeData, processData ) {
-    let prevNode = this.getPreviousNode( nodeData.prevId, processData )
-    let index = prevNode.conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId )
+  // static copyNode ( nodeData, processData ) {
+  //   let prevNode = this.getPreviousNode( nodeData.prevId, processData )
+  //   let index = prevNode.conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId )
 
-  }
+  // }
   /**
    * 添加审计节点（普通节点 approver）
    * @param { Object } data - 目标节点数据，在该数据节点之后添加审计节点
@@ -292,20 +292,20 @@ export class NodeUtils {
    */
   static checkNode ( node, parent ) {
     let valid = true
-    if ( this.isStartNode( node ) && !node.properties.initiator ) {
-      valid = false
-    }
-    if ( this.isConditionNode( node ) ) {
-      if ( !node.properties.initiator && isEmptyArray( node.properties.conditions ) ) {
-        if ( this.isDefaultCondition( node, parent ) ) {
+    const props = node.properties
+    this.isStartNode( node ) 
+    && !props.initiator 
+    && (valid = false) 
 
-        }
-        valid = false
-      }
-    }
-    if ( this.isApproverNode( node ) && isEmptyArray( node.properties.approvers ) ) {
-      valid = false
-    }
+    this.isConditionNode( node ) 
+    && !props.isDefault 
+    && !props.initiator 
+    && isEmptyArray( props.conditions )
+    && (valid = false)
+    
+    this.isApproverNode( node ) 
+    && isEmptyArray( props.approvers )
+    && (valid = false)
     return valid
   }
   /**
