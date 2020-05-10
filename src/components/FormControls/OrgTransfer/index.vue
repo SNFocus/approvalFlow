@@ -15,7 +15,6 @@
         {{ title }}
         <i
           class="el-icon-close"
-          style="cursor:pointer;float: right;"
           @click="closeTransfer"
         ></i>
       </header>
@@ -27,6 +26,7 @@
           <div class="transfer-pane__tools">
             <el-input
               v-model="searchString"
+              class="search-input"
               size="mini"
               type="search"
               placeholder="搜索人员"
@@ -78,7 +78,7 @@
                   @check-change="(data, checked) => onCheckChange(data, checked, tab_item.tabKey)"
                 >
                   <span class="tree-node" slot-scope="{ node }" >
-                    <span class="node-label">{{ node.label }}</span>
+                    <span class="node-label" :title="node.label">{{ node.label }}</span>
                   </span>
                 </el-tree>
               </el-tab-pane>
@@ -99,8 +99,8 @@
                 class="selected-item"
               >
                 <span>
-                  <i v-if="item.deptName" class="iconfont iconbumen"></i>
-                  <i v-else class="iconfont iconyuangong"></i> &nbsp;
+                  <!-- <i v-if="item.deptName" class="iconfont iconbumen"></i>
+                  <i v-else class="iconfont iconyuangong"></i> &nbsp; -->
                   <span>{{ tabConfig.find(t => t.tabKey === activeTabName).label(item) }}</span>
                 </span>
                 <i
@@ -147,10 +147,6 @@ import { DEP_CONFIG, ROLE_CONFIG, CONFIG_LIST } from './config.js'
 import { debounce } from '@/assets/utils/index.js'
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'confirm'
-  },
   name: 'fc-org-transfer',
   props: {
     tabList: {
@@ -408,6 +404,8 @@ export default {
     border: 1px solid #dcdfe6;
     transition: top .5s;
 
+
+
     &.active{
         top: 0;
     }
@@ -474,6 +472,11 @@ export default {
   background: #409efe;
   padding: 6px 24px;
   color: white;
+  .el-icon-close{
+    cursor:pointer;
+    float: right;
+    margin-top: 10px;
+  }
 }
 
 .transfer__footer {
@@ -490,6 +493,12 @@ export default {
 .transfer-pane {
   width: 360px;
 }
+  .search-input  input{
+    border: 1px solid #DCDFE6 !important;
+    &:focus{
+      border-color:#409EFF !important;
+    }
+  }
 
 .transfer-pane__tools {
   margin-bottom: 8px;
@@ -497,6 +506,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+
 
   span:last-child {
     color: #409efe;
@@ -567,16 +578,15 @@ export default {
 }
 
 .right-pane {
-  padding: 12px;
   box-sizing: border-box;
   overflow: auto;
   border: 1px solid #DCDFE6;
 
   .selected-item {
+    padding: 0px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 12px;
 
     &:hover {
       background-color: #F5F7FA;

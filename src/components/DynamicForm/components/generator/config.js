@@ -317,7 +317,9 @@ export const selectComponents = [{
   label: '组织机构',
   tag: 'fc-org-select',
   tagIcon: 'slider',
-  defaultValue: null,
+  defaultValue: {
+    dep: []
+  },
   tabList: ['dep'],
   title: '组织机构',
   searchable: true,

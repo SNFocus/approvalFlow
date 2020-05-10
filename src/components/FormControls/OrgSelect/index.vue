@@ -15,7 +15,7 @@
         </template>
       </div>
     </div>
-    <fc-org-transfer v-model="innerValue" :title="title" :searchable="searchable" :maxNum="maxNum" :tabList="tabList" :show.sync="show" @confirm="onConfirm"></fc-org-transfer>
+    <fc-org-transfer :value="innerValue" :title="title" :searchable="searchable" :maxNum="maxNum" :tabList="tabList" :show.sync="show" @confirm="onConfirm"></fc-org-transfer>
   </div>
 </template>
 <script>
@@ -70,13 +70,20 @@ export default {
     },
   },
   data(){
-    let innerValue = {}
-    this.tabList.forEach(key => {
-      innerValue[key] = this.value ? this.value[key] : []
-    })
     return {
       show: false,
-      innerValue
+      innerValue: null
+    }
+  },
+  watch:{
+    value: {
+      handler:function (val) {
+        this.innerValue = {}
+        this.tabList.forEach(key => {
+          this.innerValue[key] = val ? val[key] : []
+        })
+      },
+      immediate: true
     }
   },
   methods:{
@@ -108,8 +115,7 @@ export default {
       this.show = true
     },
     onConfirm(data){
-      console.log(data)
-      this.$emit('change', this.innerValue)
+      this.$emit('change', data)
     }
   }
 }

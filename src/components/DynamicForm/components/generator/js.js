@@ -21,6 +21,8 @@ const inheritAttrs = {
 }
 
 
+
+
 export function makeUpJs ( conf, type ) {
   confGlobal = conf = JSON.parse( JSON.stringify( conf ) )
   const dataList = []
@@ -29,9 +31,10 @@ export function makeUpJs ( conf, type ) {
   const propsList = []
   const methodList = mixinMethod( type )
   const uploadVarList = []
+  const watchList = []
 
   conf.fields.forEach( el => {
-    buildAttributes( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList )
+    buildAttributes( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchList )
   } )
 
   const script = buildexport(
@@ -42,15 +45,47 @@ export function makeUpJs ( conf, type ) {
     optionsList.join( '\n' ),
     uploadVarList.join( '\n' ),
     propsList.join( '\n' ),
-    methodList.join( '\n' )
+    methodList.join( '\n' ),
+    watchList.join(',\n')
   )
   confGlobal = null
   return script
 }
 
-function buildAttributes ( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList ) {
+function buildWatch (content, watchList) {
+  watchList.push(content)
+}
+/**
+ * fc-org-select v-model绑定的是一个对象 才疏学浅 需要添加多余的代码啊兼容此种情况
+ * 针对fc-org-select 添加相应的表单验证
+ * @param {*} conf - 控件数据
+ * @param {*} watchList - watch列表
+ */
+const setFcOrgSelectRule = (conf, watchList) => {
+  let rule = `{ validator: (rule, value, callback) => {
+    const tabList = ${JSON.stringify( conf.tabList )}
+    let count = 0
+    tabList.forEach(key => {
+      value && Array.isArray(value[key]) && (count += value[key].length)
+    })
+    if(count > 0){
+      callback()
+    }else{
+      callback(new Error('${conf.title}不能为空'))
+    }
+  }, trigger: '${trigger[conf.tag]}' }`
+
+  buildWatch(`'${confGlobal.formModel}.${conf.vModel}': {
+    handler:function(val){
+      this.$refs["elForm"].validateField(['${conf.vModel}'],()=>{ })
+    }
+  }`, watchList)
+  return rule
+}
+
+function buildAttributes ( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchList ) {
   buildData( el, dataList )
-  buildRules( el, ruleList )
+  buildRules( el, ruleList, watchList )
 
   if ( el.options && el.options.length ) {
     buildOptions( el, optionsList )
@@ -156,7 +191,7 @@ function buildData ( conf, dataList ) {
   dataList.push( `${conf.vModel}: ${defaultValue},` )
 }
 
-function buildRules ( conf, ruleList ) {
+function buildRules ( conf, ruleList, watchList ) {
   if ( conf.vModel === undefined ) return
 
   const rules = []
@@ -166,22 +201,7 @@ function buildRules ( conf, ruleList ) {
       let message = isArray( conf.defaultValue ) ? `请至少选择一个` : conf.placeholder
       if ( message === undefined ) message = `${conf.label}不能为空`
       if ( conf.tag === 'fc-org-select' ) {
-
-        let rule = `{ validator: (rule, value, callback) => {
-          debugger
-          const tabList = ${JSON.stringify( conf.tabList )}
-          let count = 0
-          tabList.forEach(t => {
-            Array.isArray(t) && (count += t.length)
-          })
-          if(count > 0){
-            callback()
-          }else{
-            callback(new Error('${conf.title}不能为空'))
-          }
-        }, trigger: ${trigger[conf.tag]} }`
-        rules.push( rule )
-        console.log( rule )
+        rules.push( setFcOrgSelectRule(conf, watchList) )
       } else {
         rules.push( `{ required: true, ${type} message: '${message}', trigger: '${trigger[conf.tag]}' }` )
       }
@@ -260,7 +280,7 @@ function buildOptionMethod ( methodName, model, methodList ) {
   methodList.push( str )
 }
 
-function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props, methods ) {
+function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props, methods, watch ) {
   const str = `${exportDefault}{
   ${inheritAttrs[type]}
   components: {},
@@ -279,7 +299,9 @@ function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props,
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    ${watch}
+  },
   created () {},
   mounted () {},
   methods: {
