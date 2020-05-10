@@ -168,11 +168,11 @@ function mixinMethod ( type ) {
 let list;
 
 function buildData ( conf, dataList ) {
-  if ( conf.layout === "rowFormItem" ) {
-    list = []
-    // TODO
-    dataList.push( conf.componentName + ': ' )
-  }
+  // if ( conf.layout === "rowFormItem" ) {
+  //   list = []
+  //   // TODO
+  //   dataList.push( conf.componentName + ': ' )
+  // }
   if ( conf.vModel === undefined ) return
 
   let defaultValue

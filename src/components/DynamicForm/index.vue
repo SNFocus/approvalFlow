@@ -383,8 +383,8 @@ export default {
       // .drawing-row-item —— 行容器的类名
       const isRow = target.classList.contains('.drawing-row-item') // 直接拖拽的行容器 最外层含有.drawing-row-item
       const hasRow = target.querySelector('.drawing-row-item') !== null // 定制组件 内部含有.drawing-row-item
-      // target.innerText !== '行容器' 是阻止从左侧拖拽嵌套
-      return !isRow && !hasRow && target.innerText !== '行容器'
+      // target.innerText !== '布局容器' 是阻止从左侧拖拽嵌套
+      return !isRow && !hasRow && target.innerText !== '布局容器'
     },
     activeFormItem(element) {
       if(element){

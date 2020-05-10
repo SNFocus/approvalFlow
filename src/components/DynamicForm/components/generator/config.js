@@ -512,7 +512,7 @@ export const layoutComponents = [{
   type: 'default',
   justify: 'start',
   align: 'top',
-  label: '行容器',
+  label: '布局容器',
   layoutTree: true,
   children: [],
 }]

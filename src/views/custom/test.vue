@@ -6,7 +6,7 @@
     size="small"
     label-width="100px"
   >
-    <el-divider content-position="left">行容器</el-divider>
+    <el-divider content-position="left">布局容器</el-divider>
     <el-row
       class="form-container"
       v-for="(row_form_item, index) in formData.row1"

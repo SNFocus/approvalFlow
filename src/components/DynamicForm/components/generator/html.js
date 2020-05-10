@@ -117,14 +117,15 @@ const layouts = {
       labelWidth = `label-width="${element.labelWidth}px"`
     }
     let rules = '', label = `label="${element.label}"`, prop = `prop="${element.vModel}"`
-    if ( isDynamic ) {
-      rules = ':rules="' + buildRules( element ) + '"'
-      let vModel = element.vModel
-      element.vModel = `${rowEle.componentName}[index]['${vModel}']`
-      label = `:label="'${element.label}' + (index == 0 ? '' : index)"`
-      prop = ':prop="`' + rowEle.componentName + '[${index}]' + `['${vModel}']` + '`"'
-      // prop = `:prop="'${rowEle.componentName}['+index+']['${vModel}]'"`
-    }
+    // TO-DELETE
+    // if ( false && isDynamic ) {
+    //   rules = ':rules="' + buildRules( element ) + '"'
+    //   let vModel = element.vModel
+    //   // element.vModel = `${rowEle.componentName}[index]['${vModel}']`
+    //   label = `:label="'${element.label}' + (index == 0 ? '' : index)"`
+    //   prop = ':prop="`' + rowEle.componentName + '[${index}]' + `['${vModel}']` + '`"'
+    //   // prop = `:prop="'${rowEle.componentName}['+index+']['${vModel}]'"`
+    // }
 
     const required = !trigger[element.tag] && element.required ? 'required' : ''
     const tagDom = tags[element.tag] ? tags[element.tag]( element ) : null
@@ -141,16 +142,20 @@ const layouts = {
     const align = element.type === 'default' ? '' : `align="${element.align}"`
     const gutter = element.gutter ? `:gutter="${element.gutter}"` : ''
     const children = element.children.map( ( el ) => layouts[el.layout]( el, true, element ) )
+    // TO-DELETE
+    // v-for="(row_form_item, index) in formData.${element.componentName}" :key="'${element.componentName}' + index"
     let str = `
     <el-divider content-position="left">${element.label}</el-divider>
-    <el-row class="form-container"  v-for="(row_form_item, index) in formData.${element.componentName}" :key="'${element.componentName}' + index" ${type} ${justify} ${align} ${gutter}>
+    <el-row class="form-container"   ${type} ${justify} ${align} ${gutter}>
       ${children.join( '\n' )}
     </el-row>
-    <el-form-item class="container-add-btn">
-        <el-button @click="addRowComponent('${element.componentName}')">添加</el-button>
-        <div class="line"></div>
-    </el-form-item>
+  
     `
+    // TO-DELETE
+//     <el-form-item class="container-add-btn">
+//     <el-button @click="addRowComponent('${element.componentName}')">添加</el-button>
+//     <div class="line"></div>
+// </el-form-item>
     str = colWrapper( element, str )
     return str
   }

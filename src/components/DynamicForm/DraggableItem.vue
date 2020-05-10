@@ -62,7 +62,6 @@ const layouts = {
           <draggable list={element.children} animation={0} group={group} disabled={isCustom} class="drag-wrapper">
             {child}
           </draggable>
-          <div style="padding:8px;background:white;text-align:center;color:#409EFE;">添加<i class="el-icon-plus"></i></div>
           { components.itemBtns.apply(this, arguments)}
         </el-row>
       </el-col>
