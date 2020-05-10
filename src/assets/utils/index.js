@@ -1,10 +1,13 @@
 /**
+ * 金额转中文
+ * 思路：
  * 个 十   百   千   万
  *    十万 百万 千万 亿 
  *    十亿 百亿 千亿
  * 1  2    3    4    5
  *    6    7    8    9   
  *    10
+ * 
  */
 export function getAmountChinese ( val ) {
   const amount = +val
@@ -38,6 +41,7 @@ export function getAmountChinese ( val ) {
   }
   return res
 }
+
 /**
  * 计算两个时间差经历的时间的文字描述
  * @param {*} timestamp - 毫秒
@@ -72,3 +76,10 @@ export const debounce = ( func, gap ) => {
     }, gap )
   }
 }
+/**
+ * 下划线转驼峰
+ * @param {String} name - 字符串
+ */
+export const toHump = name => name.replace( /\_(\w)/g, function ( all, letter ) {
+  return letter.toUpperCase()
+} )

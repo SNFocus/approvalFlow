@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="tags">
-      <el-button size="small" @click="openTransfer">添加{{title}}</el-button>
+      <el-button size="small" type="primary" icon="el-icon-plus" @click="show = true">添加{{title}}</el-button>
       <div style="margin-top: 6px;line-height: 1;">
         <template v-for="(tabKey) in tabList">
           <el-tag
@@ -15,7 +15,14 @@
         </template>
       </div>
     </div>
-    <fc-org-transfer :value="innerValue" :title="title" :searchable="searchable" :maxNum="maxNum" :tabList="tabList" :show.sync="show" @confirm="onConfirm"></fc-org-transfer>
+    <fc-org-transfer 
+      :value="innerValue" 
+      :title="title" 
+      :searchable="searchable" 
+      :maxNum="maxNum"
+      :tabList="tabList"
+      :show.sync="show"
+      @confirm="onConfirm" />
   </div>
 </template>
 <script>
@@ -103,19 +110,15 @@ export default {
       }
       return ''
     },
-    onClose(item, tabKey){
+    onClose (item, tabKey) {
       const list = this.innerValue[tabKey]
       const index = list.indexOf(item)
-      if(index > -1){
-        list.splice(index, 1)
-      }
+      index > -1 && list.splice(index, 1)
       this.$emit('change', this.innerValue)
     },
-    openTransfer(){
-      this.show = true
-    },
-    onConfirm(data){
-      this.$emit('change', data)
+    onConfirm (data) {
+      this.innerValue = data
+      this.$emit('change', this.innerValue)
     }
   }
 }

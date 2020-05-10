@@ -196,7 +196,7 @@ export const selectComponents = [{
 {
   label: '省市区',
   tag: 'el-cascader',
-  tagIcon: 'cascader',
+  tagIcon: 'area',
   placeholder: '请选择',
   defaultValue: [],
   span: 24,
@@ -316,10 +316,8 @@ export const selectComponents = [{
 {
   label: '组织机构',
   tag: 'fc-org-select',
-  tagIcon: 'slider',
-  defaultValue: {
-    dep: []
-  },
+  tagIcon: 'dept',
+  defaultValue: null,
   tabList: ['dep'],
   title: '组织机构',
   searchable: true,
