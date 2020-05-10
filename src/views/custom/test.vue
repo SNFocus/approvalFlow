@@ -6,34 +6,60 @@
     size="small"
     label-width="100px"
   >
-    <el-form-item label="手机号" prop="mobile">
-      <el-input
-        v-model="formData.mobile"
-        placeholder="请输入手机号"
-        :maxlength="11"
-        show-word-limit
-        clearable
-        prefix-icon="el-icon-mobile"
-        :style="{ width: '100%' }"
-      ></el-input>
+    <el-divider content-position="left">行容器</el-divider>
+    <el-row
+      class="form-container"
+      v-for="(row_form_item, index) in formData.row1"
+      :key="'row1' + index"
+      :gutter="15"
+    >
+      <el-form-item
+        :label="'金额' + (index == 0 ? '' : index)"
+        :prop="`row1[${index}]['field4']`"
+      >
+        <fc-amount
+          v-model="formData.row1[index]['field4']"
+          placeholder="请输入金额"
+          controls-position="right"
+          :showChinese="true"
+        ></fc-amount>
+      </el-form-item>
+      <el-form-item
+        :label="'数字输入框' + (index == 0 ? '' : index)"
+        :prop="`row1[${index}]['field3']`"
+      >
+        <el-input-number
+          v-model="formData.row1[index]['field3']"
+          placeholder="数字输入框"
+          controls-position="right"
+        ></el-input-number>
+      </el-form-item>
+      <el-form-item
+        :label="'组织机构' + (index == 0 ? '' : index)"
+        :prop="`row1[${index}]['field2']`"
+      >
+        <fc-org-select
+          v-model="formData.row1[index]['field2']"
+          :tabList="['dep']"
+          title="组织机构"
+          :searchable="true"
+          :maxNum="99"
+          :tagConfig="{
+            type: 'info',
+            closable: true,
+            'disable-transitions': false,
+            hit: false,
+            size: 'small',
+            effect: 'light',
+          }"
+        ></fc-org-select>
+      </el-form-item>
+    </el-row>
+    <el-form-item class="container-add-btn">
+      <el-button @click="addRowComponent('row1')">添加</el-button>
+      <div class="line"></div>
     </el-form-item>
-    <el-form-item label="组织机构" prop="field7">
-      <fc-org-select
-        v-model="formData.field7"
-        :tabList="['dep']"
-        title="组织机构"
-        :searchable="true"
-        :maxNum="99"
-        :tagConfig="{
-          type: 'info',
-          closable: true,
-          'disable-transitions': false,
-          hit: false,
-          size: 'small',
-          effect: 'light',
-        }"
-      ></fc-org-select>
-    </el-form-item>
+
     <el-form-item style="text-align:right;">
       <el-button type="primary" @click="submitForm">提交</el-button>
       <el-button @click="resetForm">重置</el-button>
@@ -48,27 +74,24 @@ export default {
   data() {
     return {
       formData: {
-        mobile: "",
-        field7: null,
+        row1: [{ field4: undefined, field3: undefined, field2: null }],
       },
       rules: {
-        mobile: [
-          { required: true, message: "请输入手机号", trigger: "blur" },
-          {
-            pattern: /^1(3|4|5|7|8|9)\d{9}$/,
-            message: "手机号格式错误",
-            trigger: "blur",
-          },
+        "row1[0]['field4']": [
+          { required: true, message: "请输入金额", trigger: "change" },
         ],
-        field7: [
+        "row1[0]['field3']": [
+          { required: true, message: "数字输入框", trigger: "blur" },
+        ],
+        "row1[0]['field2']": [
           {
             validator: (rule, value, callback) => {
+              debugger;
+              const val = eval("window._previewVm.vmFormData." + rule.field);
               const tabList = ["dep"];
               let count = 0;
               tabList.forEach((key) => {
-                value &&
-                  Array.isArray(value[key]) &&
-                  (count += value[key].length);
+                val && Array.isArray(val[key]) && (count += val[key].length);
               });
               if (count > 0) {
                 callback();
@@ -77,20 +100,30 @@ export default {
               }
             },
             trigger: "change",
+            type: "object",
           },
         ],
       },
     };
   },
-  computed: {},
-  watch: {
-    "formData.field7": {
-      handler: function(val) {
-        this.$refs["elForm"].validateField(["field7"], () => {});
-      },
+  computed: {
+    // 为了验证时能获取到表单数据
+    vmFormData() {
+      return this.formData;
     },
   },
-  created() {},
+  watch: {},
+  created() {
+    window._previewVm = this;
+    this.$watch(
+      function() {
+        return this.formData.row1[0]["field2"];
+      },
+      function(newVal, oldVal) {
+        this.$refs["elForm"].validateField("row1[0]['field2']", () => {});
+      }
+    );
+  },
   mounted() {},
   methods: {
     submitForm() {

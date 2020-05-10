@@ -56,7 +56,7 @@ export function camelCase ( str ) {
 export function isNumberStr ( str ) {
   return /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g.test( str )
 }
-
+// vm 用来在某些时候获取不到正确的表单数据 全局进行搜索的hack手段
 export const exportDefault = 'export default '
 
 export const beautifierConf = {

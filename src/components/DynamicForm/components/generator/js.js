@@ -20,9 +20,6 @@ const inheritAttrs = {
   dialog: 'inheritAttrs: false,'
 }
 
-
-
-
 export function makeUpJs ( conf, type ) {
   confGlobal = conf = JSON.parse( JSON.stringify( conf ) )
   const dataList = []
@@ -31,10 +28,10 @@ export function makeUpJs ( conf, type ) {
   const propsList = []
   const methodList = mixinMethod( type )
   const uploadVarList = []
-  const watchList = []
+  const watchFuncList = []
 
   conf.fields.forEach( el => {
-    buildAttributes( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchList )
+    buildAttributes( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList )
   } )
 
   const script = buildexport(
@@ -46,46 +43,48 @@ export function makeUpJs ( conf, type ) {
     uploadVarList.join( '\n' ),
     propsList.join( '\n' ),
     methodList.join( '\n' ),
-    watchList.join(',\n')
+    watchFuncList.join('\n')
   )
   confGlobal = null
   return script
 }
 
-function buildWatch (content, watchList) {
-  watchList.push(content)
+function buildWatchInCreated (key,callbackStr, watchFuncList) {
+  watchFuncList.push(`this.$watch(function () {
+    return this.${confGlobal.formModel}.${key}
+  }, ${callbackStr})`)
 }
 /**
  * fc-org-select v-model绑定的是一个对象 才疏学浅 需要添加多余的代码啊兼容此种情况
  * 针对fc-org-select 添加相应的表单验证
  * @param {*} conf - 控件数据
- * @param {*} watchList - watch列表
+ * @param {*} watchFuncList - watch列表
  */
-const setFcOrgSelectRule = (conf, watchList) => {
+const setFcOrgSelectRule = (conf, watchFuncList) => {
   let rule = `{ validator: (rule, value, callback) => {
+    debugger
+    const val = eval('window._previewVm.vmFormData.' + rule.field)
     const tabList = ${JSON.stringify( conf.tabList )}
     let count = 0
     tabList.forEach(key => {
-      value && Array.isArray(value[key]) && (count += value[key].length)
+      val && Array.isArray(val[key]) && (count += val[key].length)
     })
     if(count > 0){
       callback()
     }else{
       callback(new Error('${conf.title}不能为空'))
     }
-  }, trigger: '${trigger[conf.tag]}' }`
-
-  buildWatch(`'${confGlobal.formModel}.${conf.vModel}': {
-    handler:function(val){
-      this.$refs["elForm"].validateField(['${conf.vModel}'],()=>{ })
-    }
-  }`, watchList)
+  }, trigger: '${trigger[conf.tag]}', type: 'object' }`
+  const key = conf.isChild ? conf.vModel.replace('index', conf.childIndex): conf.vModel
+  buildWatchInCreated(key,`function (newVal, oldVal) {
+      this.$refs["elForm"].validateField("${key}",()=>{ })
+  }`, watchFuncList)
   return rule
 }
 
-function buildAttributes ( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchList ) {
+function buildAttributes ( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList ) {
   buildData( el, dataList )
-  buildRules( el, ruleList, watchList )
+  buildRules( el, ruleList, watchFuncList )
 
   if ( el.options && el.options.length ) {
     buildOptions( el, optionsList )
@@ -112,8 +111,10 @@ function buildAttributes ( el, dataList, ruleList, optionsList, methodList, prop
   }
 
   if ( el.children ) {
-    el.children.forEach( el2 => {
-      buildAttributes( el2, dataList, ruleList, optionsList, methodList, propsList, uploadVarList )
+    el.children.forEach( (el2, index) => {
+      el2.isChild = true  // 临时变量
+      el2.childIndex = index  // 临时变量
+      buildAttributes( el2, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, true )
     } )
   }
 }
@@ -191,9 +192,8 @@ function buildData ( conf, dataList ) {
   dataList.push( `${conf.vModel}: ${defaultValue},` )
 }
 
-function buildRules ( conf, ruleList, watchList ) {
+function buildRules ( conf, ruleList, watchFuncList ) {
   if ( conf.vModel === undefined ) return
-
   const rules = []
   if ( trigger[conf.tag] ) {
     if ( conf.required ) {
@@ -201,7 +201,7 @@ function buildRules ( conf, ruleList, watchList ) {
       let message = isArray( conf.defaultValue ) ? `请至少选择一个` : conf.placeholder
       if ( message === undefined ) message = `${conf.label}不能为空`
       if ( conf.tag === 'fc-org-select' ) {
-        rules.push( setFcOrgSelectRule(conf, watchList) )
+        rules.push( setFcOrgSelectRule(conf, watchFuncList) )
       } else {
         rules.push( `{ required: true, ${type} message: '${message}', trigger: '${trigger[conf.tag]}' }` )
       }
@@ -217,9 +217,10 @@ function buildRules ( conf, ruleList, watchList ) {
     let key = conf.vModel
     // 判断是否是行容器下的组件
     if ( /\w+\[index\].+/.test( conf.vModel ) ) {
-      key = eval( conf.vModel.replace( /\w+\[index\]/, '' ) )[0]
+      // key = eval( conf.vModel.replace( /\w+\[index\]/, '' ) )[0]
+      key = conf.vModel.replace('index', conf.childIndex)
     }
-    ruleList.push( `${key}: [${rules.join( ',' )}],` )
+    ruleList.push( `"${key}": [${rules.join( ',' )}],` )
   }
 }
 
@@ -280,7 +281,7 @@ function buildOptionMethod ( methodName, model, methodList ) {
   methodList.push( str )
 }
 
-function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props, methods, watch ) {
+function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props, methods, watchFunc ) {
   const str = `${exportDefault}{
   ${inheritAttrs[type]}
   components: {},
@@ -298,11 +299,17 @@ function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props,
       ${props}
     }
   },
-  computed: {},
-  watch: {
-    ${watch}
+  computed: {
+    // 为了验证时能获取到表单数据
+    vmFormData(){
+      return this.${conf.formModel}
+    }
   },
-  created () {},
+  watch: {},
+  created () {
+    window._previewVm = this
+    ${watchFunc}
+  },
   mounted () {},
   methods: {
     ${methods}

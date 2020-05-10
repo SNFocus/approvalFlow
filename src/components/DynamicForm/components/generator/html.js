@@ -122,7 +122,8 @@ const layouts = {
       let vModel = element.vModel
       element.vModel = `${rowEle.componentName}[index]['${vModel}']`
       label = `:label="'${element.label}' + (index == 0 ? '' : index)"`
-      prop = `:prop="'${rowEle.componentName}['+index+'].${vModel}'"`
+      prop = ':prop="`' + rowEle.componentName + '[${index}]' + `['${vModel}']` + '`"'
+      // prop = `:prop="'${rowEle.componentName}['+index+']['${vModel}]'"`
     }
 
     const required = !trigger[element.tag] && element.required ? 'required' : ''
