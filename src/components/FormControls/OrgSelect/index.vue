@@ -127,9 +127,7 @@ export default {
       return this.getPropByKey(data, tabKey, 'nodeId')
     },
     getLabel(data, tabKey){
-      let label = this.getPropByKey(data, tabKey, 'label')
-      debugger
-      return label
+      return this.getPropByKey(data, tabKey, 'label')
     },
     onClose (item) {
       const list = this.innerValue[item.tabKey]

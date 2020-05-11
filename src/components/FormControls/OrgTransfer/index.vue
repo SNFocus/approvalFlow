@@ -240,7 +240,7 @@ export default {
       }
       this.$nextTick(() => {
         const tree = this.$refs[tabKey][0]
-        this.selectedData[this.activeTabName] = tree.getCheckedNodes()
+        this.$set(this.selectedData, this.activeTabName, tree.getCheckedNodes())
         this.isNumEnough()
         this.$forceUpdate()
       })
@@ -342,8 +342,8 @@ export default {
           key = item.key
           customConf = item.config
         }
-        this.aloneCheckedData[key] = []
-        this.selectedData[key] = []
+        this.$set(this.aloneCheckedData, key, [])
+        this.$set(this.selectedData, key, [])
         const conf = CONFIG_LIST.find(t => t.tabKey === key)
         if(conf){
           const mergedConfig = Object.assign({}, conf, customConf)
@@ -365,12 +365,17 @@ export default {
 
     show: {
       handler: function (show) {
-        if (show) {
-          this.dataInit()
-          this.isNumEnough()
-        }
+        show && this.isNumEnough()
       },
       immediate: true
+    },
+
+    tabList:{
+      handler: function(){
+        this.dataInit()
+      },
+      immediate: true,
+      deep: true
     }
   }
 }

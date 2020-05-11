@@ -9,7 +9,7 @@ const toHump = name => name.replace( /\_(\w)/g, function ( all, letter ) {
 async function getDepChildNode ( orgId ) {
   const promises = [GET_DEPT_TREE( { orgId } )]
   let res = []
-  promises.push( GET_USER_BY_DEPT( { deptId: orgId } ) )
+  // loadUser && promises.push( GET_USER_BY_DEPT( { deptId: orgId } ) )
   try {
     res = await Promise.all( promises )
   } catch ( error ) {/* this.$message.error('获取子节点数据出错')*/ }
@@ -55,8 +55,6 @@ function loadUserData ( node, resolve ) {
   return loadDepOrUser( node, resolve, false )  // 返回的promise
 }
 
-
-
 const defaultOption = {
   tabName: '部门',  // 选项卡名称
   tabKey: 'dep', //选项卡键值 传入的selected要和键值保持一致 eg: {dep: [], role: []}
@@ -67,7 +65,6 @@ const defaultOption = {
   },
   // 生成节点的名称 可选值 string | function
   label: function ( data, node ) {
-    debugger
     return data.hasOwnProperty( 'userId' ) ? data.userName : data.deptName
   },
   // 判断是否为叶子节点 可选值 string | function
@@ -81,7 +78,7 @@ const defaultOption = {
   },
   // 判断该节点是否可选 例如同时选择部门和部门下的人
   disabled: function ( data, node ) {
-    return !data.hasOwnProperty( 'userId' )
+    return false
   },
   // 动态请求后台拿到节点数据 返回一个promise
   onload: loadDepData,
