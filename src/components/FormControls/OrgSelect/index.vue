@@ -2,22 +2,21 @@
   <div>
     <div class="tags">
       <el-button v-if="buttonType === 'button'" size="small" type="primary" icon="el-icon-plus" @click="show = true">添加{{title}}</el-button>
-      <div v-if="buttonType === 'input'" class="input-box"  @click="show = true">{{selectedLabels || '点击选择' + title}}</div>
       
+      <div v-if="buttonType === 'input'" class="input-box"  @click="show = true">{{selectedLabels || '点击选择' + title}}</div>
       <div v-if="buttonType === 'button'" style="margin-top: 6px;line-height: 1;">
-        <template v-for="(tabKey) in tabList">
-          <el-tag
-            v-bind="tagConfig"
-            class="org-tag"
-            v-for="item in innerValue[tabKey]"
-            :key="getKey(item, tabKey)"
-            @close="onClose(item, tabKey)">
-            {{getLabel(item, tabKey)}}
-          </el-tag>
-        </template>
+        <el-tag
+          v-bind="tagConfig"
+          class="org-tag"
+          v-for="item in selectedData"
+          :key="item.key"
+          @close="onClose(item)">
+          {{item.label}}
+        </el-tag>
       </div>
     </div>
-    <fc-org-transfer 
+    <fc-org-transfer
+      ref="transfer"
       :value="innerValue" 
       :title="title" 
       :searchable="searchable" 
@@ -28,16 +27,6 @@
   </div>
 </template>
 <script>
-const config = {
-  dep: {
-    keys: ['userId', 'deptId'],
-    labels: ['userName', 'deptName']
-  },
-  role: {
-    keys: ['userId', 'deptId'],
-    labels: ['userName', 'deptName']
-  }
-}
 export default {
   model:{
     prop: 'value',
@@ -51,7 +40,7 @@ export default {
     },
     tabList: {
       type: Array,
-      default: ()=>(['dep', 'role'])
+      default: ()=>(['dep'])
     },
     title: {
       type: String,
@@ -83,7 +72,12 @@ export default {
     },
   },
   data(){
+    const tabKeys = []
+    this.tabList.forEach(t => {
+      tabKeys.push(typeof t === 'string' ? t : t.key)
+    })
     return {
+      tabKeys,
       show: false,
       innerValue: null
     }
@@ -92,7 +86,7 @@ export default {
     value: {
       handler:function (val) {
         this.innerValue = {}
-        this.tabList.forEach(key => {
+        this.tabKeys.forEach(key => {
           this.innerValue[key] = val ? val[key] : []
         })
       },
@@ -102,11 +96,11 @@ export default {
   },
   computed:{
     selectedData(){
-      return this.tabList.reduce((res, key) => {
+      return this.tabKeys.reduce((res, key) => {
         return res.concat(this.innerValue[key].map(t => ({
           tabKey: key,
-          label: this.getLabel(t, key),
-          key: this.getKey(t, key)
+          key: this.getKey(t, key),
+          label: this.getLabel(t, key)
         })))
       }, [])
     },
@@ -115,25 +109,23 @@ export default {
     }
   },
   methods:{
-    getKey(data, tabKey){
-      for(let key of config[tabKey].keys){
-        if(key in data){
-          return data[key]
-        }
+    getPropByKey(data, tabKey, key){
+      const transfer = this.$refs['transfer']
+      if(transfer){
+        return transfer.getNodeProp(data, key, tabKey)
+      }else{
+        return ''
       }
-      return ''
+    },
+    getKey(data, tabKey){
+      return this.getPropByKey(data, tabKey, 'nodeId')
     },
     getLabel(data, tabKey){
-      for(let key of config[tabKey].labels){
-        if(key in data){
-          return data[key]
-        }
-      }
-      return ''
+      return this.getPropByKey(data, tabKey, 'label')
     },
-    onClose (item, tabKey) {
-      const list = this.innerValue[tabKey]
-      const index = list.indexOf(item)
+    onClose (item) {
+      const list = this.innerValue[item.tabKey]
+      const index = list.findIndex(t => this.getKey(t, item.tabKey) === item.key)
       index > -1 && list.splice(index, 1)
       this.$emit('change', this.innerValue)
     },

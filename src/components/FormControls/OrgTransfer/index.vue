@@ -1,22 +1,17 @@
 
 <template>
   <section
-    class="h-transfer"
-    :class="[tabConfig.length == 1 ? 'single-tab' : '']"
-    v-if="show"
-  >
+    v-if="show" 
+    class="h-transfer" 
+    :class="[tabConfig.length == 1 ? 'single-tab' : '']" >
     <div class="mask"></div>
-
     <!-- 内容面板 -->
     <div class="transfer__content">
       <!-- 面板顶部标题 -->
       <header class="transfer__header">
         <i class="el-icon-monitor"></i>
         {{ title }}
-        <i
-          class="el-icon-close"
-          @click="closeTransfer"
-        ></i>
+        <i class="el-icon-close" @click="closeTransfer" ></i>
       </header>
       <!-- 穿梭框主要内容 -->
       <div class="transfer__body">
@@ -41,8 +36,7 @@
             <div
               class="searchResPane"
               :class="{ active: searchMode }"
-              v-loading="searchLoading"
-            >
+              v-loading="searchLoading" >
               <div class="hidden-tag" @click="searchString = ''">关闭</div>
               <div v-for="(item, index) in searchRes" :key="index" class="item">
                 <div>
@@ -88,7 +82,7 @@
             <span @click="removeAll">清空列表</span>
           </div>
           <div class="transfer-pane__body shadow right-pane">
-            <template v-for="type in tabList">
+            <template v-for="type in tabKeys">
               <div
                 v-for="(item) in selectedData[type]"
                 :key="type+ item.nodeId"
@@ -105,7 +99,7 @@
                 ></i>
               </div>
             </template>
-            <template v-for="type in tabList">
+            <template v-for="type in tabKeys">
              <div
                 v-for="item in aloneCheckedData[type]"
                 :key="'alone' + type + item.nodeId"
@@ -145,6 +139,13 @@ import { debounce } from '@/assets/utils/index.js'
 export default {
   name: 'fc-org-transfer',
   props: {
+    // v-model 已经选择过的数据 用于回显
+    value: {
+      type: Object,
+      default: () => ({})
+    },
+    // 字符串数组使用配置文件的预设值
+    // 对象数组需要包含 key/conf 两个属性 conf 会覆盖对应key的默认配置
     tabList: {
       type: Array,
       default: () => ['dep', 'role']
@@ -152,7 +153,6 @@ export default {
     title: {
       type: String,
       default: '组织机构'
-      // reuired: true
     },
     show: {
       type: Boolean,
@@ -162,11 +162,6 @@ export default {
     searchable: {
       type: Boolean,
       default: true
-    },
-    // v-model 已经选择过的数据 用于回显
-    value: {
-      type: Object,
-      default: () => ({})
     },
     // 可选择的最大数量
     maxNum: {
@@ -178,11 +173,18 @@ export default {
     const aloneCheckedData = {}
     const selectedData = {}
     const tabConfig = []
-    this.tabList.forEach(key => {
+    const tabKeys = []
+    this.tabList.forEach(item => {
+      let key = item, customConf = {}
+      if(typeof item === 'object'){
+        key = item.key
+        customConf = item.config
+      }
       aloneCheckedData[key] = []
       selectedData[key] = []
       const data = CONFIG_LIST.find(t => t.tabKey === key)
-      data && tabConfig.push(data)
+      data && tabConfig.push(Object.assign({}, data, customConf)) && tabKeys.push(key)
+      
     })
     return {
       searchRes: [],  // 搜索后的结果
@@ -192,14 +194,15 @@ export default {
       searchString: '',  
       searchMode: false,  // 是否展示搜索面板
       searchLoading: false, 
-      activeTabName: this.tabList[0],
-      tabConfig
+      activeTabName: tabKeys[0],
+      tabConfig,
+      tabKeys
     }
   },
   computed: {
     selectedNum () {
       let num = 0
-      for (const key of this.tabList) {
+      for (const key of this.tabKeys) {
         const data1 = this.selectedData[key]
         data1 && data1.length && (num += data1.length)
         const data2 = this.aloneCheckedData[key]
@@ -218,7 +221,7 @@ export default {
       .find(t => t.tabKey === this.activeTabName)
       .onload(node, resolve)
       .then(res=>{
-        for (const tabKey of this.tabList) {
+        for (const tabKey of this.tabKeys) {
          const tree = this.$refs[tabKey][0]
          this.aloneCheckedData[tabKey].forEach(data => {
           tree.setChecked(data.nodeId, true)
@@ -238,7 +241,7 @@ export default {
         activeConfig.onsearch(this.searchString, resolve, reject)
       })
         .then(res => {
-          this.searchRes = res.map(t => ({ nodeId: activeConfig.getNodeId(t), ...t }))
+          this.searchRes = res.map(t => ({ nodeId: activeConfig.nodeId(t), ...t }))
         })
         .catch(err => console.warn(err))
         .finally(() => this.searchLoading = false)
@@ -279,7 +282,7 @@ export default {
     },
 
     removeAll () {
-      for (const type of this.tabList) {
+      for (const type of this.tabKeys) {
         const tree = this.$refs[type][0]
         tree.getCheckedKeys().forEach(key => {
           tree.setCheckedKeys([])
@@ -291,7 +294,7 @@ export default {
 
     isNumEnough () {
       let count = 0
-      for (const type of this.tabList) {
+      for (const type of this.tabKeys) {
         count += this.selectedData[type].length
         count += this.aloneCheckedData[type].length
       }
@@ -310,25 +313,26 @@ export default {
 
     confirm () {
       const res = {}
-      for (const type of this.tabList) {
+      for (const type of this.tabKeys) {
         res[type] = this.selectedData[type].concat(this.aloneCheckedData[type])
       }
       this.$emit('confirm', res)
       this.closeTransfer()
     },
 
-    getActiveConf(){
-      return this.tabConfig.find(t => t.tabKey === this.activeTabName)
+    getActiveConf(tabKey){
+      const target = tabKey || this.activeTabName
+      return this.tabConfig.find(t => t.tabKey === target)
     },
 
-    getConfProp(propName){
-      const conf = this.getActiveConf()
+    getConfProp(propName, tabKey){
+      const conf = this.getActiveConf(tabKey)
       return conf ? conf[propName] : null
     },
 
-    getNodeProp(data, propName){
+    getNodeProp(data, propName, tabKey){
       try{
-        const prop = this.getConfProp(propName)
+        const prop = this.getConfProp(propName, tabKey)
         if(typeof prop === 'string'){
           return data[prop]
         }
@@ -353,7 +357,7 @@ export default {
           this.tabConfig.forEach(c => {
             this.selectedData[c.tabKey] = []
             const data = (this.value[c.tabKey] || [])
-              .map(t => ({ nodeId: c.getNodeId(t), ...t }))
+              .map(t => ({ nodeId: c.nodeId(t), ...t }))
             this.$set(this.aloneCheckedData, c.tabKey, data)
           })
           this.isNumEnough()

@@ -338,7 +338,7 @@ export const selectComponents = [{
   required: true,
   regList: [],
   changeTag: true,
-  proCondition: false,
+  proCondition: true,
   asSummary: false
 },
 

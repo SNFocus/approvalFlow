@@ -1,30 +1,21 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-prototype-builtins */
-import {
-  GET_DEPT_ROOT,
-  GET_DEPT_TREE,
-  GET_USER_BY_DEPT,
-  GET_PAGE_EMPLOYEE
-} from '@/api'
+import { GET_DEPT_ROOT, GET_DEPT_TREE, GET_USER_BY_DEPT, GET_PAGE_EMPLOYEE } from '@/api'
 
 const toHump = name => name.replace( /\_(\w)/g, function ( all, letter ) {
   return letter.toUpperCase()
 } )
-async function getDepChildNode ( orgId ) {
 
+async function getDepChildNode ( orgId ) {
   const promises = [GET_DEPT_TREE( { orgId } )]
   let res = []
   promises.push( GET_USER_BY_DEPT( { deptId: orgId } ) )
   try {
     res = await Promise.all( promises )
-  } catch ( error ) {
-    // this.$message.error('获取子节点数据出错')
-  }
-
+  } catch ( error ) {/* this.$message.error('获取子节点数据出错')*/ }
   const nodes = res.reduce( ( p, c ) => {
     return [...p, ...c.data]
   }, [] )
-
   return nodes.map( t => ( {
     nodeId: t.userId || t.deptId,
     ...t
@@ -37,21 +28,16 @@ async function getRootDept () {
   try {
     res = ( await GET_DEPT_ROOT() ).data
     res.nodeId = res.deptId
-  } catch ( err ) {
-    // this.$message.error((err && err.msg) || '获取组织结构根节点失败')
-  }
+  } catch ( err ) { }
   return res
 }
 
-export const DEP_CONFIG = {
+const defaultOption = {
   tabName: '部门',  // 选项卡名称
-
   tabKey: 'dep', //选项卡键值 传入的selected要和键值保持一致 eg: {dep: [], role: []}
-
   children: 'children', // 子节点标志
-
   // 生成每个节点的id 保证唯一
-  getNodeId: function ( data ) {
+  nodeId: function ( data ) {
     return data.hasOwnProperty( 'userId' ) ? data.userId : data.deptId
   },
   // 生成节点的名称 可选值 string | function
@@ -71,7 +57,7 @@ export const DEP_CONFIG = {
   disabled: function ( data, node ) {
     return !data.hasOwnProperty( 'userId' )
   },
-  // 动态请求后台拿到节点数据
+  // 动态请求后台拿到节点数据 返回一个promise
   onload: async function ( node, resolve ) {
     if ( node.level === 0 ) { // 根目录
       const test = await getRootDept()
@@ -89,14 +75,11 @@ export const DEP_CONFIG = {
   },
   // 搜索节点方法 
   onsearch: async function ( searchString, resolve, reject ) {
-    const param = {
-      page: 1,
-      limit: 200,
-      searchName: searchString
-    }
+    // const param = { page: 1, limit: 200, searchName: searchString }
     resolve( ( await GET_PAGE_EMPLOYEE() ).data )
   }
 }
 
-export const ROLE_CONFIG = Object.assign( {}, DEP_CONFIG, { tabKey: 'role', tabName: '角色' } )
+export const DEP_CONFIG = Object.assign( {}, defaultOption )
+export const ROLE_CONFIG = Object.assign( {}, defaultOption, { tabKey: 'role', tabName: '角色' } )
 export const CONFIG_LIST = [DEP_CONFIG, ROLE_CONFIG]
