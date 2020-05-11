@@ -521,9 +521,12 @@
             <el-tooltip
               class="item"
               effect="dark"
-              content="流程条件：流程设计里可用于区分流程走向，例如：金额大于500需要主管+经理审批；小于500只需要主管审批。"
               placement="top-start"
             >
+            <div slot="content">
+              流程条件：流程设计里可用于区分流程走向
+              <br/>
+              例如：金额大于500需要主管+经理审批；小于500只需要主管审批。</div>
               <span
                 v-show="activeData.proCondition"
                 style="font-size:12px;color#aaa;"

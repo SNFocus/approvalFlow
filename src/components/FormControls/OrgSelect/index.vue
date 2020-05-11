@@ -79,7 +79,8 @@ export default {
     return {
       tabKeys,
       show: false,
-      innerValue: null
+      innerValue: null,
+      selectedData: []
     }
   },
   watch:{
@@ -89,14 +90,23 @@ export default {
         this.tabKeys.forEach(key => {
           this.innerValue[key] = val ? val[key] : []
         })
+         // transfer 可能还未加载成功
+        this.$nextTick(_ => {
+          this.initSelectedData()
+        })
       },
       immediate: true,
       deep: true
     }
   },
   computed:{
-    selectedData(){
-      return this.tabKeys.reduce((res, key) => {
+    selectedLabels(){
+      return this.selectedData.map(t => t.label).join(',')
+    }
+  },
+  methods:{
+    initSelectedData(){
+      this.selectedData = this.tabKeys.reduce((res, key) => {
         return res.concat(this.innerValue[key].map(t => ({
           tabKey: key,
           key: this.getKey(t, key),
@@ -104,11 +114,6 @@ export default {
         })))
       }, [])
     },
-    selectedLabels(){
-      return this.selectedData.map(t => t.label).join(',')
-    }
-  },
-  methods:{
     getPropByKey(data, tabKey, key){
       const transfer = this.$refs['transfer']
       if(transfer){

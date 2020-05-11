@@ -41,7 +41,7 @@
           <fc-org-select ref="condition-org" v-model="initiator" />
         </el-col>
       </el-row>
-      <template v-for="(item,index) in pconditions">
+      <template v-for="(item, index) in pconditions">
         <!-- 计数 -->
         <num-input
           v-if="couldShowIt(item,'el-input-number','fc-date-duration','fc-time-duration','fc-amount')"
@@ -68,12 +68,18 @@
           :key="index"
           @delete="onDelCondition(item)"
         ></single-select>
-        <!-- 组织机构 -->
-        <fc-org-select
-          v-if="couldShowIt(item,'fc-org-select')"
-          :tabList="['dep']"
-          :key="index"
-        />
+          <!-- 组织机构 -->
+        <row-wrapper :key="index" :title="item.label" v-if="couldShowIt(item,'fc-org-select')">
+          <fc-org-select 
+          v-model="item.conditionValue" 
+          :ref="'org' + index" 
+          :tabList="['dep']" 
+          />
+          <template v-slot:action>
+            <i  class="el-icon-delete" style="cursor: pointer;" @click="onDelCondition(item)"></i>
+          </template>
+        </row-wrapper>
+        
 
       </template>
       <div style="padding-left:10px;margin-top:2em;">
@@ -96,7 +102,7 @@
           
           <div v-else-if="value.type === 'approver'">
             <div style="padding: 12px;">
-              <el-radio-group v-model="approverForm.assigneeType" style="line-height: 32px;" @change="resetApprover">
+              <el-radio-group v-model="approverForm.assigneeType" style="line-height: 32px;" @change="resetOrgColl">
                 <el-radio v-for="item in assigneeTypeOptions" :label="item.value" :key="item.value" class="radio-item">{{item.label}}</el-radio>
               </el-radio-group>
             </div>
@@ -190,6 +196,7 @@ import NumInput from "./NumInput";
 import radioGroup from "./radioGroup";
 import SingleSelect from "./SingleSelect";
 import { NodeUtils } from "../FlowCard/util.js";
+import RowWrapper from './RowWrapper'
 const rangeType = {
   'lt': '<',
   'lte':'≤',
@@ -296,7 +303,7 @@ export default {
       this.isStartNode() && (res = this.startForm.formOperates)
       return res
     },
-    resetApprover(){
+    resetOrgColl(){
       for(let key in this.orgCollection){
         this.orgCollection[key] = []
       }
@@ -353,13 +360,7 @@ export default {
       Object.assign(this.startForm, this.value.properties)
       this.startForm.formOperates = this.initFormOperates()
     },
-    /**
-     * 初始化审批节点所需数据
-     */
-    initApproverNodeData() {
-      Object.assign(this.approverForm, this.value.properties)
-      this.approverForm.formOperates = this.initFormOperates()
-    },
+
     /**
      * 条件节点确认保存得回调
      */
@@ -382,6 +383,10 @@ export default {
           }else{
             nodeContent +=  `[${t.label} ${rangeType[cValue.type]} ${cValue.value}] ` + '\n'
           }
+        }else if(t.tag === 'fc-org-select'){
+          const index = this.pconditions.findIndex(p => p.formId === t.formId)
+          const labels = this.$refs['org' + index][0].selectedLabels
+          nodeContent += `[${t.label} = ${labels}] ` + '\n'
         }else{
           nodeContent +=  `[${t.label} = ${cValue}] ` + '\n'
         }
@@ -467,11 +472,24 @@ export default {
     isApproverNode(){
       return this.value ? NodeUtils.isApproverNode(this.value) : false;
     },
+
     isStartNode(){
       return this.value ? NodeUtils.isStartNode(this.value) : false;
     },
+
     initInitiator(){
       this.initiator = this.value.initiator
+    },
+        /**
+     * 初始化审批节点所需数据
+     */
+    initApproverNodeData() {
+      Object.assign(this.approverForm, this.value.properties)
+      const approvers = this.approverForm.approvers
+      if (this.approverForm.approvers) {
+        this.orgCollection = approvers
+      }
+      this.approverForm.formOperates = this.initFormOperates()
     },
     /**
      * 初始化条件节点数据
@@ -489,7 +507,7 @@ export default {
             const con = nodeConditions.find(item => item.formId == t.formId)
             con && con.conditionValue && (temp = con.conditionValue, this.showingPCons.push(t.formId))
           }
-          t.conditionValue = temp
+          this.$set(t, 'conditionValue', temp)
         })
       }
     },
@@ -515,7 +533,8 @@ export default {
   components: {
     "num-input": NumInput,
     "radio-group": radioGroup,
-    "single-select": SingleSelect
+    "single-select": SingleSelect,
+    "row-wrapper": RowWrapper
   }
 };
 </script>
