@@ -220,8 +220,14 @@ export class NodeUtils {
    * @param {Node} processData - 整个流程图节点数据
    */
   static resortPrioByCNode ( cnode, oldIndex, processData ) {
+    if ( cnode.properties.isDefault ) {
+      return
+    }
     let prevNode = this.getPreviousNode( cnode.prevId, processData )
     let newIndex = cnode.properties.priority
+    if ( prevNode.conditionNodes[newIndex].properties.isDefault ) {
+      return
+    }
     let delNode = prevNode.conditionNodes.splice( newIndex, 1, cnode )[0]
     delNode.properties.priority = oldIndex
     prevNode.conditionNodes[oldIndex] = delNode
