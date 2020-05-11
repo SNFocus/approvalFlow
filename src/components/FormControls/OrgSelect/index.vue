@@ -86,11 +86,12 @@ export default {
   watch:{
     value: {
       handler:function (val) {
+        if(!val) return
         this.innerValue = {}
         this.tabKeys.forEach(key => {
-          this.innerValue[key] = val ? val[key] : []
+          this.innerValue[key] = val && val[key] ? val[key] : []
         })
-         // transfer 可能还未加载成功
+        // transfer 可能还未加载成功
         this.$nextTick(_ => {
           this.initSelectedData()
         })
@@ -126,7 +127,9 @@ export default {
       return this.getPropByKey(data, tabKey, 'nodeId')
     },
     getLabel(data, tabKey){
-      return this.getPropByKey(data, tabKey, 'label')
+      let label = this.getPropByKey(data, tabKey, 'label')
+      debugger
+      return label
     },
     onClose (item) {
       const list = this.innerValue[item.tabKey]

@@ -38,7 +38,7 @@
       <el-row style="padding: 10px;" v-if="showingPCons.includes(-1)" :gutter="12">
         <el-col :span="4" style="font-size: 12px;">发起人</el-col>
         <el-col :span="18" style="padding-left: 12px;">
-          <fc-org-select ref="condition-org" v-model="initiator" />
+          <fc-org-select ref="condition-org" :tabList="['dep&user']" v-model="initiator" />
         </el-col>
       </el-row>
       <template v-for="(item, index) in pconditions">
@@ -96,7 +96,7 @@
           <el-row style="padding: 10px;"  v-if="value.type === 'start'">
             <el-col :span="4" style="font-size: 12px;">发起人</el-col>
             <el-col :span="18" style="padding-left: 12px;">
-              <fc-org-select ref="start-org" v-model="initiator" />
+              <fc-org-select ref="start-org" :tabList="['dep&user']" v-model="initiator" />
             </el-col>
           </el-row>
           
@@ -128,7 +128,13 @@
                 </div>
               </div>
               <div v-else class="option-box">
-                <fc-org-select ref="approver-org" v-model="orgCollection" :title="getAssignTypeLabel()" buttonType="button" @change="onOrgChange" />
+                <fc-org-select  
+                ref="approver-org" 
+                buttonType="button" 
+                v-model="orgCollection" 
+                :title="getAssignTypeLabel()" 
+                :tabList="fcOrgTabList.includes(approverForm.assigneeType) ? [approverForm.assigneeType] : ['dep']" 
+                @change="onOrgChange" />
               </div>
             </div>
             <div class="option-box" style="border-bottom: 1px solid #e5e5e5;" v-if="approverForm.approvers.length > 1 && !['optional','myself'].includes(approverForm.assigneeType)">
@@ -208,6 +214,7 @@ export default {
   props: [/*当前节点数据*/"value", /*整个节点数据*/"processData"],
   data() {
     return {
+      fcOrgTabList:['dep', 'role', 'user'],
       visible: false,  // 控制面板显隐
       globalFormOperate: null,  // 统一设置节点表单权限
       titleInputVisible: false, // 是否显示标题输入框  startNode 不显示
@@ -222,7 +229,8 @@ export default {
       priorityLength: 0, // 当为条件节点时  显示节点优先级选项的数据
       orgCollection:{
         dep: [],
-        role: []
+        role: [],
+        user: []
       },
       useDirectorProxy: true, // 找不到主管时 上级主管代理审批
       directorLevel: 1,  // 审批主管级别
@@ -239,14 +247,16 @@ export default {
         optionalRange: 'ALL', // USER<最多十个> / ALL / ROLE 
       },
 
-      optionalOptions: [{
+      optionalOptions: [
+        {
           label: '自选一个人',
           value: false
         }, {
           label: '自选多个人',
           value: true
         }],
-        rangeOptions: [{
+        rangeOptions: [
+          {
           label: '全公司',
           value: 'ALL'
         }, {
@@ -256,9 +266,10 @@ export default {
           label: '角色',
           value: 'ROLE'
       }],
-      assigneeTypeOptions:[{
-        label:'指定成员',
-        value: 'user'
+      assigneeTypeOptions:[
+        {
+          label:'指定成员',
+          value: 'user'
         },
         {
           label:'主管',
@@ -390,11 +401,7 @@ export default {
         }else{
           nodeContent +=  `[${t.label} = ${cValue}] ` + '\n'
         }
-
-        const res = {
-          formId: t.formId,
-          conditionValue: cValue
-        }
+        const res = { formId: t.formId, conditionValue: cValue }
         conditions.push(res)
       }, [])
 
@@ -425,6 +432,7 @@ export default {
     approverNodeComfirm() {
       const content = this.getInitatorLabel('approver')
       const formOperates = this.approverForm.formOperates.map(t=>({formId: t.formId, formOperate: t.formOperate}))
+      this.approverForm.approvers = this.orgCollection[this.approverForm.assigneeType]
       Object.assign(this.properties, this.approverForm, {formOperates})
       this.$emit("confirm", this.properties, content)
       this.visible = false;
@@ -486,8 +494,9 @@ export default {
     initApproverNodeData() {
       Object.assign(this.approverForm, this.value.properties)
       const approvers = this.approverForm.approvers
-      if (this.approverForm.approvers) {
-        this.orgCollection = approvers
+      this.resetOrgColl()
+      if (Array.isArray(this.approverForm.approvers)) {
+        this.orgCollection[this.approverForm.assigneeType] = approvers
       }
       this.approverForm.formOperates = this.initFormOperates()
     },

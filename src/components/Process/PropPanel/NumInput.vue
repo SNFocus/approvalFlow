@@ -139,7 +139,6 @@ ellipsis(n) {
   font-size: 12px;
   padding-right: 16px !important;
   ellipsis(2);
-  line-height: 22px;
 }
 
 .range-title {

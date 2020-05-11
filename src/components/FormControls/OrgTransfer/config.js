@@ -22,6 +22,21 @@ async function getDepChildNode ( orgId ) {
   } ) )
 }
 
+async function loadDepOrUser ( node, resolve, loadDep = true ) {
+  if ( node.level === 0 ) { // 根目录
+    const test = await getRootDept()  // 获取根节点
+    return resolve( [test] )
+  }
+  let nodeData = []
+  if ( node.level === 1 ) {
+    nodeData = await getDepChildNode( node.data.deptId )  // 获取部门节点
+  } else if ( !loadDep && node.level === 2 ) {
+    nodeData = ( await GET_PAGE_EMPLOYEE() ).data  // 获取部门下人员
+  } else {
+    nodeData = []
+  }
+  return resolve( nodeData )
+}
 // 获取组织结构根节点
 async function getRootDept () {
   let res = []
@@ -31,6 +46,16 @@ async function getRootDept () {
   } catch ( err ) { }
   return res
 }
+
+function loadDepData ( node, resolve ) {
+  return loadDepOrUser( node, resolve ) // 返回的promise
+}
+
+function loadUserData ( node, resolve ) {
+  return loadDepOrUser( node, resolve, false )  // 返回的promise
+}
+
+
 
 const defaultOption = {
   tabName: '部门',  // 选项卡名称
@@ -42,6 +67,7 @@ const defaultOption = {
   },
   // 生成节点的名称 可选值 string | function
   label: function ( data, node ) {
+    debugger
     return data.hasOwnProperty( 'userId' ) ? data.userName : data.deptName
   },
   // 判断是否为叶子节点 可选值 string | function
@@ -58,21 +84,7 @@ const defaultOption = {
     return !data.hasOwnProperty( 'userId' )
   },
   // 动态请求后台拿到节点数据 返回一个promise
-  onload: async function ( node, resolve ) {
-    if ( node.level === 0 ) { // 根目录
-      const test = await getRootDept()
-      return resolve( [test] )
-    }
-    let nodeData = []
-    if ( node.level === 1 ) {
-      nodeData = await getDepChildNode( node.data.deptId )
-    } else if ( node.level === 2 ) {
-      nodeData = ( await GET_PAGE_EMPLOYEE() ).data
-    } else {
-      nodeData = []
-    }
-    return resolve( nodeData )
-  },
+  onload: loadDepData,
   // 搜索节点方法 
   onsearch: async function ( searchString, resolve, reject ) {
     // const param = { page: 1, limit: 200, searchName: searchString }
@@ -82,4 +94,6 @@ const defaultOption = {
 
 export const DEP_CONFIG = Object.assign( {}, defaultOption )
 export const ROLE_CONFIG = Object.assign( {}, defaultOption, { tabKey: 'role', tabName: '角色' } )
-export const CONFIG_LIST = [DEP_CONFIG, ROLE_CONFIG]
+export const USER_CONFIG = Object.assign( {}, defaultOption, { tabKey: 'user', tabName: '指定人员', load: loadUserData } )
+const DEP_USER_CONFIG = Object.assign( {}, defaultOption, { tabKey: 'dep&user', tabName: '部门和人员', disabled: () => false } )
+export const CONFIG_LIST = [DEP_CONFIG, ROLE_CONFIG, USER_CONFIG, DEP_USER_CONFIG]

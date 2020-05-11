@@ -170,33 +170,18 @@ export default {
     }
   },
   data () {
-    const aloneCheckedData = {}
-    const selectedData = {}
-    const tabConfig = []
-    const tabKeys = []
-    this.tabList.forEach(item => {
-      let key = item, customConf = {}
-      if(typeof item === 'object'){
-        key = item.key
-        customConf = item.config
-      }
-      aloneCheckedData[key] = []
-      selectedData[key] = []
-      const data = CONFIG_LIST.find(t => t.tabKey === key)
-      data && tabConfig.push(Object.assign({}, data, customConf)) && tabKeys.push(key)
-      
-    })
+    
     return {
       searchRes: [],  // 搜索后的结果
-      selectedData,   // 用户手动选择的节点(在tree里面已经显示的节点)
-      aloneCheckedData, // 已有的 但是未在tree中渲染的数据 例如回显时的数据
+      selectedData: [],   // 用户手动选择的节点(在tree里面已经显示的节点)
+      aloneCheckedData: [], // 已有的 但是未在tree中渲染的数据 例如回显时的数据
       isEnough: false,  // 是否选择了足够的人数
       searchString: '',  
       searchMode: false,  // 是否展示搜索面板
       searchLoading: false, 
-      activeTabName: tabKeys[0],
-      tabConfig,
-      tabKeys
+      activeTabName: '',
+      tabConfig: [],
+      tabKeys: []
     }
   },
   computed: {
@@ -343,6 +328,33 @@ export default {
         console.error(e)
         return '执行出错，可联系开发人员'
       }
+    },
+
+
+    dataInit(){
+      this.aloneCheckedData = {}
+      this.selectedData = {}
+      this.tabConfig = []
+      this.tabKeys = []
+      this.tabList.forEach(item => {
+        let key = item, customConf = {}
+        if(typeof item === 'object'){
+          key = item.key
+          customConf = item.config
+        }
+        this.aloneCheckedData[key] = []
+        this.selectedData[key] = []
+        const conf = CONFIG_LIST.find(t => t.tabKey === key)
+        if(conf){
+          const mergedConfig = Object.assign({}, conf, customConf)
+          this.tabConfig.push(mergedConfig)
+          this.tabKeys.push(key)
+          let  data = (this.value ? this.value[key] : [])
+          data=data.map(t => ({ nodeId: mergedConfig.nodeId(t), ...t }))
+          this.$set(this.aloneCheckedData, key, data)
+        }
+      })
+      this.activeTabName = this.tabKeys[0]
     }
   },
   watch: {
@@ -354,12 +366,7 @@ export default {
     show: {
       handler: function (show) {
         if (show) {
-          this.tabConfig.forEach(c => {
-            this.selectedData[c.tabKey] = []
-            const data = (this.value[c.tabKey] || [])
-              .map(t => ({ nodeId: c.nodeId(t), ...t }))
-            this.$set(this.aloneCheckedData, c.tabKey, data)
-          })
+          this.dataInit()
           this.isNumEnough()
         }
       },
