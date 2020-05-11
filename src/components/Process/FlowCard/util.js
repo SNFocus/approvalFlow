@@ -233,6 +233,9 @@ export class NodeUtils {
    * @param { Object  } processData - 流程图的所有节点数据
    */
   static increasePriority ( data, processData ) {
+    if ( data.properties.isDefault ) {  // 默认节点不能修改优先级
+      return
+    }
     // 分支节点数据 包含该分支所有的条件节点
     let prevNode = this.getPreviousNode( data.prevId, processData )
     let branchData = prevNode.conditionNodes
@@ -253,12 +256,16 @@ export class NodeUtils {
     // 分支节点数据 包含该分支所有的条件节点
     let prevNode = this.getPreviousNode( data.prevId, processData )
     let branchData = prevNode.conditionNodes
-    let index = branchData.findIndex( c => c === data )
+    let index = branchData.findIndex( c => c.nodeId === data.nodeId )
     if ( index < branchData.length - 1 ) {
+      let lastNode = branchData[index + 1]
+      if ( lastNode.properties.isDefault ) {  // 默认节点不能修改优先级
+        return
+      }
       // 和后一个数组项交换位置 Array.prototype.splice会返回包含被删除的项的集合（数组）
-      branchData[index + 1].properties.priority = index
+      lastNode.properties.priority = index
       branchData[index].properties.priority = index + 1
-      branchData[index + 1] = branchData.splice( index, 1, branchData[index + 1] )[0]
+      lastNode = branchData.splice( index, 1, lastNode )[0]
     }
   }
   /**
@@ -293,19 +300,19 @@ export class NodeUtils {
   static checkNode ( node, parent ) {
     let valid = true
     const props = node.properties
-    this.isStartNode( node ) 
-    && !props.initiator 
-    && (valid = false) 
+    this.isStartNode( node )
+      && !props.initiator
+      && ( valid = false )
 
-    this.isConditionNode( node ) 
-    && !props.isDefault 
-    && !props.initiator 
-    && isEmptyArray( props.conditions )
-    && (valid = false)
-    
-    this.isApproverNode( node ) 
-    && isEmptyArray( props.approvers )
-    && (valid = false)
+    this.isConditionNode( node )
+      && !props.isDefault
+      && !props.initiator
+      && isEmptyArray( props.conditions )
+      && ( valid = false )
+
+    this.isApproverNode( node )
+      && isEmptyArray( props.approvers )
+      && ( valid = false )
     return valid
   }
   /**
