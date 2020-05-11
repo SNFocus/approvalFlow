@@ -39,7 +39,7 @@
       <el-row style="padding: 10px;" :gutter="12">
         <el-col :span="4" style="font-size: 12px;">发起人</el-col>
         <el-col :span="18" style="padding-left: 12px;">
-          <fc-org-select v-model="initiator" />
+          <fc-org-select ref="start-org" v-model="initiator" />
         </el-col>
       </el-row>
     </section>
@@ -48,7 +48,9 @@
     <section style="height: 100%;" v-if="value && isConditionNode()">
       <el-row style="padding: 10px;" v-if="showingPCons.includes(-1)" :gutter="12">
         <el-col :span="4" style="font-size: 12px;">发起人</el-col>
-        <el-col :span="18" style="padding-left: 12px;"><el-input v-model="initiator" size="small" /></el-col>
+        <el-col :span="18" style="padding-left: 12px;">
+          <fc-org-select ref="condition-org" v-model="initiator" />
+        </el-col>
       </el-row>
       <template v-for="(item,index) in pconditions">
         <!-- 计数 -->
@@ -115,7 +117,7 @@
               </div>
             </div>
             <div v-else class="option-box">
-              <fc-org-select v-model="orgCollection" :title="getAssignTypeLabel()" buttonType="button" @change="onOrgChange" />
+              <fc-org-select ref="approver-org" v-model="orgCollection" :title="getAssignTypeLabel()" buttonType="button" @change="onOrgChange" />
             </div>
           </div>
           <div class="option-box" style="border-bottom: 1px solid #e5e5e5;" v-if="approverForm.approvers.length > 1 && !['optional','myself'].includes(approverForm.assigneeType)">
@@ -368,23 +370,27 @@ export default {
       this.properties.conditions = conditions
       // 发起人虽然是条件 但是这里把发起人放到外部单独判断
       this.properties.initiator = this.initiator
-      this.initiator && (nodeContent = `[发起人: ${this.initiator}]` + nodeContent)
+      this.initiator && (nodeContent = `[发起人: ${this.getInitatorLabel('condition')}]` + nodeContent)
       this.$emit("confirm", this.properties, nodeContent);
       this.visible = false;
+    },
+
+    getInitatorLabel(type){
+      return this.$refs[type + '-org']['selectedLabels']
     },
     /**
      * 开始节点确认保存
      */
     startNodeComfirm() {
       this.properties.initiator = this.initiator
-      this.$emit("confirm", this.properties, this.initiator);
+      this.$emit("confirm", this.properties, this.getInitatorLabel('start'));
       this.visible = false;
     },
     /**
      * 审批节点确认保存
      */
     approverNodeComfirm() {
-      const content = this.getAssignTypeLabel()
+      const content = this.getInitatorLabel('approver')
       const formOperates = this.approverForm.formOperates.map(t=>({formId: t.formId, formOperate: t.formOperate}))
       Object.assign(this.properties, this.approverForm, {formOperates})
       this.$emit("confirm", this.properties, content)
