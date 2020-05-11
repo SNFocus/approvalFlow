@@ -43,17 +43,15 @@
               :class="{ active: searchMode }"
               v-loading="searchLoading"
             >
-              <div class="hidden-tag" @click="searchString = ''">隐藏</div>
-              <div v-for="(item, index) in searchRes" :key="index" class="item" @dblclick="addTransferData(item, activeTabName)">
+              <div class="hidden-tag" @click="searchString = ''">关闭</div>
+              <div v-for="(item, index) in searchRes" :key="index" class="item">
                 <div>
-                  <div>{{ item.empName }}</div>
-                  <div
-                    style="font-size:12px;color:#999;max-width: 280px;"
-                    class="text-ellipsis"
-                  >
-                    {{ item.branchOfficeName + '/' + item.deptName }}
+                  <div>{{ getNodeProp(item, 'label') }}</div>
+                  <div class="text-ellipsis search-res-tip" >
+                    {{ getNodeProp(item, 'searchResTip') }}
                   </div>
                 </div>
+                <el-checkbox @change="checked => checked ? addData(item) : removeData(item, activeTabName, true)"></el-checkbox>
               </div>
             </div>
 
@@ -70,16 +68,14 @@
                   :props="{
                     children: tab_item.children,
                     label: tab_item.label,
-                    isLeaf: tab_item.isLeaf
+                    isLeaf: tab_item.isLeaf,
+                    disabled: tab_item.disabled
                   }"
                   :load="onLoad"
                   node-key="nodeId"
                   :check-strictly="true"
                   @check-change="(data, checked) => onCheckChange(data, checked, tab_item.tabKey)"
                 >
-                  <span class="tree-node" slot-scope="{ node }" >
-                    <span class="node-label" :title="node.label">{{ node.label }}</span>
-                  </span>
                 </el-tree>
               </el-tab-pane>
             </el-tabs>
@@ -101,7 +97,7 @@
                 <span>
                   <!-- <i v-if="item.deptName" class="iconfont iconbumen"></i>
                   <i v-else class="iconfont iconyuangong"></i> &nbsp; -->
-                  <span>{{ tabConfig.find(t => t.tabKey === activeTabName).label(item) }}</span>
+                  <span>{{ getNodeProp(item, 'label') }}</span>
                 </span>
                 <i
                   class="el-icon-delete"
@@ -118,7 +114,7 @@
                 <span>
                   <!-- <i v-if="item.deptName" class="iconfont iconbumen"></i>
                   <i v-else class="iconfont iconyuangong"></i> &nbsp; -->
-                  <span>{{ tabConfig.find(t => t.tabKey === activeTabName).label(item) }}</span>
+                  <span>{{ getNodeProp(item, 'label') }}</span>
                 </span>
                 <i
                   class="el-icon-delete"
@@ -237,7 +233,7 @@ export default {
         return
       }
       this.searchLoading = true
-      const activeConfig = this.tabConfig.find(t => t.tabKey === this.activeTabName)
+      const activeConfig = this.getActiveConf()
       new Promise((resolve, reject) => {
         activeConfig.onsearch(this.searchString, resolve, reject)
       })
@@ -262,21 +258,24 @@ export default {
       })
     },
 
-    addTransferData (data, tabKey) {
+    addData (data) {
+      const tabKey = this.activeTabName
       const tree = this.$refs[tabKey][0]
       tree.setChecked(data.nodeId, true)
-      if (!tree.getCheckedKeys(data).includes(data.nodeId)) {
-        this.aloneCheckedData[tabKey].push(data)
-      }
+      !tree.getCheckedKeys(data).includes(data.nodeId)
+      && !this.aloneCheckedData[tabKey].find(t => t.nodeId === data.nodeId)
+      && this.aloneCheckedData[tabKey].push(data)
     },
 
-    isNumEnough () {
-      let count = 0
-      for (const type of this.tabList) {
-        count += this.selectedData[type].length
-        count += this.aloneCheckedData[type].length
+    removeData (data, tabKey, fromAloneData = false) {
+      if (fromAloneData) {
+        const index = this.aloneCheckedData[tabKey].findIndex(t => t.nodeId === data.nodeId)
+        if (index > -1) {
+          this.aloneCheckedData[tabKey].splice(index, 1)
+        }
+      } else {
+        this.$refs[tabKey][0].setChecked(data.nodeId, false)
       }
-      this.isEnough = count >= this.maxNum
     },
 
     removeAll () {
@@ -290,15 +289,13 @@ export default {
       }
     },
 
-    removeData (data, tabKey, fromAloneData = false) {
-      if (fromAloneData) {
-        const index = this.aloneCheckedData[tabKey].findIndex(t => t.nodeId === data.nodeId)
-        if (index > -1) {
-          this.aloneCheckedData[tabKey].splice(index, 1)
-        }
-      } else {
-        this.$refs[tabKey][0].setChecked(data.nodeId, false)
+    isNumEnough () {
+      let count = 0
+      for (const type of this.tabList) {
+        count += this.selectedData[type].length
+        count += this.aloneCheckedData[type].length
       }
+      this.isEnough = count >= this.maxNum
     },
 
     closeTransfer () {
@@ -318,6 +315,30 @@ export default {
       }
       this.$emit('confirm', res)
       this.closeTransfer()
+    },
+
+    getActiveConf(){
+      return this.tabConfig.find(t => t.tabKey === this.activeTabName)
+    },
+
+    getConfProp(propName){
+      const conf = this.getActiveConf()
+      return conf ? conf[propName] : null
+    },
+
+    getNodeProp(data, propName){
+      try{
+        const prop = this.getConfProp(propName)
+        if(typeof prop === 'string'){
+          return data[prop]
+        }
+        if(typeof prop === 'function'){
+          return prop(data)
+        }
+      }catch(e){
+        console.error(e)
+        return '执行出错，可联系开发人员'
+      }
     }
   },
   watch: {
@@ -352,6 +373,7 @@ export default {
   top: 0;
   left: 0;
   z-index: 2999;
+  line-height: 32px;
 
   > .mask {
     position: absolute;
@@ -424,14 +446,21 @@ export default {
     }
 
     .item{
-        padding: 8px 14px;
+        padding: 4px 14px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        line-height 1.5
         &:hover{
             background-color: #ecf5ff;
             color: #66b1ff;
             cursor: pointer;
+        }
+
+        .search-res-tip{
+          font-size:12px;
+          color:#999;
+          max-width: 280px;
         }
     }
   }

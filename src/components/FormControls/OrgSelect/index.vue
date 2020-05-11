@@ -96,7 +96,8 @@ export default {
           this.innerValue[key] = val ? val[key] : []
         })
       },
-      immediate: true
+      immediate: true,
+      deep: true
     }
   },
   computed:{
@@ -150,6 +151,7 @@ export default {
     padding-left: 1rem;
     font-size: 12px;
     height: 32px;
+    line-height: 32px;
     border-radius: 4px;
     background: white;
     color #606266

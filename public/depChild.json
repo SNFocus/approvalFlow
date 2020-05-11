@@ -4,27 +4,27 @@
   "data": [
     {
       "deptId": 2,
-      "deptName": "子节点1",
+      "deptName": "xxx财务部",
       "parentDeptId": 1
     },
     {
       "deptId": 3,
-      "deptName": "子节点2",
+      "deptName": "xxx行政部",
       "parentDeptId": 1
     },
     {
       "deptId": 4,
-      "deptName": "子节点3",
+      "deptName": "xxx研发部",
       "parentDeptId": 1
     },
     {
       "deptId": 5,
-      "deptName": "子节点4",
+      "deptName": "xxx工程部",
       "parentDeptId": 1
     },
     {
       "deptId": 6,
-      "deptName": "子节点5",
+      "deptName": "xxx后勤部",
       "parentDeptId": 1
     }
   ]

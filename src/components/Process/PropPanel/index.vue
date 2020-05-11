@@ -38,7 +38,9 @@
     <section style="height: 100%;" v-if="value && value.type === 'start'">
       <el-row style="padding: 10px;" :gutter="12">
         <el-col :span="4" style="font-size: 12px;">发起人</el-col>
-        <el-col :span="18" style="padding-left: 12px;"><el-input v-model="initiator" size="small" /></el-col>
+        <el-col :span="18" style="padding-left: 12px;">
+          <fc-org-select v-model="initiator" />
+        </el-col>
       </el-row>
     </section>
 
@@ -87,7 +89,7 @@
       <el-tabs v-model="activeName" style="height:100%;">
         <el-tab-pane label="设置审批人" name="approverConf">
           <div style="padding: 12px;">
-            <el-radio-group v-model="approverForm.assigneeType" style="line-height: 32px;">
+            <el-radio-group v-model="approverForm.assigneeType" style="line-height: 32px;" @change="resetApprover">
               <el-radio v-for="item in assigneeTypeOptions" :label="item.value" :key="item.value" class="radio-item">{{item.label}}</el-radio>
             </el-radio-group>
           </div>
@@ -102,8 +104,18 @@
                   :disabled="item.disabled"></el-option>
               </el-select>
             </div>
+            <div v-else-if="approverForm.assigneeType === 'director'">
+              <div style="font-size: 14px;padding-left: 1rem;">发起人的 
+                <el-select v-model="directorLevel" size="small">
+                  <el-option v-for="item in 5" :key="item" :label="item === 1 ? '直接主管': `第${item}级主管`" :value="item"
+                  ></el-option>
+                </el-select>
+                <br>
+                <el-checkbox v-model="useDirectorProxy" style="margin-top: 1rem;">找不到主管时，由上级主管代审批</el-checkbox>
+              </div>
+            </div>
             <div v-else class="option-box">
-              <el-button type="primary" icon="el-icon-plus" size="small" @click="addMenber"> 添加{{getAssignTypeLabel()}} </el-button>
+              <fc-org-select v-model="orgCollection" :title="getAssignTypeLabel()" buttonType="button" @change="onOrgChange" />
             </div>
           </div>
           <div class="option-box" style="border-bottom: 1px solid #e5e5e5;" v-if="approverForm.approvers.length > 1 && !['optional','myself'].includes(approverForm.assigneeType)">
@@ -192,7 +204,12 @@ export default {
       // 发起人  start节点和condition节点需要
       initiator:null, 
       priorityLength: 0, // 当为条件节点时  显示节点优先级选项的数据
-      
+      orgCollection:{
+        dep: [],
+        role: []
+      },
+      useDirectorProxy: true, // 找不到主管时 上级主管代理审批
+      directorLevel: 1,  // 审批主管级别
       approverForm: {
         approvers:[], // 审批人集合
         assigneeType: "user", // 指定审批人
@@ -260,17 +277,20 @@ export default {
     Clickoutside
   },
   methods: {
+    resetApprover(){
+      for(let key in this.orgCollection){
+        this.orgCollection[key] = []
+      }
+    },
+    onOrgChange(data){
+      console.log(data)
+    },
     timeTangeLabel(item){
       const index = ['fc-time-duration','fc-date-duration'].findIndex(t => t === item.tag)
       if(index > -1){
         return '时长' + ['(小时)','(天)'][index]
       }else{  
         return item.label
-      }
-    },
-    addMenber(){
-      if(this.approverForm.assigneeType){
-        this.$message.success('打开组织机构弹窗')
       }
     },
     getAssignTypeLabel(){
@@ -467,6 +487,11 @@ export default {
     border-bottom : 1px solid #eee;
   }
 }
+
+.approver-pane > .el-tabs > .el-tabs__content{
+  height: calc(100% - 40px);
+  overflow: scroll;
+}
 </style>
 <style lang="stylus" scoped>
 .drawer {
@@ -490,11 +515,6 @@ export default {
 
   >>> .el-tabs__header {
     margin-bottom: 0;
-  }
-
-  >>> .el-tabs__content {
-    height: calc(100% - 40px);
-    overflow: scroll;
   }
 }
 
