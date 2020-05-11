@@ -137,7 +137,7 @@
                 @change="onOrgChange" />
               </div>
             </div>
-            <div class="option-box" style="border-bottom: 1px solid #e5e5e5;" v-if="approverForm.approvers.length > 1 && !['optional','myself'].includes(approverForm.assigneeType)">
+            <div class="option-box" style="border-bottom: 1px solid #e5e5e5;" v-if="approverForm.approvers && approverForm.approvers.length > 1 && !['optional','myself'].includes(approverForm.assigneeType)">
               <p>多人审批时采用的审批方式</p>
               <el-radio v-model="approverForm.counterSign" :label="true" class="radio-item">会签（须所有审批人同意）</el-radio>
               <br>
@@ -214,7 +214,7 @@ export default {
   props: [/*当前节点数据*/"value", /*整个节点数据*/"processData"],
   data() {
     return {
-      fcOrgTabList:['dep', 'role', 'user'],
+      fcOrgTabList:['dep', 'role', 'user', 'position'],
       visible: false,  // 控制面板显隐
       globalFormOperate: null,  // 统一设置节点表单权限
       titleInputVisible: false, // 是否显示标题输入框  startNode 不显示
@@ -230,7 +230,8 @@ export default {
       orgCollection:{
         dep: [],
         role: [],
-        user: []
+        user: [],
+        position: []
       },
       useDirectorProxy: true, // 找不到主管时 上级主管代理审批
       directorLevel: 1,  // 审批主管级别

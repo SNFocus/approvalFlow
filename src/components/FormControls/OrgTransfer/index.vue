@@ -371,7 +371,7 @@ export default {
     },
 
     tabList:{
-      handler: function(){
+      handler: function(val){
         this.dataInit()
       },
       immediate: true,
