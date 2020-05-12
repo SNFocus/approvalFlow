@@ -317,7 +317,7 @@ export default {
     },
     resetOrgColl(){
       for(let key in this.orgCollection){
-        this.orgCollection[key] = []
+        this.$set(this.orgCollection, key, [])
       }
     },
     onOrgChange(data){

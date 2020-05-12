@@ -72,12 +72,8 @@ export default {
     },
   },
   data(){
-    const tabKeys = []
-    this.tabList.forEach(t => {
-      tabKeys.push(typeof t === 'string' ? t : t.key)
-    })
     return {
-      tabKeys,
+      tabKeys:[],
       show: false,
       innerValue: null,
       selectedData: []
@@ -87,17 +83,18 @@ export default {
     value: {
       handler:function (val) {
         if(!val) return
-        this.innerValue = {}
-        this.tabKeys.forEach(key => {
-          this.innerValue[key] = val && val[key] ? val[key] : []
-        })
-        // transfer 可能还未加载成功
-        this.$nextTick(_ => {
-          this.initSelectedData()
-        })
+        this.reloadCmpData()
       },
       immediate: true,
       deep: true
+    },
+    tabList: {
+      handler:function (val) {
+        this.tabKeys = []
+        val.forEach(t => this.tabKeys.push(typeof t === 'string' ? t : t.key) )
+        this.reloadCmpData()
+      },
+      immediate: true,
     }
   },
   computed:{
@@ -106,6 +103,16 @@ export default {
     }
   },
   methods:{
+    reloadCmpData(){
+      this.innerValue = {}
+      this.tabKeys.forEach(key => {
+        this.innerValue[key] = this.value && this.value[key] ? this.value[key] : []
+      })
+      // transfer 可能还未加载成功
+      this.$nextTick(_ => {
+        this.initSelectedData()
+      })
+    },
     initSelectedData(){
       this.selectedData = this.tabKeys.reduce((res, key) => {
         return res.concat(this.innerValue[key].map(t => ({

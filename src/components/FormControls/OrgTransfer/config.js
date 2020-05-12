@@ -85,7 +85,7 @@ const defaultOption = {
 
 export const DEP_CONFIG = Object.assign( {}, defaultOption )
 export const ROLE_CONFIG = Object.assign( {}, defaultOption, { tabKey: 'role', tabName: '角色' } )
-export const USER_CONFIG = Object.assign( {}, defaultOption, { tabKey: 'user', tabName: '指定人员', onload: loadUserData } )
+export const USER_CONFIG = Object.assign( {}, defaultOption, { tabKey: 'user', tabName: '指定人员', onload: loadUserData, disabled: ( data, node ) => !data.hasOwnProperty( 'userId' ) } )
 const DEP_USER_CONFIG = Object.assign( {}, defaultOption, { tabKey: 'dep&user', tabName: '部门和人员', onload: loadUserData, disabled: () => false } )
 const POSITION_CONFIG = Object.assign( {}, defaultOption, { tabKey: 'position', tabName: '岗位' } )
 export const CONFIG_LIST = [DEP_CONFIG, ROLE_CONFIG, USER_CONFIG, DEP_USER_CONFIG, POSITION_CONFIG]

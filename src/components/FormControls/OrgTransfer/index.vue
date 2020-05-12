@@ -295,6 +295,7 @@ export default {
 
     closeTransfer () {
       this.$emit('update:show', false)
+      this.tabKeys = []
       this.isEnough = false
       this.searchString = ''
     },
@@ -338,23 +339,20 @@ export default {
       this.selectedData = {}
       this.tabConfig = []
       this.tabKeys = []
+      const getTabProp = tabItem => typeof tabItem === 'object' ? [tabItem.key, tabItem.config] : [tabItem, {}]
+      const initDefaultData = (key, mergedConfig) => {
+        this.tabConfig.push(mergedConfig)
+        this.tabKeys.push(key)
+        let  data = this.value && this.value[key] ? this.value[key] : []
+        data = data.map(t => ({ nodeId: mergedConfig.nodeId(t), ...t }))
+        this.$set(this.aloneCheckedData, key, data)
+      }
       this.tabList.forEach(item => {
-        let key = item, customConf = {}
-        if(typeof item === 'object'){
-          key = item.key
-          customConf = item.config
-        }
+        const [key, customConf] = getTabProp(item)
         this.$set(this.aloneCheckedData, key, [])
         this.$set(this.selectedData, key, [])
-        const conf = CONFIG_LIST.find(t => t.tabKey === key)
-        if(conf){
-          const mergedConfig = Object.assign({}, conf, customConf)
-          this.tabConfig.push(mergedConfig)
-          this.tabKeys.push(key)
-          let  data = (this.value ? this.value[key] : [])
-          data=data.map(t => ({ nodeId: mergedConfig.nodeId(t), ...t }))
-          this.$set(this.aloneCheckedData, key, data)
-        }
+        const defaultConf = CONFIG_LIST.find(t => t.tabKey === key)
+        defaultConf && initDefaultData(key, Object.assign({}, defaultConf, customConf))
       })
       this.activeTabName = this.tabKeys[0]
     }
@@ -374,7 +372,7 @@ export default {
 
     tabList:{
       handler: function(val){
-        this.dataInit()
+        this.dataInit() // tablist 比show 延后 
       },
       immediate: true,
       deep: true
