@@ -322,6 +322,7 @@ export const selectComponents = [{
   buttonType: 'button',
   title: '组织机构',
   searchable: true,
+  style: { width: '100%' },
   maxNum: 99,
   tagConfig: {
     type: 'info',

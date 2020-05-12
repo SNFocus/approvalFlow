@@ -3,17 +3,18 @@
     <div class="tags">
       <el-button v-if="buttonType === 'button'" size="small" type="primary" icon="el-icon-plus" @click="show = true">添加{{title}}</el-button>
       
-      <div v-if="buttonType === 'input'" class="input-box"  @click="show = true">{{selectedLabels || '点击选择' + title}}</div>
-      <div v-if="buttonType === 'button'" style="margin-top: 6px;line-height: 1;">
-        <el-tag
-          v-bind="tagConfig"
-          class="org-tag"
-          v-for="item in selectedData"
-          :key="item.key"
-          @close="onClose(item)">
-          {{item.label}}
-        </el-tag>
+      <div class="input-box" :class="{'as-input': buttonType === 'input'}"  @click="show = true">
+        <!-- {{selectedLabels || '点击选择' + title}} -->
+          <el-tag
+            v-bind="tagConfig"
+            class="org-tag"
+            v-for="item in selectedData"
+            :key="item.key"
+            @close="onClose(item)">
+            {{item.label}}
+          </el-tag>
       </div>
+      
     </div>
     <fc-org-transfer
       ref="transfer"
@@ -157,12 +158,12 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .tags {
-  .input-box{
+  .input-box.as-input{
     border: 1px solid #DCDFE6;
     padding-left: 1rem;
     font-size: 12px;
-    height: 32px;
-    line-height: 32px;
+    min-height: 32px;
+    line-height: 30px;
     border-radius: 4px;
     background: white;
     color #606266
@@ -175,6 +176,7 @@ export default {
     text-overflow ellipsis
     position relative
     padding-right 1rem
+    vertical-align middle
 
     >>> .el-tag__close{
       position: absolute;

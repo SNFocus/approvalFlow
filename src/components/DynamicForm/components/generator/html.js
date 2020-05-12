@@ -169,14 +169,14 @@ const tags = {
     return `<${el.tag} ${vModel} ${placeholder} ${step} ${stepStrictly} ${precision} ${controlsPosition} ${min} ${max} ${disabled}></${el.tag}>`
   },
   'fc-org-select': function ( el ) {
-    const { disabled, vModel, placeholder } = attrBuilder( el )
+    const { disabled, vModel, placeholder, width } = attrBuilder( el )
     const tabList = Array.isArray( el.tabList ) ? `:tabList='${JSON.stringify( el.tabList )}'` : ''
     const title = el.title ? `title="${el.title}"` : ''
     const searchable = el.searchable ? `:searchable="${el.searchable}"` : ''
     const maxNum = el.maxNum ? `:maxNum="${el.maxNum}"` : ''
     const tagConfig = el.tagConfig ? `:tagConfig='${JSON.stringify( el.tagConfig )}'` : ''
     const buttonType = el.buttonType ? `buttonType='${el.buttonType}'` : ''
-    return createTagHTML( el.tag, vModel, tabList, title, searchable, maxNum, tagConfig, buttonType, disabled, placeholder )
+    return createTagHTML( el.tag, vModel, tabList, title, searchable, maxNum, tagConfig, buttonType, disabled, placeholder, width )
   },
   'fc-amount': function ( el ) {
     const tag = this['el-input-number']( el )
@@ -318,18 +318,16 @@ const tags = {
 }
 
 function attrBuilder ( el ) {
+  debugger
   return {
     vModel: `v-model="${confGlobal.formModel}.${el.vModel}"`,
     clearable: el.clearable ? 'clearable' : '',
     placeholder: el.placeholder ? `placeholder="${el.placeholder}"` : '',
-    width: el.style && el.style.width ? ':style="{width: \'100%\'}"' : '',
+    width: el.style && el.style.width ? `:style="{width: '${el.style.width}'}"` : '',
     disabled: el.disabled ? ':disabled=\'true\'' : ''
   }
 }
-function isVmodelFromRow ( vmodel ) {
-  // 在rowContainer中 下拉 级联 多选 单选这种有options的组件 需要进一步判断 
-  return /\w+\[index\].+/.test( vmodel )
-}
+
 // el-input innerHTML
 function buildElInputChild ( conf ) {
   const children = []
