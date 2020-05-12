@@ -113,6 +113,7 @@ export default {
         this.initSelectedData()
       })
     },
+
     initSelectedData(){
       this.selectedData = this.tabKeys.reduce((res, key) => {
         return res.concat(this.innerValue[key].map(t => ({
@@ -122,6 +123,7 @@ export default {
         })))
       }, [])
     },
+
     getPropByKey(data, tabKey, key){
       const transfer = this.$refs['transfer']
       if(transfer){
@@ -130,18 +132,22 @@ export default {
         return ''
       }
     },
+
     getKey(data, tabKey){
       return this.getPropByKey(data, tabKey, 'nodeId')
     },
+
     getLabel(data, tabKey){
       return this.getPropByKey(data, tabKey, 'label')
     },
+
     onClose (item) {
       const list = this.innerValue[item.tabKey]
       const index = list.findIndex(t => this.getKey(t, item.tabKey) === item.key)
       index > -1 && list.splice(index, 1)
       this.$emit('change', this.innerValue)
     },
+    
     onConfirm (data) {
       this.innerValue = data
       this.$emit('change', this.innerValue)
