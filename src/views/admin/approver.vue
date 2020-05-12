@@ -85,9 +85,10 @@ export default {
       Promise.all([p1, p2, p3])
       .then(res => {
         const param = {
-          userTasks: res[1].formData,
-          approvalForm: JSON.stringify(res[1].formData),
-          expandAttr: Object.assign({}, res[0].formData, getCmpData('advancedSetting'))
+          basicSetting: res[0].formData,
+          processData: res[2].formData,
+          formData: res[1].formData,
+          expandAttr: getCmpData('advancedSetting')
         }
         this.sendServer(param)
       })

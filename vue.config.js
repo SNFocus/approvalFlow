@@ -7,7 +7,7 @@ function resolve ( dir ) {
 module.exports = {
   runtimeCompiler: true,
   devServer: {
-    port: 8084
+    port: 8088
   },
   css: {
     loaderOptions: {
