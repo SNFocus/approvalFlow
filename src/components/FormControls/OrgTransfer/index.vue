@@ -54,7 +54,7 @@
               type="border-card"
               style="height:100%;overflow:auto;"
             >
-              <el-tab-pane v-for="tab_item in tabConfig" :name="tab_item.tabKey" :label="tab_item.tabName" :key="tab_item.tabKey">
+              <el-tab-pane v-for="(tab_item, idx) in tabConfig" :name="tab_item.tabKey" :label="tab_item.tabName" :key="idx">
                 <el-tree
                   :ref="tab_item.tabKey"
                   lazy
@@ -84,8 +84,8 @@
           <div class="transfer-pane__body shadow right-pane">
             <template v-for="type in tabKeys">
               <div
-                v-for="(item) in selectedData[type]"
-                :key="type+ item.nodeId"
+                v-for="(item, index) in selectedData[type]"
+                :key="type + index"
                 class="selected-item"
               >
                 <span>
@@ -101,8 +101,8 @@
             </template>
             <template v-for="type in tabKeys">
              <div
-                v-for="item in aloneCheckedData[type]"
-                :key="'alone' + type + item.nodeId"
+                v-for="(item, index) in aloneCheckedData[type]"
+                :key="'alone' + type + index"
                 class="selected-item"
               >
                 <span>
@@ -202,9 +202,14 @@ export default {
   },
   methods: {
     onLoad (node, resolve) {
-      this.tabConfig
+      const conf= this.tabConfig
       .find(t => t.tabKey === this.activeTabName)
-      .onload(node, resolve)
+      // load 方法返回一个promise
+      conf.onload(node)
+      .then(res => {
+        const nodes = res.map( t => ( { nodeId: conf.nodeId(t), ...t } ) )
+        resolve(nodes)
+      })
       .then(res=>{
         for (const tabKey of this.tabKeys) {
          const tree = this.$refs[tabKey][0]
@@ -240,7 +245,11 @@ export default {
       }
       this.$nextTick(() => {
         const tree = this.$refs[tabKey][0]
-        this.$set(this.selectedData, this.activeTabName, tree.getCheckedNodes())
+        const nodes = tree.getCheckedNodes().map(t => {
+          !t.nodeId && (t.nodeId = this.getNodeProp(t, 'nodeId', this.activeTabName))
+          return t
+        })
+        this.$set(this.selectedData, this.activeTabName,nodes )
         this.isNumEnough()
         this.$forceUpdate()
       })
@@ -258,11 +267,9 @@ export default {
     removeData (data, tabKey, fromAloneData = false) {
       if (fromAloneData) {
         const index = this.aloneCheckedData[tabKey].findIndex(t => t.nodeId === data.nodeId)
-        if (index > -1) {
-          this.aloneCheckedData[tabKey].splice(index, 1)
-        }
+        index > -1 && this.aloneCheckedData[tabKey].splice(index, 1)
       } else {
-        this.$refs[tabKey][0].setChecked(data.nodeId, false)
+        this.$refs[tabKey][0].setChecked(data.nodeId, false)  // 触发onCheckChange
       }
     },
 
@@ -288,10 +295,6 @@ export default {
 
     closeTransfer () {
       this.$emit('update:show', false)
-      Object.keys(this.selectedData).forEach(key => {
-        this.selectedData = {}
-        this.aloneCheckedData = {}
-      })
       this.isEnough = false
       this.searchString = ''
     },
@@ -330,7 +333,6 @@ export default {
       }
     },
 
-
     dataInit(){
       this.aloneCheckedData = {}
       this.selectedData = {}
@@ -365,7 +367,7 @@ export default {
 
     show: {
       handler: function (show) {
-        show && this.isNumEnough()
+        show && this.dataInit() && this.isNumEnough()
       },
       immediate: true
     },

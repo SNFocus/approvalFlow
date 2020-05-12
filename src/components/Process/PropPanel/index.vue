@@ -487,7 +487,7 @@ export default {
     },
 
     initInitiator(){
-      this.initiator = this.value.initiator
+      this.properties.initiator = this.value.properties.initiator
     },
         /**
      * 初始化审批节点所需数据

@@ -5,7 +5,7 @@ import { GET_DEPT_ROOT, GET_DEPT_TREE, GET_USER_BY_DEPT, GET_PAGE_EMPLOYEE } fro
 const toHump = name => name.replace( /\_(\w)/g, function ( all, letter ) {
   return letter.toUpperCase()
 } )
-
+// 需要自行设置nodeID  重要！！！
 async function getDepChildNode ( orgId ) {
   const promises = [GET_DEPT_TREE( { orgId } )]
   let res = []
@@ -16,43 +16,37 @@ async function getDepChildNode ( orgId ) {
   const nodes = res.reduce( ( p, c ) => {
     return [...p, ...c.data]
   }, [] )
-  return nodes.map( t => ( {
-    nodeId: t.userId || t.deptId,
-    ...t
-  } ) )
+  return nodes
 }
-
-async function loadDepOrUser ( node, resolve, loadDep = true ) {
+// 需要返回一个promise
+async function loadDepOrUser ( node, loadDep = true ) {
+  let nodeData = []
   if ( node.level === 0 ) { // 根目录
     const test = await getRootDept()  // 获取根节点
-    return resolve( [test] )
-  }
-  let nodeData = []
-  if ( node.level === 1 ) {
+    nodeData = [test]
+  } else if ( node.level === 1 ) {
     nodeData = await getDepChildNode( node.data.deptId )  // 获取部门节点
   } else if ( !loadDep && node.level === 2 ) {
     nodeData = ( await GET_PAGE_EMPLOYEE() ).data  // 获取部门下人员
-  } else {
-    nodeData = []
   }
-  return resolve( nodeData )
+  return nodeData
 }
 // 获取组织结构根节点
+// 需要自行设置nodeID  重要！！！
 async function getRootDept () {
   let res = []
   try {
     res = ( await GET_DEPT_ROOT() ).data
-    res.nodeId = res.deptId
   } catch ( err ) { }
   return res
 }
 
-function loadDepData ( node, resolve ) {
-  return loadDepOrUser( node, resolve ) // 返回的promise
+function loadDepData ( node ) {
+  return loadDepOrUser( node ) // 返回的promise
 }
 
-function loadUserData ( node, resolve ) {
-  return loadDepOrUser( node, resolve, false )  // 返回的promise
+function loadUserData ( node ) {
+  return loadDepOrUser( node, false )  // 返回的promise
 }
 
 const defaultOption = {
