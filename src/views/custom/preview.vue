@@ -10,6 +10,7 @@ export default {
   mounted() {
     let { jsCode, htmlCode, cssCode } = this.$route.params.formData
     let main = eval(`(${jsCode.replace("export default", "")})`);
+    debugger
     main.template = `<div style="padding:3rem 2rem 1rem;">${htmlCode}</div>`;
     let Form = Vue.extend({
       components: {

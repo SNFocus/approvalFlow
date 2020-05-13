@@ -20,7 +20,7 @@
         </div>
         <div class="ghost-step step" :style="{transform: `translateX(${steps.findIndex(t => t.key === activeStep) * 100}%)`}"></div>
       </div>
-      <el-button size="small" class="publish-btn" @click="publish">发 布</el-button>
+      <el-button size="small" class="publish-btn" @click="publish">发布</el-button>
     </header>
     <section class="page__content">
       <BasicSetting v-show="activeStep === 'basicSetting'" tabName="basicSetting" ref="basicSetting" /> 
