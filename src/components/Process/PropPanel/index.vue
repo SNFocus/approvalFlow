@@ -431,9 +431,17 @@ export default {
      * 审批节点确认保存
      */
     approverNodeComfirm() {
-      const content = this.getInitatorLabel('approver')
+      const assigneeType = this.approverForm.assigneeType
+      let content = ''
+      if (['optional','myself'].includes(assigneeType)) {
+        content = this.assigneeTypeOptions.find(t => t.value === assigneeType).label
+      } else if('director' === assigneeType){
+        content = this.directorLevel === 1 ? '直接主管' : `第${this.directorLevel}级主管`
+      } else{
+        content = this.getInitatorLabel('approver')
+      }
       const formOperates = this.approverForm.formOperates.map(t=>({formId: t.formId, formOperate: t.formOperate}))
-      this.approverForm.approvers = this.orgCollection[this.approverForm.assigneeType]
+      this.approverForm.approvers = this.orgCollection[assigneeType]
       Object.assign(this.properties, this.approverForm, {formOperates})
       this.$emit("confirm", this.properties, content)
       this.visible = false;
