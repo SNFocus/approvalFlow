@@ -171,6 +171,9 @@
               <template slot="append">个字符</template>
             </el-input>
           </el-form-item>
+          <el-form-item v-if="activeData.actionText !== undefined" label="动作文字">
+            <el-input v-model="activeData.actionText" placeholder="请输入动作文字" />
+          </el-form-item>
           <!-- <el-form-item v-if="activeData['active-text'] !== undefined" label="开启提示">
             <el-input v-model="activeData['active-text']" placeholder="请输入开启提示" />
           </el-form-item>
@@ -239,7 +242,7 @@
           </el-form-item>
           <!-- <el-form-item v-if="activeData.action !== undefined" label="上传地址">
             <el-input v-model="activeData.action" placeholder="请输入上传地址" clearable />
-          </el-form-item>-->
+          </el-form-item> -->
           <el-form-item v-if="activeData['list-type'] !== undefined" label="列表类型">
             <el-radio-group v-model="activeData['list-type']" size="small">
               <el-radio-button label="text">text</el-radio-button>

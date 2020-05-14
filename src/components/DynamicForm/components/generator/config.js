@@ -510,6 +510,7 @@ export const selectComponents = [{
 
 export const layoutComponents = [{
   layout: 'rowFormItem',
+  rowType: 'layout',
   tagIcon: 'row',
   type: 'default',
   justify: 'start',
@@ -517,6 +518,18 @@ export const layoutComponents = [{
   label: '布局容器',
   layoutTree: true,
   children: [],
+},
+{
+  layout: 'rowFormItem',
+  rowType: 'table',
+  tagIcon: 'row',
+  type: 'default',
+  justify: 'start',
+  align: 'top',
+  label: '表格/明细',
+  layoutTree: true,
+  children: [],
+  actionText: '添加'
 }]
 
 export const commonComponents = [...inputComponents, ...selectComponents, ...layoutComponents]

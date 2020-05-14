@@ -10,7 +10,6 @@ import '@/components/DynamicForm/icons'
 import FormControls from './components/FormControls/index.js'
 Vue.use( FormControls )
 Vue.use( ElementUI );
-Vue.prototype.$compile = Vue.compile
 
 Vue.config.productionTip = false
 

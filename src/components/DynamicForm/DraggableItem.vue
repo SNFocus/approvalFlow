@@ -63,6 +63,12 @@ const layouts = {
             {child}
           </draggable>
           { components.itemBtns.apply(this, arguments)}
+          {
+            element.rowType === 'table' && 
+              <div style="text-align: center;background: white;color: #4e79ff;padding: .4rem 1rem;">
+                <i class="el-icon-plus"></i> {element.actionText}
+              </div>
+          } 
         </el-row>
       </el-col>
     )
