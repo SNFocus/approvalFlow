@@ -1,10 +1,13 @@
 <template>
-<div>
+<div  class="fc-table-box">
 <table border="1" cellpadding="0" class="fc-table">
   <thead class="header row">
     <th  class="cell index"></th>
-    <th v-for="head in tableData" :key="head.formId"  class="cell">
-      <div class="title" :title="head.label">{{head.label}}</div>
+    <th v-for="head in tableData" :key="head.formId"  class="cell" :class="{required: head.required}">
+      <div class="title" :title="head.label">
+        <i class="required-label">*</i>
+        {{head.label}}
+      </div>
     </th>
   </thead>
   <tbody class="body">
@@ -16,7 +19,18 @@
         </el-popconfirm>
       </td>
       <td v-for="(cell, cidx) in row" :key="cidx"  class="cell">
-        <template v-if="cell.tag === 'el-upload'">
+        <!-- 单选框组 多选框组 下拉选择 需要自行添加options -->
+        <template v-if="['el-select', 'el-checkbox-group','el-radio-group'].includes(cell.tag)">
+          <component 
+          :is="cell.tag" 
+          v-model="cell.value" 
+          v-bind="getConfById(cell.formId)">
+            <template v-for="(opt, oindex) in cell.options">
+              <component :is="cell.tag.replace('-group', '')" :label="opt.label" :key="oindex" :value="opt.value"></component>
+            </template>
+          </component>
+        </template>
+        <template v-else-if="cell.tag === 'el-upload'">
           <el-upload
             v-bind="getConfById(cell.formId)"
             :file-list="[]">
@@ -35,6 +49,7 @@
 <script>
 import { commonComponents } from '../../components/DynamicForm/components/generator/config'
 import { testProp, useableProps } from './config'
+import schema from 'async-validator' // element-ui 表单验证用到的依赖
 // useableProps 需要的组件属性 很多属性在表格中没用 需要过滤
 export default {
   props:{
@@ -101,8 +116,6 @@ export default {
     border 1px solid #e5e5e5
   }
 
-  
-
   .body{
     .row{
       &:hover{
@@ -122,7 +135,6 @@ export default {
 
       > div{
         min-height  40px
-        line-height 40px
         position relative
         width 100%
       }
@@ -156,6 +168,15 @@ export default {
         overflow hidden
         text-overflow ellipsis
       }
+
+      .required-label{
+        display none
+        color #da5858
+      }
+
+      &.required .required-label{
+        display inline
+      }
     }
   }
 
@@ -176,6 +197,16 @@ export default {
 .fc-table >>> {
   .el-input__inner, .el-textarea__inner{
     border none
+    line-height 1
+    min-width 110px
+    padding-left 10px
+    padding-right 10px
+  }
+
+  .el-upload--text{
+    padding-top 6px
+    height 100%
+    width 100%
   }
 }
 </style>
