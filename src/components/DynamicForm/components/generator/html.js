@@ -318,7 +318,6 @@ const tags = {
 }
 
 function attrBuilder ( el ) {
-  debugger
   return {
     vModel: `v-model="${confGlobal.formModel}.${el.vModel}"`,
     clearable: el.clearable ? 'clearable' : '',

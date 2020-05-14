@@ -534,7 +534,6 @@ export const layoutComponents = [{
 
 export const commonComponents = [...inputComponents, ...selectComponents, ...layoutComponents]
   .map( t => Object.assign( { cmpType: 'common' }, t ) )
-
 const getConfigByTag = ( targetList, tag ) => targetList.find( t => t.tag === tag )
 const copyConfigAsCustom = ( rowConf, childrenConf ) => {
   const clone = ( target, conf = {} ) => {
