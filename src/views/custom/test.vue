@@ -19,16 +19,29 @@
         </el-popconfirm>
       </td>
       <td v-for="(cell, cidx) in row" :key="cidx"  class="cell">
+        
         <!-- 单选框组 多选框组 下拉选择 需要自行添加options -->
+        <!-- 单选框组 多选框组 都替换成下拉 -->
         <template v-if="['el-select', 'el-checkbox-group','el-radio-group'].includes(cell.tag)">
-          <component 
+          <el-select v-model="cell.value" placeholder="请选择" :multiple="cell.tag === 'el-checkbox-group' || getConfById(cell.formId).multiple">
+            <el-option
+              v-for="(opt, oindex) in cell.options" 
+              :key="oindex"
+              :label="opt.label"
+              :value="opt.value">
+            </el-option>
+          </el-select>
+          <!-- <component 
           :is="cell.tag" 
           v-model="cell.value" 
           v-bind="getConfById(cell.formId)">
-            <template v-for="(opt, oindex) in cell.options">
-              <component :is="cell.tag.replace('-group', '')" :label="opt.label" :key="oindex" :value="opt.value"></component>
-            </template>
-          </component>
+            <component 
+            v-for="(opt, oindex) in cell.options" 
+            :is="cell.tag === 'el-select' ? 'el-option' : cell.tag.replace('-group', '')" 
+            :label="opt.label" 
+            :key="oindex" 
+            :value="opt.value" />
+          </component> -->
         </template>
         <template v-else-if="cell.tag === 'el-upload'">
           <el-upload
@@ -89,7 +102,8 @@ export default {
         tag: t.tag,
         key: t.vModel,
         formId: t.formId,
-        value: t.defaultValue
+        value: t.defaultValue,
+        options: t.options
       }))
     },
 

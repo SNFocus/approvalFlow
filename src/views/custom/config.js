@@ -21,6 +21,43 @@ export const testProp = {
   children: [
     {
       "cmpType": "common",
+      "label": "组织机构",
+      "tag": "fc-org-select",
+      "tagIcon": "dept",
+      "defaultValue": null,
+      "tabList": [
+        "dep"
+      ],
+      "buttonType": "button",
+      "title": "组织机构",
+      "searchable": true,
+      "maxNum": 99,
+      "tagConfig": {
+        "type": "info",
+        "closable": true,
+        "disable-transitions": false,
+        "hit": false,
+        "size": "small",
+        "effect": "light"
+      },
+      "style": {
+        "width": "100%"
+      },
+      "span": 24,
+      "labelWidth": 0,
+      "disabled": false,
+      "required": true,
+      "regList": [],
+      "changeTag": true,
+      "proCondition": true,
+      "asSummary": false,
+      "formId": 15,
+      "renderKey": 1589446182196,
+      "layout": "colFormItem",
+      "vModel": "field1"
+    },
+    {
+      "cmpType": "common",
       "label": "单行输入框",
       "tag": "el-input",
       "tagIcon": "input",
@@ -99,37 +136,37 @@ export const testProp = {
       "layout": "colFormItem",
       "vModel": "field6"
     },
-    // {
-    //   "cmpType": "common",
-    //   "label": "单选框组",
-    //   "tag": "el-radio-group",
-    //   "tagIcon": "radio",
-    //   "span": 24,
-    //   "labelWidth": 0,
-    //   "style": {},
-    //   "optionType": "default",
-    //   "border": false,
-    //   "size": "medium",
-    //   "disabled": false,
-    //   "required": true,
-    //   "options": [
-    //     {
-    //       "label": "选项一",
-    //       "value": "选项一"
-    //     },
-    //     {
-    //       "label": "选项二",
-    //       "value": "选项二"
-    //     }
-    //   ],
-    //   "regList": [],
-    //   "changeTag": true,
-    //   "proCondition": true,
-    //   "formId": 7,
-    //   "renderKey": 1589433237870,
-    //   "layout": "colFormItem",
-    //   "vModel": "field7"
-    // },
+    {
+      "cmpType": "common",
+      "label": "单选框组",
+      "tag": "el-radio-group",
+      "tagIcon": "radio",
+      "span": 24,
+      "labelWidth": 0,
+      "style": {},
+      "optionType": "default",
+      "border": false,
+      "size": "medium",
+      "disabled": false,
+      "required": true,
+      "options": [
+        {
+          "label": "选项一",
+          "value": "选项一"
+        },
+        {
+          "label": "选项二",
+          "value": "选项二"
+        }
+      ],
+      "regList": [],
+      "changeTag": true,
+      "proCondition": true,
+      "formId": 7,
+      "renderKey": 1589433237870,
+      "layout": "colFormItem",
+      "vModel": "field7"
+    },
     {
       "cmpType": "common",
       "label": "时间范围",
@@ -449,7 +486,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "type",
       "label",
       "tag",
@@ -468,7 +504,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "step-strictly",
@@ -486,7 +521,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "disabled",
@@ -503,7 +537,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "clearable",
@@ -521,7 +554,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "defaultValue",
@@ -543,7 +575,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "optionType",
@@ -561,7 +592,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "defaultValue",
@@ -580,7 +610,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "defaultValue",
@@ -600,7 +629,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "defaultValue",
@@ -621,7 +649,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "defaultValue",
@@ -640,7 +667,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "showDuration",
@@ -661,7 +687,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "defaultValue",
@@ -681,7 +706,6 @@ export const useableProps = [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "showDuration",
@@ -700,10 +724,30 @@ export const useableProps = [
   },
   {
     "props": [
+      "label",
+      "tag",
+      "defaultValue",
+      "tabList",
+      "buttonType",
+      "title",
+      "searchable",
+      "maxNum",
+      "tagConfig",
+      "required",
+      "regList",
+      "formId",
+      "vModel"
+    ],
+    "forceProp": {
+      "buttonType": "input"
+    },
+    "tag": "fc-org-select"
+  },
+  {
+    "props": [
       "vModel",
       "defaultValue",
       "formId",
-      "cmpType",
       "label",
       "tag",
       "action",

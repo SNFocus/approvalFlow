@@ -12,6 +12,7 @@ Vue.use( FormControls )
 Vue.use( ElementUI );
 
 Vue.config.productionTip = false
+Vue.prototype.log = console.log
 
 new Vue( {
   router,
