@@ -6,6 +6,7 @@ function resolve ( dir ) {
 
 module.exports = {
   runtimeCompiler: true,
+  publicPath: './',
   devServer: {
     port: 8088
   },
