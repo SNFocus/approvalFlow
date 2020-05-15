@@ -8,19 +8,16 @@ import Vue from "vue";
 
 export default {
   mounted() {
+    // defaultData 可以将默认formData覆盖到data中
+    const defaultData = {}
     let { jsCode, htmlCode, cssCode } = this.$route.params.formData
     let main = eval(`(${jsCode.replace("export default", "")})`);
-    debugger
-    main.template = `<div style="padding:3rem 2rem 1rem;">${htmlCode}</div>`;
-    let Form = Vue.extend({
-      components: {
-        child: main
-      },
-      data() {
-        return {};
-      },
-      template: `<div><child /></div>`
-    });
+    const newData = Object.assign({}, main.data(), {formData: defaultData})
+    main.data = function(){
+      return newData
+    }
+    main.template = `<div style="padding:3rem 2rem;">${htmlCode}</div>`;
+    let Form = Vue.extend(main);
     new Form().$mount("#customForm");
   }
 };
@@ -32,24 +29,5 @@ export default {
   margin: 1rem auto;
   border-radius: 6px;
   box-shadow: 0 0 15px rgba(0, 0, 0, .1);
- 
-  >>> .el-row{
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-  }
-
-  >>> .container-add-btn {
-    .el-form-item__content {
-      display: flex;
-      align-items: center;
-
-      .line{
-        width: 80%;
-        margin-left: 5%;
-        height: 1px;
-        background: #e5e5e5;
-      }
-    }
-  }
 }
 </style>

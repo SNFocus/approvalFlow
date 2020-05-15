@@ -381,9 +381,6 @@ export const testProp = {
       "placeholder": "请选择下拉选择",
       "span": 24,
       "labelWidth": 0,
-      "style": {
-        "width": "100%"
-      },
       "clearable": true,
       "disabled": false,
       "required": true,
