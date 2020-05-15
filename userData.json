@@ -1,0 +1,31 @@
+{
+  "code": 200,
+  "msg": "获取成功",
+  "data": [
+    {
+      "userId": 20,
+      "userName": "张三",
+      "deptId": 1
+    },
+    {
+      "userId": 30,
+      "userName": "李四",
+      "deptId": 1
+    },
+    {
+      "userId": 40,
+      "userName": "王五",
+      "deptId": 1
+    },
+    {
+      "userId": 50,
+      "userName": "二麻子",
+      "deptId": 1
+    },
+    {
+      "userId": 60,
+      "userName": "富贵",
+      "deptId": 1
+    }
+  ]
+}

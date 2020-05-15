@@ -1,0 +1,31 @@
+{
+  "code": 200,
+  "msg": "获取成功",
+  "data": [
+    {
+      "deptId": 2,
+      "deptName": "xxx财务部",
+      "parentDeptId": 1
+    },
+    {
+      "deptId": 3,
+      "deptName": "xxx行政部",
+      "parentDeptId": 1
+    },
+    {
+      "deptId": 4,
+      "deptName": "xxx研发部",
+      "parentDeptId": 1
+    },
+    {
+      "deptId": 5,
+      "deptName": "xxx工程部",
+      "parentDeptId": 1
+    },
+    {
+      "deptId": 6,
+      "deptName": "xxx后勤部",
+      "parentDeptId": 1
+    }
+  ]
+}
