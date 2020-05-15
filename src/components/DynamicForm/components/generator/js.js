@@ -43,16 +43,16 @@ export function makeUpJs ( conf, type ) {
     uploadVarList.join( '\n' ),
     propsList.join( '\n' ),
     methodList.join( '\n' ),
-    watchFuncList.join('\n')
+    watchFuncList.join( '\n' )
   )
   confGlobal = null
   return script
 }
 
-function buildWatchInCreated (key,callbackStr, watchFuncList) {
-  watchFuncList.push(`this.$watch(function () {
+function buildWatchInHook ( key, callbackStr, watchFuncList ) {
+  watchFuncList.push( `this.$watch(function () {
     return this.${confGlobal.formModel}.${key}
-  }, ${callbackStr})`)
+  }, ${callbackStr})` )
 }
 /**
  * fc-org-select v-model绑定的是一个对象 才疏学浅 需要添加多余的代码啊兼容此种情况
@@ -60,7 +60,7 @@ function buildWatchInCreated (key,callbackStr, watchFuncList) {
  * @param {*} conf - 控件数据
  * @param {*} watchFuncList - watch列表
  */
-const setFcOrgSelectRule = (conf, watchFuncList) => {
+const setFcOrgSelectRule = ( conf, watchFuncList ) => {
   let rule = `{ validator: (rule, value, callback) => {
     const val = eval('window._previewVm.vmFormData.' + rule.field)
     const tabList = ${JSON.stringify( conf.tabList )}
@@ -74,10 +74,10 @@ const setFcOrgSelectRule = (conf, watchFuncList) => {
       callback(new Error('${conf.title}不能为空'))
     }
   }, trigger: '${trigger[conf.tag]}', type: 'object' }`
-  const key = conf.isChild ? conf.vModel.replace('index', conf.childIndex): conf.vModel
-  buildWatchInCreated(key,`function (newVal, oldVal) {
+  const key = conf.isChild ? conf.vModel.replace( 'index', conf.childIndex ) : conf.vModel
+  buildWatchInHook( key, `function (newVal, oldVal) {
       this.$refs["elForm"].validateField("${key}",()=>{ })
-  }`, watchFuncList)
+  }`, watchFuncList )
   return rule
 }
 
@@ -110,7 +110,7 @@ function buildAttributes ( el, dataList, ruleList, optionsList, methodList, prop
   }
 
   if ( el.children ) {
-    el.children.forEach( (el2, index) => {
+    el.children.forEach( ( el2, index ) => {
       el2.isChild = true  // 临时变量
       el2.childIndex = index  // 临时变量
       buildAttributes( el2, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, true )
@@ -119,40 +119,36 @@ function buildAttributes ( el, dataList, ruleList, optionsList, methodList, prop
 }
 
 function mixinMethod ( type ) {
-  const list = []; const
-    minxins = {
-      file: confGlobal.formBtns ? {
-        submitForm: `submitForm() {
+  const list = [];
+  const minxins = {
+    file: confGlobal.formBtns ? {
+      submitForm: `submitForm() {
           this.$refs['${confGlobal.formRef}'].validate(valid => {
             if(!valid) return
             console.log(this.${confGlobal.formModel})
             // TODO 提交表单
           })
         },`,
-        resetForm: `resetForm() {
+      resetForm: `resetForm() {
           this.$refs['${confGlobal.formRef}'].resetFields()
-        },`,
-        addRowComponent: `addRowComponent(rowCmpName) {
-          const rowData = this.${confGlobal.formModel}[rowCmpName]
-          rowData.push(Object.assign({}, rowData[0]))
-      },`
-      } : null,
-      dialog: {
-        onOpen: 'onOpen() {},',
-        onClose: `onClose() {
+        },`
+    } : null,
+    dialog: {
+      onOpen: 'onOpen() {},',
+      onClose: `onClose() {
         this.$refs['${confGlobal.formRef}'].resetFields()
       },`,
-        close: `close() {
+      close: `close() {
         this.$emit('update:visible', false)
       },`,
-        handelConfirm: `handelConfirm() {
+      handelConfirm: `handelConfirm() {
         this.$refs['${confGlobal.formRef}'].validate(valid => {
           if(!valid) return
           this.close()
         })
       },`
-      }
     }
+  }
 
   const methods = minxins[type]
   if ( methods ) {
@@ -164,14 +160,8 @@ function mixinMethod ( type ) {
   return list
 }
 
-let list;
-
 function buildData ( conf, dataList ) {
-  // if ( conf.layout === "rowFormItem" ) {
-  //   list = []
-  //   // TODO
-  //   dataList.push( conf.componentName + ': ' )
-  // }
+
   if ( conf.vModel === undefined ) return
 
   let defaultValue
@@ -179,14 +169,6 @@ function buildData ( conf, dataList ) {
     defaultValue = `'${conf.defaultValue}'`
   } else {
     defaultValue = `${JSON.stringify( conf.defaultValue )}`
-  }
-  if ( conf.vModel.includes( '[index]' ) && list ) {
-    const rowName = conf.vModel.replace( /\[index\].+/, '' )
-    let key = eval( conf.vModel.replace( /\w+\[index\]/, '' ) )[0]
-    list.push( `${key}: ${defaultValue}` )
-    let listIndex = dataList.findIndex( item => item.includes( rowName ) )
-    dataList[listIndex] = rowName + ': ' + `[{${list.join( ',' )}}],`
-    return;
   }
   dataList.push( `${conf.vModel}: ${defaultValue},` )
 }
@@ -199,11 +181,9 @@ function buildRules ( conf, ruleList, watchFuncList ) {
       const type = isArray( conf.defaultValue ) ? 'type: \'array\',' : ''
       let message = isArray( conf.defaultValue ) ? `请至少选择一个` : conf.placeholder
       if ( message === undefined ) message = `${conf.label}不能为空`
-      if ( conf.tag === 'fc-org-select' ) {
-        rules.push( setFcOrgSelectRule(conf, watchFuncList) )
-      } else {
-        rules.push( `{ required: true, ${type} message: '${message}', trigger: '${trigger[conf.tag]}' }` )
-      }
+      conf.tag === 'fc-org-select'
+        ? rules.push( setFcOrgSelectRule( conf, watchFuncList ) )
+        : rules.push( `{ required: true, ${type} message: '${message}', trigger: '${trigger[conf.tag]}' }` )
     }
     if ( conf.regList && isArray( conf.regList ) ) {
       conf.regList.forEach( item => {
@@ -212,14 +192,7 @@ function buildRules ( conf, ruleList, watchFuncList ) {
         }
       } )
     }
-
-    let key = conf.vModel
-    // 判断是否是行容器下的组件
-    if ( /\w+\[index\].+/.test( conf.vModel ) ) {
-      // key = eval( conf.vModel.replace( /\w+\[index\]/, '' ) )[0]
-      key = conf.vModel.replace('index', conf.childIndex)
-    }
-    ruleList.push( `"${key}": [${rules.join( ',' )}],` )
+    ruleList.push( `"${conf.vModel}": [${rules.join( ',' )}],` )
   }
 }
 

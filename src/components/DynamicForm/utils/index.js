@@ -121,22 +121,3 @@ function parse ( str ) {
 export function jsonClone ( obj ) {
   return parse( stringify( obj ) )
 }
-
-export function formToPreview ( formConf, formData ) {
-  let fields = formConf.fields
-  let transferData = ( conf, data ) => {
-    if ( conf.layout === "colFormItem" ) {
-      let vModel = conf.vModel;
-      if ( conf.vModel.includes( 'list[index]' ) ) {
-        vModel = conf.vModel.replace( "list[index]['", '' ).replace( "']", '' )
-      }
-      return { label: conf.label, value: data[vModel] }
-    }
-    if ( conf.layout === "rowFormItem" ) {
-      return {
-        list: formData.list.map( t1 => conf.children.map( t2 => transferData( t2, t1 ) ) )
-      }
-    }
-  }
-  return fields.map( item => transferData( item, formData ) )
-}
