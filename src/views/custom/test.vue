@@ -29,7 +29,11 @@
              <!-- 单选框组 多选框组 下拉选择 需要自行添加options -->
              <!-- 单选框组 多选框组 都替换成下拉 -->
               <template v-if="['el-select', 'el-checkbox-group','el-radio-group'].includes(head.tag)">
-                <el-select  v-model="formData[scope.$index][cindex].value" placeholder="请选择" :multiple="head.tag === 'el-checkbox-group' || getConfById(head.formId).multiple">
+                <el-select  
+                v-model="formData[scope.$index][cindex].value" placeholder="请选择" 
+                :multiple="head.tag === 'el-checkbox-group' || getConfById(head.formId).multiple"
+                @change="onFormDataChange(scope.$index, cindex)"
+                >
                   <el-option
                     v-for="(opt, oindex) in head.options" 
                     :key="oindex"
@@ -52,10 +56,11 @@
                 v-else 
                 :is="head.tag" 
                 v-model="formData[scope.$index][cindex].value" 
-                v-bind="getConfById(head.formId)">
+                v-bind="getConfById(head.formId)"
+                @change="onFormDataChange(scope.$index, cindex)">
               </component>
               <div class="error-tip" v-show="!formData[scope.$index][cindex].valid">
-                {{head.label}}不能为空
+                不能为空
               </div>
           </div>
         </template>
@@ -116,6 +121,11 @@ export default {
         return useable.forceProp ? Object.assign({}, res, useable.forceProp) : res
       })
     },
+    
+    onFormDataChange(rowIndex, colIndex){
+      const data = this.formData[rowIndex][colIndex]
+      data.required && (data.valid = this.checkData(data))
+    },
     /**
      * 校验单个表单数据
      * @param {CmpConfig} 组件配置对象
@@ -158,7 +168,6 @@ export default {
     getEmptyRow(){
       return this.tableData.map((t) => ({
         tag: t.tag,
-        key: t.vModel,
         formId: t.formId,
         value: t.defaultValue,
         options: t.options, // 下拉 单选 多选
