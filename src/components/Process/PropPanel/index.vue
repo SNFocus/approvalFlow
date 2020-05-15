@@ -34,7 +34,7 @@
     </header>
 
     <!-- 条件  -->
-    <section style="height: 100%;" v-if="value && isConditionNode()">
+    <section class="condition-pane" v-if="value && isConditionNode()">
       <el-row style="padding: 10px;" v-if="showingPCons.includes(-1)" :gutter="12">
         <el-col :span="4" style="font-size: 12px;">发起人</el-col>
         <el-col :span="18" style="padding-left: 12px;">
@@ -563,10 +563,6 @@ export default {
   }
 }
 
-.approver-pane > .el-tabs > .el-tabs__content{
-  height: calc(100% - 40px);
-  overflow: scroll;
-}
 </style>
 <style lang="stylus" scoped>
 .drawer {
@@ -578,6 +574,7 @@ export default {
 
   >>> .el-drawer__body {
     padding-bottom: 44px;
+    overflow: hidden;
   }
 
   >>> .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
@@ -652,10 +649,17 @@ export default {
 }
 
 .approver-pane{
+  overflow-y: scroll;
+  overflow-x: hidden; 
   .option-box {
-    font-size: 14px;
-    padding-left: 1rem;
+    font-size 14px
+    padding-left 1rem
   }
-  
+}
+
+.condition-pane{
+  height 100%
+  overflow-y scroll
+  overflow-x hidden
 }
 </style>
