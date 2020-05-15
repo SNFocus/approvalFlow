@@ -2,7 +2,6 @@
   <div class="fc-org-select">
     <div class="tags">
       <el-button v-if="buttonType === 'button'" size="small" type="primary" icon="el-icon-plus" @click="show = true">添加{{title}}</el-button>
-      
       <div class="input-box" :class="{'as-input': buttonType === 'input'}"  @click="show = true">
         <!-- {{selectedLabels || '点击选择' + title}} -->
           <el-tag
