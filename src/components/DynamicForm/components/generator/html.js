@@ -106,6 +106,9 @@ const layouts = {
     return str
   },
   rowFormItem ( element ) {
+    if(element.rowType === 'table'){
+      return this.colFormItem(element)
+    }
     const type = element.type === 'default' ? '' : `type="${element.type}"`
     const justify = element.type === 'default' ? '' : `justify="${element.justify}"`
     const align = element.type === 'default' ? '' : `align="${element.align}"`
@@ -314,6 +317,9 @@ const tags = {
 
     if ( child ) child = `\n${child}\n` // 换行
     return `<${el.tag} ${ref} ${fileList} ${action} ${autoUpload} ${multiple} ${beforeUpload} ${listType} ${accept} ${name} ${disabled}>${child}</${el.tag}>`
+  },
+  'fc-input-table': el => {
+    return `<${el.tag} ref="${el.vModel}" :config="tableRefs['${el.vModel}']"></${el.tag}>`
   }
 }
 

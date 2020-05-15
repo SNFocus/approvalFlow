@@ -29,9 +29,10 @@ export function makeUpJs ( conf, type ) {
   const methodList = mixinMethod( type )
   const uploadVarList = []
   const watchFuncList = []
+  const tableRefs = {}
 
   conf.fields.forEach( el => {
-    buildAttributes( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList )
+    buildAttributes( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, tableRefs )
   } )
 
   const script = buildexport(
@@ -43,7 +44,8 @@ export function makeUpJs ( conf, type ) {
     uploadVarList.join( '\n' ),
     propsList.join( '\n' ),
     methodList.join( '\n' ),
-    watchFuncList.join( '\n' )
+    watchFuncList.join( '\n' ),
+    JSON.stringify(tableRefs)
   )
   confGlobal = null
   return script
@@ -81,8 +83,8 @@ const setFcOrgSelectRule = ( conf, watchFuncList ) => {
   return rule
 }
 
-function buildAttributes ( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList ) {
-  buildData( el, dataList )
+function buildAttributes ( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, tableRefs ) {
+  buildData( el, dataList, tableRefs)
   buildRules( el, ruleList, watchFuncList )
 
   if ( el.options && el.options.length ) {
@@ -113,7 +115,7 @@ function buildAttributes ( el, dataList, ruleList, optionsList, methodList, prop
     el.children.forEach( ( el2, index ) => {
       el2.isChild = true  // 临时变量
       el2.childIndex = index  // 临时变量
-      buildAttributes( el2, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, true )
+      buildAttributes( el2, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, tableRefs )
     } )
   }
 }
@@ -123,6 +125,8 @@ function mixinMethod ( type ) {
   const minxins = {
     file: confGlobal.formBtns ? {
       submitForm: `submitForm() {
+          if (!this.checkTableData()) console.log('false')
+          console.log(this.${confGlobal.formModel})
           this.$refs['${confGlobal.formRef}'].validate(valid => {
             if(!valid) return
             console.log(this.${confGlobal.formModel})
@@ -131,6 +135,15 @@ function mixinMethod ( type ) {
         },`,
       resetForm: `resetForm() {
           this.$refs['${confGlobal.formRef}'].resetFields()
+        },`,
+        // fc-input-table 需要单独进行表单校验
+      checkTableData: `checkTableData() {
+          let valid = true
+          Object.keys(this.tableRefs).forEach(vModel => {
+            const res = this.$refs[vModel].submit()  // 返回false或表单数据
+            res ? (this.${confGlobal.formModel}[vModel] = res) : (valid = false)
+          })
+          return valid
         },`
     } : null,
     dialog: {
@@ -160,12 +173,14 @@ function mixinMethod ( type ) {
   return list
 }
 
-function buildData ( conf, dataList ) {
-
+function buildData ( conf, dataList, tableRefs ) {
   if ( conf.vModel === undefined ) return
 
   let defaultValue
-  if ( typeof ( conf.defaultValue ) === 'string' && !conf.multiple ) {
+  if (conf.rowType === 'table') {
+    dataList.push( `${conf.vModel}Conf: ${JSON.stringify(conf)},` )
+    tableRefs[conf.vModel] = conf
+  } else if ( typeof ( conf.defaultValue ) === 'string' && !conf.multiple ) {
     defaultValue = `'${conf.defaultValue}'`
   } else {
     defaultValue = `${JSON.stringify( conf.defaultValue )}`
@@ -253,13 +268,14 @@ function buildOptionMethod ( methodName, model, methodList ) {
   methodList.push( str )
 }
 
-function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props, methods, watchFunc ) {
+function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props, methods, watchFunc, tableRefs ) {
   const str = `${exportDefault}{
   ${inheritAttrs[type]}
   components: {},
   props: [],
   data () {
     return {
+      tableRefs: ${tableRefs},
       ${conf.formModel}: {
         ${data}
       },

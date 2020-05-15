@@ -1,6 +1,6 @@
 <template>
 <div  class="fc-table-box">
-  <el-table :data="formData" border class="fc-table" @cell-click="focusInput" v-bind="tableConfig">
+  <el-table :data="formData" border class="fc-table" @cell-click="focusInput" v-bind="config.tableConf || {}">
       <el-table-column width="50" align="center">
         <!-- 序号 -->
         <template slot-scope="scope">
@@ -79,15 +79,12 @@
 import { testProp, useableProps } from './config'
 // useableProps —— 需要的组件属性 很多属性在表格中没用 需要过滤
 export default {
+  name: "fc-input-table",
   props:{
     config: {
       type: Object,
       default: ()=> testProp
     },
-    tableConfig:{
-      type: Object,
-      default: () => ({})
-    }
   },
 
   data() {
@@ -155,10 +152,11 @@ export default {
     /**
      * 校验表格数据必填项
      */
-    validateData(){
-      this.formData.forEach(row => {
-        row.forEach(col => col.required && (col.valid = this.checkData(col)))
-      })
+    submit(){
+      let res = true
+      const checkCol = col => col.required && !this.checkData(col) && (res = col.valid = false) 
+      this.formData.forEach(row => row.forEach(checkCol))
+      return res ? this.formData : false
     },
     /**
      * 根据formid获取完整组件配置
@@ -178,13 +176,6 @@ export default {
         valid: true,
         required: t.required
       }))
-    },
-    /**
-     * 提交表格数据
-     */
-    submit () {
-      this.validateData()
-      console.log(this.formData)
     },
 
     removeRow (index) {
@@ -277,17 +268,9 @@ export default {
     td:not(:first-child)
       vertical-align top
       .cell
-        padding 2px 0px 0px
-        &::before
-          content ""
-          position absolute
-          top 1px
-          left -1px
-          right -1px
-          bottom -1px
-        
-        &:hover::before
-          border 1px solid #b5b5b5
+        border 1px solid transparent
+        &:hover
+          border-color #b5b5b5
         
   .fc-org-select
     position relative

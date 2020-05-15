@@ -523,13 +523,15 @@ export const layoutComponents = [{
   layout: 'rowFormItem',
   rowType: 'table',
   tagIcon: 'row',
+  tag: 'fc-input-table',
   type: 'default',
   justify: 'start',
   align: 'top',
   label: '表格/明细',
-  layoutTree: true,
+  layoutTree: false,
   children: [],
-  actionText: '添加'
+  actionText: '添加',
+  tableConf: {}
 }]
 
 export const commonComponents = [...inputComponents, ...selectComponents, ...layoutComponents]

@@ -447,6 +447,9 @@ export default {
         clone.placeholder !== undefined && (clone.placeholder += clone.label);
         tempActiveData = clone;
       } else if (clone.layout === "rowFormItem") {
+        if (clone.rowType === 'table') {
+          clone.vModel = `field${clone.formId}`;
+        }
         // delete clone.label;
         clone.componentName = `row${clone.formId}`;
         clone.gutter = this.formConf.gutter;
