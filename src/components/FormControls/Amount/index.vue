@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="fc-amount">
     <el-input-number v-model="innerValue" v-bind="$props" v-on="$listeners"></el-input-number>
     <div class="explain-text" v-if="showChinese">大写：{{chinese}}</div>
   </div>
@@ -20,7 +20,7 @@ export default {
   },
   computed:{
     chinese(){
-      return getAmountChinese(this.innerValue)
+      return this.showChinese ? getAmountChinese(this.innerValue) : ''
     }
   },
   watch:{

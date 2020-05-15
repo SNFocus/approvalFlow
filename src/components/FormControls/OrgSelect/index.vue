@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="fc-org-select">
     <div class="tags">
       <el-button v-if="buttonType === 'button'" size="small" type="primary" icon="el-icon-plus" @click="show = true">添加{{title}}</el-button>
       

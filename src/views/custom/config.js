@@ -496,7 +496,9 @@ export const useableProps = [
       "required",
       "regList"
     ],
-
+    "forceProp": {
+      "min-width": 180
+    },
     "tag": "el-input"
   },
   {
@@ -512,7 +514,8 @@ export const useableProps = [
       "regList"
     ],
     "forceProp": {
-      "controls": false
+      "controls": false,
+      "min-width": 180
     },
     "tag": "el-input-number"
   },
@@ -528,7 +531,8 @@ export const useableProps = [
       "regList"
     ],
     "forceProp": {
-      "controls": false
+      "controls": false,
+      "min-width": 120
     },
     "tag": "fc-amount"
   },
@@ -547,6 +551,9 @@ export const useableProps = [
       "options",
       "regList"
     ],
+    "forceProp": {
+      "min-width": 140
+    },
     "tag": "el-select"
   },
   {
@@ -568,6 +575,9 @@ export const useableProps = [
       "separator",
       "regList"
     ],
+    "forceProp": {
+      "min-width": 170
+    },
     "tag": "el-cascader"
   },
   {
@@ -585,6 +595,9 @@ export const useableProps = [
       "options",
       "regList"
     ],
+    "forceProp": {
+      "min-width": 140
+    },
     "tag": "el-radio-group"
   },
   {
@@ -603,6 +616,9 @@ export const useableProps = [
       "options",
       "regList"
     ],
+    "forceProp": {
+      "min-width": 140
+    },
     "tag": "el-checkbox-group"
   },
   {
@@ -622,6 +638,9 @@ export const useableProps = [
       "range",
       "regList"
     ],
+    "forceProp": {
+      "min-width": 160
+    },
     "tag": "el-slider"
   },
   {
@@ -642,6 +661,10 @@ export const useableProps = [
       "required",
       "regList"
     ],
+    "forceProp": {
+      "buttonType": "input",
+      "min-width": 100
+    },
     "tag": "fc-org-select"
   },
   {
@@ -660,6 +683,9 @@ export const useableProps = [
       "value-format",
       "regList"
     ],
+    "forceProp": {
+      "min-width": 120
+    },
     "tag": "el-time-picker"
   },
   {
@@ -669,7 +695,6 @@ export const useableProps = [
       "formId",
       "label",
       "tag",
-      "showDuration",
       "defaultValue",
       "disabled",
       "clearable",
@@ -680,6 +705,9 @@ export const useableProps = [
       "value-format",
       "regList"
     ],
+    "forceProp": {
+      "min-width": 320
+    },
     "tag": "fc-time-duration"
   },
   {
@@ -699,6 +727,9 @@ export const useableProps = [
       "readonly",
       "regList"
     ],
+    "forceProp": {
+      "min-width": 120
+    },
     "tag": "el-date-picker"
   },
   {
@@ -708,7 +739,6 @@ export const useableProps = [
       "formId",
       "label",
       "tag",
-      "showDuration",
       "defaultValue",
       "type",
       "range-separator",
@@ -720,28 +750,10 @@ export const useableProps = [
       "readonly",
       "regList"
     ],
-    "tag": "fc-date-duration"
-  },
-  {
-    "props": [
-      "label",
-      "tag",
-      "defaultValue",
-      "tabList",
-      "buttonType",
-      "title",
-      "searchable",
-      "maxNum",
-      "tagConfig",
-      "required",
-      "regList",
-      "formId",
-      "vModel"
-    ],
     "forceProp": {
-      "buttonType": "input"
+      "min-width": 320
     },
-    "tag": "fc-org-select"
+    "tag": "fc-date-duration"
   },
   {
     "props": [
@@ -765,7 +777,8 @@ export const useableProps = [
       "regList"
     ],
     "forceProp": {
-      "list-type": "text"
+      "list-type": "text",
+      "min-width": 80
     },
     "tag": "el-upload"
   }
