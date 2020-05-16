@@ -316,7 +316,7 @@ export default {
         .el-upload-list--text
           position fixed
           margin-top 4px
-
+          z-index 9
         
   .fc-org-select
     position relative
@@ -331,10 +331,9 @@ export default {
     background white
     box-shadow 2px 2px 8px 2px rgba(0, 0, 0, .1)
     max-width 200px
-    z-index 9
     transition margin-top .3s
     &:hover
       position fixed
       margin-top 4px
-    
+      z-index 9
 </style>
