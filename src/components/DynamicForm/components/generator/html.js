@@ -114,10 +114,11 @@ const layouts = {
     const align = element.type === 'default' ? '' : `align="${element.align}"`
     const gutter = element.gutter ? `:gutter="${element.gutter}"` : ''
     const children = element.children.map( ( el ) => layouts[el.layout]( el ) )
-    const divider = element.label ? `<el-divider content-position="left">${element.label}</el-divider>` : ''
+    const divider = element.showDivider ? `<el-divider content-position="left">${element.label}</el-divider>` : ''
+    const rowClass = `class="form-container ${element.showDivider ? 'showDivider' : ''}"`
     let str = `
     ${divider}
-    <el-row class="form-container"   ${type} ${justify} ${align} ${gutter}>
+    <el-row ${rowClass} ${type} ${justify} ${align} ${gutter}>
       ${children.join( '\n' )}
     </el-row>
     `

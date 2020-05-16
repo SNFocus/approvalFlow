@@ -18,15 +18,15 @@
           <span class="step-index">{{index+1}}</span>
           {{item.label}}
         </div>
-        <div class="ghost-step step" :style="{transform: `translateX(${steps.findIndex(t => t.key === activeStep) * 100}%)`}"></div>
+        <div class="ghost-step step" :style="{transform: translateX}"></div>
       </div>
       <el-button size="small" class="publish-btn" @click="publish">发布</el-button>
     </header>
     <section class="page__content">
-      <BasicSetting v-show="activeStep === 'basicSetting'" tabName="basicSetting" ref="basicSetting" /> 
-      <DynamicForm v-show="activeStep === 'formDesign'" tabName="formDesign" ref="formDesign"/>
-      <Process v-show="activeStep === 'processDesign'" tabName="processDesign" ref="processDesign"/>
-      <AdvancedSetting v-show="activeStep === 'advancedSetting'" ref="advancedSetting"/>
+      <BasicSetting  v-show="activeStep === 'basicSetting'" tabName="basicSetting" ref="basicSetting" /> 
+      <DynamicForm  v-show="activeStep === 'formDesign'" tabName="formDesign" ref="formDesign"/>
+      <Process  v-show="activeStep === 'processDesign'" tabName="processDesign" ref="processDesign"/>
+      <AdvancedSetting  v-show="activeStep === 'advancedSetting'" ref="advancedSetting"/>
     </section>
   </div>
 </template>
@@ -70,6 +70,11 @@ export default {
   beforeRouteLeave(to, from, next){
     window.removeEventListener('beforeunload', beforeUnload)
     next()
+  },
+  computed:{
+    translateX(){
+      return `translateX(${this.steps.findIndex(t => t.key === this.activeStep) * 100}%)`
+    }
   },
   methods: {
     changeSteps(item) {

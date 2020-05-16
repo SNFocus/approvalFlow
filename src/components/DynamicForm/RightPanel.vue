@@ -57,8 +57,11 @@
           <el-form-item v-if="activeData['end-placeholder']!==undefined" label="结束占位">
             <el-input v-model="activeData['end-placeholder']" placeholder="请输入占位提示" />
           </el-form-item>
-          <el-form-item v-if="activeData.span!==undefined" label="表单栅格">
+          <el-form-item v-if="activeData.span !== undefined" label="表单栅格">
             <el-slider v-model="activeData.span" :max="24" :min="1" :marks="{12:''}" @change="spanChange" />
+          </el-form-item>
+          <el-form-item v-if="activeData.showDivider !== undefined" label="显示分割线">
+            <el-switch v-model="activeData.showDivider" />
           </el-form-item>
           <!-- 
           <el-form-item v-if="activeData.layout==='rowFormItem'" label="栅格间隔">

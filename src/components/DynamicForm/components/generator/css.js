@@ -6,6 +6,9 @@
  *GitHub: https://github.com/JakHuang/form-generator
  */
 const defaultCss = `
+.showDivider.form-container{
+  margin-bottom: 2rem;
+}
 
 `
 const styles = {

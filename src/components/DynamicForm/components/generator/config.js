@@ -518,6 +518,7 @@ export const layoutComponents = [{
   label: '布局容器',
   layoutTree: true,
   children: [],
+  showDivider: true
 },
 {
   layout: 'rowFormItem',
@@ -531,7 +532,8 @@ export const layoutComponents = [{
   layoutTree: false,
   children: [],
   actionText: '添加',
-  tableConf: {}
+  tableConf: {},
+  showDivider: false
 }]
 
 export const commonComponents = [...inputComponents, ...selectComponents, ...layoutComponents]
