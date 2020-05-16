@@ -1,6 +1,6 @@
 <template>
 <div  class="fc-table-box">
-  <el-table :data="formData" border class="fc-table" @cell-click="focusInput" v-bind="tableConfig">
+  <el-table :data="formData" border class="fc-table" @cell-click="focusInput" v-bind="config.tableConf || {}">
       <el-table-column width="50" align="center">
         <!-- 序号 -->
         <template slot-scope="scope">
@@ -18,16 +18,13 @@
       <el-table-column
         v-for="(head, cindex) in tableData"
         :key="head.formId"
-        :min-width="head['min-width']"
-        :label="head.label">
+        :min-width="head['min-width']">
          <template slot="header">
            <span style="color: #f56c6c;" v-if="head.required">*</span>
-           {{head.label}}
+           {{head['label']}}
          </template>
         <template slot-scope="scope">
-          <div >
-             <!-- 单选框组 多选框组 下拉选择 需要自行添加options -->
-             <!-- 单选框组 多选框组 都替换成下拉 -->
+             <!-- 单选框组 多选框组 都替换成下拉 并添加options -->
               <template v-if="['el-select', 'el-checkbox-group','el-radio-group'].includes(head.tag)">
                 <el-select  
                 v-model="formData[scope.$index][cindex].value" placeholder="请选择" 
@@ -45,11 +42,13 @@
               <!-- 上传 -->
               <template v-else-if="head.tag === 'el-upload'">
                 <el-upload
-                  style="position: relative;"
-                  v-bind="getConfById(head.formId)"
-                  :file-list="[]">
-                  <i class="el-icon-upload2"></i> 上传
-                </el-upload> 
+                v-bind="getConfById(head.formId)" 
+                :on-success="(res) => onUploadSuccess(res, formData[scope.$index][cindex])">
+                  <span slot="default" >
+                    已上传
+                    {{formData[scope.$index][cindex].value.length}}
+                  </span>
+                </el-upload>
               </template>
               <!-- 其他 -->
               <component 
@@ -62,7 +61,6 @@
               <div class="error-tip" v-show="!formData[scope.$index][cindex].valid">
                 不能为空
               </div>
-          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -79,21 +77,35 @@
 import { testProp, useableProps } from './config'
 // useableProps —— 需要的组件属性 很多属性在表格中没用 需要过滤
 export default {
+  name: "fc-input-table",
   props:{
     config: {
       type: Object,
       default: ()=> testProp
     },
-    tableConfig:{
-      type: Object,
-      default: () => ({})
-    }
   },
 
   data() {
     return {
       formData:[],
-      tableData: []
+      tableData: [],
+      tableData1: [{
+            date: '2016-05-02',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            date: '2016-05-04',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1517 弄'
+          }, {
+            date: '2016-05-01',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1519 弄'
+          }, {
+            date: '2016-05-03',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1516 弄'
+          }]
     };
   },
 
@@ -155,10 +167,11 @@ export default {
     /**
      * 校验表格数据必填项
      */
-    validateData(){
-      this.formData.forEach(row => {
-        row.forEach(col => col.required && (col.valid = this.checkData(col)))
-      })
+    submit(){
+      let res = true
+      const checkCol = col => col.required && !this.checkData(col) && (res = col.valid = false) 
+      this.formData.forEach(row => row.forEach(checkCol))
+      return res ? this.formData : false
     },
     /**
      * 根据formid获取完整组件配置
@@ -170,21 +183,18 @@ export default {
      * 获取默认行数据
      */
     getEmptyRow(){
-      return this.tableData.map((t) => ({
-        tag: t.tag,
-        formId: t.formId,
-        value: t.defaultValue,
-        options: t.options, // 下拉 单选 多选
-        valid: true,
-        required: t.required
-      }))
-    },
-    /**
-     * 提交表格数据
-     */
-    submit () {
-      this.validateData()
-      console.log(this.formData)
+      return this.tableData.map((t) => {
+        let res = {
+          tag: t.tag,
+          formId: t.formId,
+          value: t.defaultValue,
+          options: t.options, // 下拉 单选 多选
+          valid: true,
+          required: t.required
+        }
+        if(t.tag === 'el-upload') this.$set(res, 'value', t.defaultValue)
+        return res
+      })
     },
 
     removeRow (index) {
@@ -198,31 +208,40 @@ export default {
      * 对表格进行合计
      */
     getSummaries (param) {
-        const { columns, data } = param;
-        const sums = [];
-        columns.forEach((column, index) => {
-          if (index === 0) {
-            sums[index] = '合计';
-            return;
-          }
-          const values = data.map(item => Number(item[column.property]));
-          if (!values.every(value => isNaN(value))) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr);
-              if (!isNaN(value)) {
-                return prev + curr;
-              } else {
-                return prev;
-              }
-            }, 0);
-            sums[index] += ' 元';
-          } else {
-            sums[index] = 'N/A';
-          }
-        });
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计';
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index] += ' 元';
+        } else {
+          sums[index] = 'N/A';
+        }
+      });
 
-        return sums;
-      }
+      return sums;
+    },
+
+    handleRemove(file) {
+      console.log(file);
+    },
+
+    onUploadSuccess(response, target) {
+      !Array.isArray(target.value) && (target.value = [])
+      target.value.push(response)
+    },
   }
 };
 </script>
@@ -240,30 +259,33 @@ export default {
     border-top none
   
 .fc-table-box >>> 
+
+  // 索引和删除按钮切换
   .el-table__row:hover
     .index
       display none
-    
     .el-icon-delete
       display inline
-    
-  .el-input__inner, .el-textarea__inner
-    border none
-    line-height 1
-    padding-right 10px
-    text-align left
-  
-  .el-upload--text
-    padding-top 6px
-    height 100%
-    width 100%
 
+  // 去除输入框边框
+  .el-input__inner, .el-textarea__inner
+    width 100%
+    border none
+    text-align left
+    padding-right 10px
+
+  // 下载按钮
+  .el-upload--text
+    width 100%
+    height 100%
+    padding-top 6px
+    white-space nowrap
+
+  // 组织机构按钮
   .input-box
     border none !important
     min-height 40px !important
-
-  .el-date-editor:not(.el-range-editor)
-    width 120px
+    padding-left 0
 
   .el-table .el-table__body
     td
@@ -273,26 +295,58 @@ export default {
         font-size 12px
         padding-left 6px
         color #f56c6c
+      .cell > div
+        width 100%
       
     td:not(:first-child)
       vertical-align top
-      .cell
-        padding 2px 0px 0px
-        &::before
-          content ""
-          position absolute
-          top 1px
-          left -1px
-          right -1px
-          bottom -1px
-        
-        &:hover::before
-          border 1px solid #b5b5b5
+      &::after, &::before
+        content ""
+        width 10px
+        height 10px
+        background white
+        position absolute
+        border 2px solid transparent
+        transition border-color .3s
+
+      &::after
+        border-top none
+        border-right none
+        left 0
+        bottom 0
+
+      &::before
+        border-bottom none
+        border-left none
+        right 0
+        top 0
+
+      &:hover
+        &::after, &::before
+          border-color red
+
+        .el-upload-list--text
+          position fixed
+          margin-top 4px
+
         
   .fc-org-select
     position relative
 
   .el-slider
     padding-left 10px
-  
+
+  .el-upload-list--text
+    position absolute
+    margin-top 28px
+    margin-left -6px
+    background white
+    box-shadow 2px 2px 8px 2px rgba(0, 0, 0, .1)
+    max-width 200px
+    z-index 9
+    transition margin-top .3s
+    &:hover
+      position fixed
+      margin-top 4px
+    
 </style>

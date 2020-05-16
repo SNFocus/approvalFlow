@@ -684,7 +684,7 @@ export const useableProps = [
       "regList"
     ],
     "forceProp": {
-      "min-width": 320
+      "min-width": 200
     },
     "tag": "fc-time-duration"
   },
@@ -729,7 +729,7 @@ export const useableProps = [
       "regList"
     ],
     "forceProp": {
-      "min-width": 320
+      "min-width": 210
     },
     "tag": "fc-date-duration"
   },
@@ -756,7 +756,8 @@ export const useableProps = [
     ],
     "forceProp": {
       "list-type": "text",
-      "min-width": 80
+      "min-width": 80,
+      "defaultValue": [],
     },
     "tag": "el-upload"
   }
