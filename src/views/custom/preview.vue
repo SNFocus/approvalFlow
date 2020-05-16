@@ -24,10 +24,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.preview-container {
-  max-width: 700px;
-  margin: 1rem auto;
-  border-radius: 6px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, .1);
-}
+.preview-container 
+  max-width 1000px
+  min-width 700px
+  margin 1rem auto
+  border-radius 6px
+  box-shadow 0 0 15px rgba(0, 0, 0, .1)
 </style>

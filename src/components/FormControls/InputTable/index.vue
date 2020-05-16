@@ -267,10 +267,31 @@ export default {
       
     td:not(:first-child)
       vertical-align top
-      .cell
-        border 1px solid transparent
-        &:hover
-          border-color #b5b5b5
+      &::after, &::before
+        content ""
+        width 10px
+        height 10px
+        background white
+        position absolute
+        border 2px solid transparent
+        transition border-color .3s
+
+      &::after
+        border-top none
+        border-right none
+        left 0
+        bottom 0
+
+      &::before
+        border-bottom none
+        border-left none
+        right 0
+        top 0
+
+      &:hover
+        &::after, &::before
+          border-color red
+
         
   .fc-org-select
     position relative
