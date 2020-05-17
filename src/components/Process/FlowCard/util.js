@@ -93,14 +93,15 @@ export class NodeUtils {
    */
   static deleteNode ( nodeData, processData ) {
     let prevNode = this.getPreviousNode( nodeData.prevId, processData )
-    if ( prevNode.type === 'empty' ) {
-      this.deleteNode( prevNode, processData );
-      return;
+    if ( prevNode.type === 'empty') {
+      this.deleteNode( prevNode, processData )
+      !this.isConditionNode(nodeData) && this.deleteNode(nodeData, processData)
+      return
     }
     let concatChild = ( prev, delNode ) => {
       prev.childNode = delNode.childNode
+      isEmptyArray(prev.conditionNodes) && (prev.conditionNodes = delNode.conditionNodes)
       prev.childNode && ( prev.childNode.prevId = prev.nodeId )
-      delNode.conditionNodes && (prev.conditionNodes = delNode.conditionNodes).
       prev.conditionNodes && prev.conditionNodes.forEach( c => c.prevId = prev.nodeId );
     }
     if ( this.isConditionNode( nodeData ) ) {
@@ -145,7 +146,10 @@ export class NodeUtils {
     let oldChildNode = data.childNode;
     newChildNode = newChildNode || this.createNode( "approver", data.nodeId )
     data.childNode = newChildNode
-    oldChildNode && ( newChildNode.childNode = oldChildNode );
+    if(oldChildNode) {
+      newChildNode.childNode = oldChildNode
+      oldChildNode.prevId = newChildNode.nodeId
+    }
     let conditionNodes = data.conditionNodes
     if ( Array.isArray( conditionNodes ) && !isBranchAction && conditionNodes.length ) {
       newChildNode.conditionNodes = conditionNodes.map( c => {
@@ -153,6 +157,9 @@ export class NodeUtils {
         return c
       } )
       delete data.conditionNodes
+    }
+    if(oldChildNode && oldChildNode.type === 'empty'){
+      this.deleteNode(oldChildNode, data)
     }
   }
   /**
