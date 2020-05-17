@@ -6,36 +6,28 @@ const hasBranch = data => notEmptyArray(data.conditionNodes);
 const stopPro = ev => ev.stopPropagation();
 
 function createNormalCard(ctx, conf, h) {
-  let isStartNode = conf.type === "start";
-  let classString = `flow-path-card ${isStartNode ? "start-node" : ""}`;
+  const classList = ['flow-path-card']
+  const afterTrue = (isTrue, name) => (isTrue && classList.push(name), isTrue)
+  const isStartNode = afterTrue(NodeUtils.isStartNode(conf), 'start-node')
+  const isApprNode = afterTrue(NodeUtils.isApproverNode(conf), 'approver')
+  const isCopyNode = afterTrue(NodeUtils.isCopyNode(conf), 'copy')
   return (
-    <section
-      class={classString}
-      onClick={this.eventLancher.bind(ctx, "edit", conf)}
-    >
+    <section class={classList.join(' ')} onClick={this.eventLancher.bind(ctx, "edit", conf)} >
       <header class="header">
         <div class="title-box" style="height: 100%;width:190px;">
-          {!isStartNode && (
-            <i
-              class="iconfont iconshenpi"
-              style="font-size:12px;color:white;margin-right:4px;"
-            ></i>
+          {isApprNode && (
+            <i class="iconfont iconshenpi" style="font-size:12px;color:white;margin-right:4px;"></i>
+          )}
+          {isCopyNode && (
+            <i class="el-icon-s-promotion" style="font-size:12px;color:white;margin-right:4px;"></i>
           )}
           <span class="title-text">{conf.properties.title}</span>
           {!isStartNode && (
-            <input
-              vModel_trim={conf.properties.title}
-              class="title-input"
-              style="margin-top:3px;"
-              onClick={stopPro}
-            />
+            <input vModel_trim={conf.properties.title} class="title-input" style="margin-top:3px;" onClick={stopPro} />
           )}
         </div>
         <div class="actions" style="margin-right:4px;">
-          <i
-            class="el-icon-close icon"
-            onClick={this.eventLancher.bind(ctx, "deleteNode", conf, ctx.data)}
-          ></i>
+          <i class="el-icon-close icon" onClick={this.eventLancher.bind(ctx, "deleteNode", conf, ctx.data)} ></i>
         </div>
       </header>
       <div class="body">
@@ -47,17 +39,13 @@ function createNormalCard(ctx, conf, h) {
     </section>
   );
 }
-
+// arg = ctx, data, h
+const createFunc = (...arg) => createNormalCard.call(arg[0], ...arg)
 let nodes = {
-  start: function(ctx, data, h) {
-    return createNormalCard.call(ctx, ctx, data, h);
-  },
-  approver: function(ctx, data, h) {
-    return createNormalCard.call(ctx, ctx, data, h);
-  },
-  empty: function(ctx, data, h) {
-    return "";
-  },
+  start: createFunc,
+  approver: createFunc,
+  copy: createFunc,
+  empty: _ => '',
   condition: function(ctx, conf, h) {
     return (
       <section
@@ -133,32 +121,24 @@ function addNodeButton(ctx, data, h, isBranch = false) {
   return (
     <div class="add-node-btn-box flex  justify-center">
       <div class="add-node-btn">
-        <el-popover placement="right" trigger="click" width="220">
+        <el-popover placement="right" trigger="click" width="300">
           <div class="condition-box">
             <div>
-              <div
-                class="condition-icon"
-                onClick={ctx.eventLancher.bind(
-                  ctx,
-                  "addApprovalNode",
-                  data,
-                  isBranch
-                )}
-              >
+              <div class="condition-icon" onClick={ctx.eventLancher.bind( ctx, "addApprovalNode",  data, isBranch )} >
                 <i class="iconfont iconshenpi"></i>
               </div>
               审批人
             </div>
+
             <div>
-              <div
-                class="condition-icon"
-                onClick={this.eventLancher.bind(
-                  ctx,
-                  "appendBranch",
-                  data,
-                  isBranch
-                )}
-              >
+              <div class="condition-icon" onClick={ctx.eventLancher.bind( ctx, "addCopyNode",  data, isBranch )} >
+                <i class="el-icon-s-promotion iconfont" style="vertical-align: middle;"></i>
+              </div>
+              抄送人
+            </div>
+
+            <div>
+              <div class="condition-icon" onClick={this.eventLancher.bind(ctx, "appendBranch", data, isBranch)}>
                 <i class="iconfont iconcondition"></i>
               </div>
               条件分支
@@ -175,9 +155,7 @@ function addNodeButton(ctx, data, h, isBranch = false) {
 }
 
 function NodeFactory(ctx, data, h) {
-  if (!data) {
-    return;
-  }
+  if (!data) return
   const showErrorTip = ctx.verifyMode && NodeUtils.checkNode(data) === false
   let res = [],
     branchNode = "",

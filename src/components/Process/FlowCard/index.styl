@@ -114,12 +114,29 @@ btn-bigger()
   &:hover {
     box-shadow: 0 0 0 2px #3296fa, 0 0 5px 4px rgba(0, 0, 0, 0.2);
   }
-  &:not(.condition) .header{
-      background-color #ff9431
+
+  &.copy{
+    .header{
+      background-color #3296fa
+    }
   }
 
-  &.start-node .header{
+  &.approver{
+    &:hover{
+      box-shadow: 0 0 0 2px #ff9431, 0 0 5px 4px rgba(0, 0, 0, 0.2);
+    }
+    .header{
+      background-color #ff9431
+    }
+  }
+
+  &.start-node{
+    &:hover{
+      box-shadow: 0 0 0 2px #576a95, 0 0 5px 4px rgba(0, 0, 0, 0.2);
+    }
+    .header{
       background-color #576a95
+    }
   }
   
 

@@ -27,8 +27,7 @@
         v-if="isConditionNode()"
         v-model="properties.priority"
         size="mini"
-        class="priority-select"
-      >
+        class="priority-select" >
         <el-option v-for="item in priorityLength" :key="item" :value="item-1" :label="'优先级'+item"></el-option>
       </el-select>
     </header>
@@ -79,8 +78,6 @@
             <i  class="el-icon-delete" style="cursor: pointer;" @click="onDelCondition(item)"></i>
           </template>
         </row-wrapper>
-        
-
       </template>
       <div style="padding-left:10px;margin-top:2em;">
         <el-button type="primary" size="small" icon="el-icon-plus" @click="dialogVisible=true">添加条件</el-button>
@@ -89,7 +86,7 @@
     </section>
 
     <!-- 审批人 -->
-    <section class="approver-pane" style="height:100%;" v-if="value && !isConditionNode()">
+    <section class="approver-pane" style="height:100%;" v-if="value && (isApproverNode() || isStartNode())">
       <el-tabs v-model="activeName" style="height:100%;">
         <el-tab-pane :label="'设置' + (value.type === 'approver' ? '审批人' : '发起人')" name="config">
           <!-- 开始节点 -->
@@ -178,6 +175,13 @@
           </div>
         </el-tab-pane>
       </el-tabs>
+    </section>
+
+    <section  v-if="value && isCopyNode()" style="padding-left: 1rem;">
+      <p>抄送人</p>
+      <fc-org-select ref="copy-org" v-model="properties.menbers" buttonType="button" title="抄送人" />
+      <br>
+      <el-checkbox v-model="properties.userOptional">允许发起人自选抄送人</el-checkbox>
     </section>
 
     <el-dialog title="选择条件" :visible.sync="dialogVisible" width="500px" :append-to-body="true" custom-class="condition-dialog">
@@ -300,7 +304,7 @@ export default {
       // 发起人是默认就有得  所以需要加 1
       return this.pconditions.length - this.showingPCons.length + 1;
     },
-        usedFormItems(){
+    usedFormItems(){
       return this.$store.state.formItemList
     }
   },
@@ -308,7 +312,6 @@ export default {
     Clickoutside
   },
   methods: {
-
     getFormOperates(){
       let res = []
       this.isApproverNode() && (res = this.approverForm.formOperates)
@@ -367,10 +370,20 @@ export default {
       format(formItems)
       return res
     },
+
+    initCopyNode () {
+      this.properties = this.value.properties
+    },
+
     initStartNodeData(){
       this.initInitiator()
       Object.assign(this.startForm, this.value.properties)
       this.startForm.formOperates = this.initFormOperates()
+    },
+
+    copyNodeConfirm () {
+      this.$emit("confirm", this.properties, this.getOrgSelectLabel('copy') || '发起人自选');
+      this.visible = false;
     },
 
     /**
@@ -409,12 +422,12 @@ export default {
       this.properties.conditions = conditions
       // 发起人虽然是条件 但是这里把发起人放到外部单独判断
       this.properties.initiator = this.initiator
-      this.initiator && (nodeContent = `[发起人: ${this.getInitatorLabel('condition')}]` + '\n' + nodeContent)
-      this.$emit("confirm", this.properties, nodeContent);
+      this.initiator && (nodeContent = `[发起人: ${this.getOrgSelectLabel('condition')}]` + '\n' + nodeContent)
+      this.$emit("confirm", this.properties, nodeContent || '请设置条件');
       this.visible = false;
     },
 
-    getInitatorLabel(type){
+    getOrgSelectLabel (type) {
       return this.$refs[type + '-org']['selectedLabels']
     },
     /**
@@ -424,7 +437,7 @@ export default {
       this.properties.initiator = this.initiator
       const formOperates = this.startForm.formOperates.map(t=>({formId: t.formId, formOperate: t.formOperate}))
       Object.assign(this.properties, this.startForm, {formOperates})
-      this.$emit("confirm", this.properties, this.getInitatorLabel('start'));
+      this.$emit("confirm", this.properties, this.getOrgSelectLabel('start') || '所有人');
       this.visible = false;
     },
     /**
@@ -438,23 +451,20 @@ export default {
       } else if('director' === assigneeType){
         content = this.directorLevel === 1 ? '直接主管' : `第${this.directorLevel}级主管`
       } else{
-        content = this.getInitatorLabel('approver')
+        content = this.getOrgSelectLabel('approver')
       }
       const formOperates = this.approverForm.formOperates.map(t=>({formId: t.formId, formOperate: t.formOperate}))
       this.approverForm.approvers = this.orgCollection[assigneeType]
       Object.assign(this.properties, this.approverForm, {formOperates})
-      this.$emit("confirm", this.properties, content)
+      this.$emit("confirm", this.properties, content || '请设置审批人')
       this.visible = false;
     },
     // 确认修改
     confirm() {
-      if(this.isConditionNode()){
-        this.conditionNodeComfirm() 
-      }else if(this.isApproverNode()) {
-        this.approverNodeComfirm()
-      }else{
-        this.startNodeComfirm()
-      }
+      this.isCopyNode() && this.copyNodeConfirm()
+      this.isStartNode() && this.startNodeComfirm()
+      this.isApproverNode() && this.approverNodeComfirm()
+      this.isConditionNode() && this.conditionNodeComfirm() 
     },
     // 关闭抽屉
     cancel() {
@@ -492,6 +502,10 @@ export default {
 
     isStartNode(){
       return this.value ? NodeUtils.isStartNode(this.value) : false;
+    },
+
+    isCopyNode () {
+      return this.value ? NodeUtils.isCopyNode(this.value) : false
     },
 
     initInitiator(){

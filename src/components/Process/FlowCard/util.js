@@ -20,6 +20,9 @@ export class NodeUtils {
     } while ( qutient );
     return res.join( '' )
   }
+  static isCopyNode (node) {
+    return node && node.type === 'copy'
+  }
   /**
    * 判断是否是条件节点
    * @param {Node} node - 节点数据
@@ -138,7 +141,7 @@ export class NodeUtils {
    * 添加审计节点（普通节点 approver）
    * @param { Object } data - 目标节点数据，在该数据节点之后添加审计节点
    * @param { Object } isBranchAction - 目标节点数据，是否是条件分支
-   * @param { Object } newChildNode - 传入的新的节点 用户操作均为空  删除操作会传入该参数模拟添加节点
+   * @param { Object } newChildNode - 传入的新的节点 用户操作均为空  删除操作/添加抄送人 会传入该参数 以模拟添加节点
    */
   static addApprovalNode ( data, isBranchAction, newChildNode = undefined ) {
     let oldChildNode = data.childNode;
@@ -163,6 +166,11 @@ export class NodeUtils {
     let emptyNode = this.createNode( 'empty', data.nodeId )
     this.addApprovalNode( data, true, emptyNode )
     return emptyNode
+  }
+
+  static addCopyNode (data, isBranchAction) {
+    // 复用addApprovalNode  因为抄送人和审批人基本一致
+    this.addApprovalNode(data, isBranchAction, this.createNode('copy'))
   }
   /**
    * 添加条件节点 condition 通过点击添加条件进入该操作
