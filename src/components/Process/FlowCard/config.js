@@ -23,5 +23,6 @@ export default {
     content: "请设置条件",
     properties: { title: '条件', conditions: [], initiator: null }
   },
+  branch: { type: "branch", content: "", properties: {} },
   empty: { type: "empty", content: "", properties: {} }
 }

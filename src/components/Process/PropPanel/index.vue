@@ -34,39 +34,56 @@
 
     <!-- 条件  -->
     <section class="condition-pane" v-if="value && isConditionNode()">
-      <el-row style="padding: 10px;" v-if="showingPCons.includes(-1)" :gutter="12">
-        <el-col :span="4" style="font-size: 12px;">发起人</el-col>
-        <el-col :span="18" style="padding-left: 12px;">
+      <row-wrapper title="发起人" v-if="showingPCons.includes(-1)">
           <fc-org-select ref="condition-org" :tabList="['dep&user']" v-model="initiator" />
-        </el-col>
-      </el-row>
+      </row-wrapper>
+      
       <template v-for="(item, index) in pconditions">
         <!-- 计数 -->
-        <num-input
-          v-if="couldShowIt(item,'el-input-number','fc-date-duration','fc-time-duration','fc-amount')"
-          v-model="item.conditionValue"
-          :title="timeTangeLabel(item)"
-          :key="index"
-          @delete="onDelCondition(item)"
-        ></num-input>
+        <row-wrapper 
+          :key="index" 
+          :title="item.label" 
+          v-if="couldShowIt(item,'el-input-number','fc-date-duration','fc-time-duration','fc-amount')">
+          <num-input
+            :key="index"
+            :title="timeTangeLabel(item)"
+            v-model="item.conditionValue"
+            style="padding-right: 6px;"
+          ></num-input>
+          <template v-slot:action>
+            <i  class="el-icon-delete" style="cursor: pointer;" @click="onDelCondition(item)"></i>
+          </template>
+        </row-wrapper>
         <!-- 单选组 -->
-        <radio-group
-          v-if="couldShowIt(item,'el-radio-group')"
-          v-model="item.conditionValue"
-          :options="item.options"
-          :key="index"
-          @delete="onDelCondition(item)"
-          :title="item.label"
-        ></radio-group>
+        <row-wrapper 
+          :key="index" 
+          :title="item.label" 
+          v-if="couldShowIt(item,'el-radio-group')">
+          <el-radio-group v-model="item.conditionValue" class="radio-group">
+            <el-radio v-for="item in item.options" :label="item.label" :key="item.label">{{item.label}}</el-radio>
+          </el-radio-group>
+          <template v-slot:action>
+            <i  class="el-icon-delete" style="cursor: pointer;" @click="onDelCondition(item)"></i>
+          </template>
+        </row-wrapper>
+        
         <!-- 下拉 -->
-        <single-select
-          v-if="couldShowIt(item,'el-select')"
-          v-model="item.conditionValue"
-          :options="item.options"
-          :title="item.label"
-          :key="index"
-          @delete="onDelCondition(item)"
-        ></single-select>
+        <row-wrapper 
+          :key="index" 
+          :title="item.label" 
+          v-if="couldShowIt(item,'el-select')">
+          <el-select v-model="item.conditionValue" placeholder="请选择" size="small">
+            <el-option
+              v-for="item in item.options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <template v-slot:action>
+              <i  class="el-icon-delete" style="cursor: pointer;" @click="onDelCondition(item)"></i>
+            </template>
+        </row-wrapper>
           <!-- 组织机构 -->
         <row-wrapper :key="index" :title="item.label" v-if="couldShowIt(item,'fc-org-select')">
           <fc-org-select 
@@ -140,10 +157,6 @@
               <br>
               <el-radio  v-model="approverForm.counterSign"  :label="false" class="radio-item">或签（一名审批人同意或拒绝即可）</el-radio>
             </div>
-            <div class="option-box">
-              <p>抄送人</p>
-              <el-button type="primary" icon="el-icon-plus" size="small">添加成员</el-button>
-            </div>
           </div>
 
         </el-tab-pane>
@@ -201,12 +214,10 @@
   </el-drawer>
 </template>
 <script>
-import Clickoutside from "element-ui/src/utils/clickoutside";
-import NumInput from "./NumInput";
-import radioGroup from "./radioGroup";
-import SingleSelect from "./SingleSelect";
-import { NodeUtils } from "../FlowCard/util.js";
+import Clickoutside from "element-ui/src/utils/clickoutside"
+import { NodeUtils } from "../FlowCard/util.js"
 import RowWrapper from './RowWrapper'
+import NumInput from "./NumInput"
 const rangeType = {
   'lt': '<',
   'lte':'≤',
@@ -564,8 +575,6 @@ export default {
   },
   components: {
     "num-input": NumInput,
-    "radio-group": radioGroup,
-    "single-select": SingleSelect,
     "row-wrapper": RowWrapper
   }
 };
@@ -673,7 +682,6 @@ export default {
 
 .condition-pane{
   height 100%
-  overflow-y scroll
-  overflow-x hidden
+  overflow scroll
 }
 </style>

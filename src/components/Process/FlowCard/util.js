@@ -99,11 +99,9 @@ export class NodeUtils {
     }
     let concatChild = ( prev, delNode ) => {
       prev.childNode = delNode.childNode
-      prev.conditionNodes = delNode.conditionNodes
       prev.childNode && ( prev.childNode.prevId = prev.nodeId )
-      prev.conditionNodes && prev.conditionNodes.forEach( c => {
-        c.prevId = prev.nodeId
-      } );
+      delNode.conditionNodes && (prev.conditionNodes = delNode.conditionNodes).
+      prev.conditionNodes && prev.conditionNodes.forEach( c => c.prevId = prev.nodeId );
     }
     if ( this.isConditionNode( nodeData ) ) {
       let cons = prevNode.conditionNodes
@@ -170,7 +168,7 @@ export class NodeUtils {
 
   static addCopyNode (data, isBranchAction) {
     // 复用addApprovalNode  因为抄送人和审批人基本一致
-    this.addApprovalNode(data, isBranchAction, this.createNode('copy'))
+    this.addApprovalNode(data, isBranchAction, this.createNode('copy', data.nodeId))
   }
   /**
    * 添加条件节点 condition 通过点击添加条件进入该操作
@@ -312,6 +310,7 @@ export class NodeUtils {
    * @param {Node} node - 节点数据
    */
   static checkNode ( node, parent ) {
+    // 抄送人应该可以默认自选
     let valid = true
     const props = node.properties
     this.isStartNode( node )
@@ -323,8 +322,9 @@ export class NodeUtils {
       && !props.initiator
       && isEmptyArray( props.conditions )
       && ( valid = false )
-
+    const customSettings = ['myself', 'optional', 'director']
     this.isApproverNode( node )
+      && !customSettings.includes(props.assigneeType)
       && isEmptyArray( props.approvers )
       && ( valid = false )
     return valid
