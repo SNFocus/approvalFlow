@@ -20,7 +20,7 @@ export class NodeUtils {
     } while ( qutient );
     return res.join( '' )
   }
-  static isCopyNode (node) {
+  static isCopyNode ( node ) {
     return node && node.type === 'copy'
   }
   /**
@@ -91,16 +91,24 @@ export class NodeUtils {
    * @param { Object  } nodeData - 被删除节点的数据
    * @param { Object  } processData - 流程图的所有节点数据
    */
-  static deleteNode ( nodeData, processData ) {
+  static deleteNode ( nodeData, processData, checkEmpty = true ) {
     let prevNode = this.getPreviousNode( nodeData.prevId, processData )
-    if ( prevNode.type === 'empty') {
-      this.deleteNode( prevNode, processData )
-      !this.isConditionNode(nodeData) && this.deleteNode(nodeData, processData)
+    if ( checkEmpty && prevNode.type === 'empty' ) {
+      if ( this.isConditionNode( nodeData ) ) {
+        this.deleteNode( prevNode, processData )
+      } else {
+        if ( isEmptyArray( prevNode.conditionNodes ) ) {
+          this.deleteNode( prevNode, processData )
+        }
+        this.deleteNode( nodeData, processData, false )
+      }
+      // this.deleteNode( prevNode, processData )
+      // !this.isConditionNode(nodeData) && this.deleteNode(nodeData, processData)
       return
     }
     let concatChild = ( prev, delNode ) => {
       prev.childNode = delNode.childNode
-      isEmptyArray(prev.conditionNodes) && (prev.conditionNodes = delNode.conditionNodes)
+      isEmptyArray( prev.conditionNodes ) && ( prev.conditionNodes = delNode.conditionNodes )
       prev.childNode && ( prev.childNode.prevId = prev.nodeId )
       prev.conditionNodes && prev.conditionNodes.forEach( c => c.prevId = prev.nodeId );
     }
@@ -123,9 +131,7 @@ export class NodeUtils {
         concatChild( prevNode, anotherCon )
       }
       // 重新编排优先级
-      cons.forEach( ( c, i ) => {
-        c.properties.priority = i
-      } )
+      cons.forEach( ( c, i ) => c.properties.priority = i )
       return
     }
     concatChild( prevNode, nodeData )
@@ -146,7 +152,7 @@ export class NodeUtils {
     let oldChildNode = data.childNode;
     newChildNode = newChildNode || this.createNode( "approver", data.nodeId )
     data.childNode = newChildNode
-    if(oldChildNode) {
+    if ( oldChildNode ) {
       newChildNode.childNode = oldChildNode
       oldChildNode.prevId = newChildNode.nodeId
     }
@@ -158,8 +164,8 @@ export class NodeUtils {
       } )
       delete data.conditionNodes
     }
-    if(oldChildNode && oldChildNode.type === 'empty'){
-      this.deleteNode(oldChildNode, data)
+    if ( oldChildNode && oldChildNode.type === 'empty' ) {
+      this.deleteNode( oldChildNode, data )
     }
   }
   /**
@@ -173,9 +179,9 @@ export class NodeUtils {
     return emptyNode
   }
 
-  static addCopyNode (data, isBranchAction) {
+  static addCopyNode ( data, isBranchAction ) {
     // 复用addApprovalNode  因为抄送人和审批人基本一致
-    this.addApprovalNode(data, isBranchAction, this.createNode('copy', data.nodeId))
+    this.addApprovalNode( data, isBranchAction, this.createNode( 'copy', data.nodeId ) )
   }
   /**
    * 添加条件节点 condition 通过点击添加条件进入该操作
@@ -331,7 +337,7 @@ export class NodeUtils {
       && ( valid = false )
     const customSettings = ['myself', 'optional', 'director']
     this.isApproverNode( node )
-      && !customSettings.includes(props.assigneeType)
+      && !customSettings.includes( props.assigneeType )
       && isEmptyArray( props.approvers )
       && ( valid = false )
     return valid
