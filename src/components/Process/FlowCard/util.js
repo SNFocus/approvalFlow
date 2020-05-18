@@ -20,30 +20,22 @@ export class NodeUtils {
     } while ( qutient );
     return res.join( '' )
   }
-  static isCopyNode ( node ) {
-    return node && node.type === 'copy'
-  }
+
+
   /**
-   * 判断是否是条件节点
+   * 判断节点类型
    * @param {Node} node - 节点数据
    * @returns Boolean
    */
   static isConditionNode ( node ) {
     return node && node.type === 'condition'
   }
-  /**
-    * 判断是否是开始节点
-    * @param {Node} node - 节点数据
-    * @returns Boolean
-    */
+  static isCopyNode ( node ) {
+    return node && node.type === 'copy'
+  }
   static isStartNode ( node ) {
     return node && node.type === 'start'
   }
-  /**
-    * 判断是否是审批节点
-    * @param {Node} node - 节点数据
-    * @returns Boolean
-    */
   static isApproverNode ( node ) {
     return node && node.type === 'approver'
   }
@@ -66,9 +58,7 @@ export class NodeUtils {
    * @returns { Object } 父节点
    */
   static getPreviousNode ( prevId, processData ) {
-    if ( processData.nodeId === prevId ) {
-      return processData
-    }
+    if ( processData.nodeId === prevId ) return processData
     if ( processData.childNode ) {
       let r1 = this.getPreviousNode( prevId, processData.childNode )
       if ( r1 ) {
@@ -335,6 +325,7 @@ export class NodeUtils {
       && !props.initiator
       && isEmptyArray( props.conditions )
       && ( valid = false )
+
     const customSettings = ['myself', 'optional', 'director']
     this.isApproverNode( node )
       && !customSettings.includes( props.assigneeType )
