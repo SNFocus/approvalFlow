@@ -107,7 +107,7 @@
                 <div
                   v-for="(element, index) in customMadeComponents"
                   :key="index"
-                  class="components-item"
+                  class="components-item custom-component"
                   @click="addComponent(element)"
                 >
                   <div class="components-body">
@@ -253,7 +253,6 @@ import {
 const emptyActiveData = { style: {}, autosize: {} };
 let oldActiveId;
 let tempActiveData;
-const drawingListInDB = getDrawingList();
 const formConfInDB = getFormConf();
 // const idGlobal = getIdGlobal();
 export default {
@@ -332,7 +331,8 @@ export default {
         this.$store.commit('updateFormItemList', val)
         // if (val.length === 0) this.idGlobal = 100;
       },
-      deep: true
+      deep: true,
+      immediate: true
     },
     // idGlobal: {
     //   handler(val) {
@@ -342,15 +342,11 @@ export default {
     // }
   },
   mounted() {
-    if (Array.isArray(drawingListInDB) && drawingListInDB.length > 0) {
-      this.drawingList = drawingListInDB;
-    } else {
-      this.drawingList = drawingDefalut;
-    }
+    const drawingListInDB = getDrawingList()
+    const hasStorage = Array.isArray(drawingListInDB) && drawingListInDB.length > 0
+    this.drawingList = hasStorage ? drawingListInDB : drawingDefalut;
     this.activeFormItem(this.drawingList[0]);
-    if (formConfInDB) {
-      this.formConf = formConfInDB;
-    }
+    formConfInDB && (this.formConf = formConfInDB);
 
     // const clipboard = new ClipboardJS('#copyNode', {
     //   text: trigger => {
@@ -376,15 +372,20 @@ export default {
       return this.commonComponents.findIndex(t => t.label === name) > -1
     },
     /**
-     * 阻止行容器中嵌套行容器
+     * 阻止表格中嵌套行容器
      * 定制组件不能添加子组件
      */
     shouldClone(to, from ,target, event, conf){
-      // .drawing-row-item —— 行容器的类名
-      const isRow = target.classList.contains('.drawing-row-item') // 直接拖拽的行容器 最外层含有.drawing-row-item
-      const hasRow = target.querySelector('.drawing-row-item') !== null // 定制组件 内部含有.drawing-row-item
-      // target.innerText !== '布局容器' 是阻止从左侧拖拽嵌套
-      return !isRow && !hasRow && target.innerText !== '布局容器'
+       // .drawing-row-item —— 行容器的类名 ipad里面的组件才会带有
+      // 直接拖拽的行容器 最外层含有.drawing-row-item
+      // 定制组件 内部含有.drawing-row-item
+      const hasRow = target.classList.contains('.drawing-row-item') || target.querySelector('.drawing-row-item') !== null
+      const isRowContainer = ['布局容器', '表格/明细'].includes(target.innerText) //是阻止从左侧拖拽嵌套
+      const isCusFromLeft = target.classList.contains('custom-component')
+      if(conf.rowType === 'table'){
+        if(isRowContainer || hasRow || isCusFromLeft) return false
+      }
+      return  true
     },
     activeFormItem(element) {
       if(element){

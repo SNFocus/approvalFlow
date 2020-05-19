@@ -557,7 +557,10 @@ export default {
   },
   watch: {
     visible(val) {
-      if (!val) return 
+      if (!val) return
+      this.processData.properties.formOperates = 
+        this.initFormOperates(this.processData)
+        .map(t=>({formId: t.formId, formOperate: t.formOperate}))
       this.isStartNode() && this.initStartNodeData()
       this.isApproverNode() && this.initApproverNodeData()
       this.isConditionNode() && this.initConditionNodeData()
