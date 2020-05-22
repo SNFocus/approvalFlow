@@ -12,7 +12,7 @@ const FORM_CONF = 'formConf'
 
 export function getDrawingList () {
   const str = localStorage.getItem( DRAWING_ITEMS )
-  if ( str ) return JSON.parse( str )
+  if ( !["undefined", "null"].includes( str ) ) return JSON.parse( str )
   return null
 }
 

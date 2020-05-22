@@ -267,7 +267,8 @@ export default {
   },
   props:['tabName'],
   data() {
-    const drawingList = getDrawingList() || drawingDefalut
+    const storageList = getDrawingList()
+    const drawingList = Array.isArray(storageList) && storageList.length ? storageList : drawingDefalut
     return {
       // idGlobal,
       formConf,
@@ -311,6 +312,7 @@ export default {
     },
     drawingList: {
       handler(val) {
+        if(!val) return 
         const canUsedAsPCon = d => {
           if(!d.proCondition || !d.required) return false
           if(d.tag === 'el-select' && d.multiple) return false
@@ -319,6 +321,7 @@ export default {
           return true 
         }
         const loop = (data, callback) => {
+          if(!data) return
           if(Array.isArray(data.children)){
             data.children.forEach(t => loop(t, callback))
           }
