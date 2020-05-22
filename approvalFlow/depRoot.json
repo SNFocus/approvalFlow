@@ -1,0 +1,8 @@
+{
+  "code": 200,
+  "msg": "获取成功",
+  "data": {
+    "deptId": 1,
+    "deptName": "xxx公司"
+  }
+}
