@@ -47,6 +47,10 @@ let nodes = {
   copy: createFunc,
   empty: _ => '',
   condition: function(ctx, conf, h) {
+      // <i
+      //    class="el-icon-document-copy icon"
+      //    onClick={this.eventLancher.bind(ctx, "copyNode", conf, ctx.data)}
+      //  ></i>
     return (
       <section
         class="flow-path-card condition"
@@ -66,10 +70,7 @@ let nodes = {
           </div>
           <span class="priority">优先级{conf.properties.priority + 1}</span>
           <div class="actions">
-            <i
-              class="el-icon-document-copy icon"
-              onClick={this.eventLancher.bind(ctx, "copyNode", conf, ctx.data)}
-            ></i>
+            
             <i
               class="el-icon-close icon"
               onClick={this.eventLancher.bind(
