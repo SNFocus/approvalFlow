@@ -83,19 +83,23 @@ export default {
     onClosePanel() {
       this.activeData = null;
     },
-    doseUsedFormCondition ( formId ) {
+
+    // 传formIds 查询指定组件 未传时  判断所有组件
+    isFilledPCon ( formIds ) {
       let res = false
+      const loopChild = (parent, callback) => parent.childNode && loop( parent.childNode, callback )
       const loop = ( data, callback ) => {
-        if(res) return
-        if ( data && Array.isArray( data.conditionNodes ) ) {
-            const hasFinded = data.conditionNodes.some( c => c.properties.conditions.some( item => item.formId == formId))
-            if(hasFinded){
-              callback()
-            }else{
-              data.conditionNodes.forEach(d => d.childNode && loop( d.childNode, callback ))
-            }
+        if(res || !data) return // 查找到就退出
+        if ( Array.isArray( data.conditionNodes )) {
+          const uesd = data.conditionNodes.some( c => {
+            const cons = c.properties.conditions || []
+            return Array.isArray(formIds) 
+              ? cons.some( item => formIds.includes(item.formId)) // 查询特定组件
+              : cons.length > 0 // 只要有节点设置了条件 说明就有组件作为条件被使用
+          })
+          uesd ? callback() : data.conditionNodes.forEach(t => loopChild(t, callback))
         }
-        data.childNode && loop( data.childNode, callback )
+        loopChild(data, callback)
       }
       loop( this.data, () => res = true )
       return res

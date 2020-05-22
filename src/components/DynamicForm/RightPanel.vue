@@ -523,7 +523,7 @@
    
           
           <el-form-item v-if="activeData.required !== undefined" label="是否必填">
-            <el-switch v-model="activeData.required" @change="requireChange" />
+            <el-switch v-model="activeData.required" @change="requireChange" :disabled="!couldChangeRequire" />
             <el-tooltip
               class="item"
               effect="dark"
@@ -681,7 +681,7 @@ export default {
     IconsDialog,
     draggable
   },
-  props: ["showField", "activeData", "formConf"],
+  props: ["showField", "activeData", "formConf", "couldChangeRequire"],
   data() {
     return {
       proConditionCmp: ["el-input-number", "el-select", "el-radio-group"], // 可作为流程图条件的组件
@@ -839,21 +839,24 @@ export default {
     }
   },
   methods: {
+    // PCon => ProcessCondition 
+    isUsdAsPCon () {
+      
+    },
+
     requireChange(required) {
-       
       // 下拉 单选 计数 日期区间 时间区间 需要写进流程条件中
       if (!this.activeData.proCondition) return;
       if (required && !this.activeData.multiple) {
         // 没有设置时长的时间范围组件不能作为流程条件
-        if(['fc-date-duration','fc-time-duration'].includes(this.activeData.tag) && !this.activeData.showDuration){
-           
+        const isRangeCmp = ['fc-date-duration','fc-time-duration'].includes(this.activeData.tag)
+        const showDuration = this.activeData.showDuration
+        if( isRangeCmp && !showDuration){
           this.$store.commit("delPCondition", this.activeData.formId);
           return 
         }
-         
         this.$store.commit("addPCondition", this.activeData);
       } else {
-         
         this.$store.commit("delPCondition", this.activeData.formId);
       }
     },

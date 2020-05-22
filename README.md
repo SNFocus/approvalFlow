@@ -3,6 +3,7 @@
 
 基于JakHuang大佬的[form-generator](https://github.com/JakHuang/form-generator)的，仿钉钉后台审批流程创建界面
 
+[Gitee预览入口](http://soning.gitee.io/approvalflow/)
 ## 主要功能
 1. 表单配置(form-generator)
   - 拖拽表单，填写组件配置

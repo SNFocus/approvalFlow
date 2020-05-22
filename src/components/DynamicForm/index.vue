@@ -190,6 +190,7 @@
       :active-data="activeData"
       :form-conf="formConf"
       :show-field="!!drawingList.length"
+      :couldChangeRequire="!isProCondition(activeData)"
       @tag-change="tagChange"
     />
 
@@ -545,6 +546,11 @@ export default {
       document.getElementById("copyNode").click();
     },
     empty() {
+      const processCmp = this.$parent.$children.find(t => t.isProcessCmp)
+      if(processCmp && processCmp.isFilledPCon()) {
+        this.$message.warning("尚有组件已作为流程判断条件，无法删除");
+        return;
+      }
       this.$confirm("确定要清空所有组件吗？", "提示", { type: "warning" }).then(
         () => {
           this.drawingList = [];
@@ -574,18 +580,21 @@ export default {
       }
       return item;
     },
-    // 判断是已否被流程图作为条件使用了
-    hasUsedAsPCondition(cmp){
-      return this.$store.state.processConditions.find(t => t.formId == cmp.formId) ? true : false
+    // 判断是已否被流程图作为条件必填项了
+    isProCondition(cmp){
+      const isPcon = this.$store.state.processConditions.find(t => t.formId == cmp.formId) ? true : false
+      if (!isPcon) return false
+      const processCmp = this.$parent.$children.find(t => t.isProcessCmp)
+      if(processCmp && processCmp.isFilledPCon([cmp.formId])) {
+        return true
+      }
+      return false
     },
     drawingItemDelete(index, parent) {
       // 首先判断是否是流程条件 再判断是否有节点使用过
-      if (this.hasUsedAsPCondition(parent[index]) ) {
-        const processCmp = this.$parent.$children.find(t => t.isProcessCmp)
-        if(processCmp && processCmp.doseUsedFormCondition(parent[index].formId)) {
-          this.$message.warning("该组件已作为流程判断条件，无法删除");
-          return;
-        }
+      if (this.isProCondition(parent[index])) {
+        this.$message.warning("该组件已作为流程判断条件，无法删除");
+        return 
       }
       this.$store.commit("delPCondition", parent[index].formId);
       parent.splice(index, 1);
