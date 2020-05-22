@@ -15,7 +15,7 @@
 ```
 // src
 |-- components
-|---- BasicSettingForm // 基础设置
+|---- BasicSetting // 基础设置
 |---- DynamicForm      // 表单配置
 |---- Process          // 流程配置
 |---- AdvancedSetting  // 高级设置

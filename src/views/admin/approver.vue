@@ -35,7 +35,7 @@
 // @ is an alias to /src
 import Process from "@/components/Process";
 import DynamicForm from "@/components/DynamicForm";
-import BasicSetting from '@/components/BasicSettingForm'
+import BasicSetting from '@/components/BasicSetting'
 import AdvancedSetting from '@/components/AdvancedSetting'
 
 const beforeUnload = function (e) {
