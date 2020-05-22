@@ -103,6 +103,11 @@ export default {
       })
     },
     sendServer(param){
+      this.$notify({
+        title: '数据已整合完成',
+        message: '请在控制台中查看数据输出',
+        position: 'bottom-right'
+      });
       console.log(param)
     },
     exit() {

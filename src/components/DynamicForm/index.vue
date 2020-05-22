@@ -266,6 +266,7 @@ export default {
   },
   props:['tabName'],
   data() {
+    const drawingList = getDrawingList() || drawingDefalut
     return {
       // idGlobal,
       formConf,
@@ -275,15 +276,15 @@ export default {
       commonComponents,
       customMadeComponents,
       labelWidth: 100,
-      drawingList: drawingDefalut,
+      drawingList,
       drawingData: {},
-      activeId: drawingDefalut ? drawingDefalut[0].formId : "",
+      activeId: drawingList ? drawingList[0].formId : "",
       drawerVisible: false,
       formData: {},
       dialogVisible: false,
       generateConf: null,
       showFileName: false,
-      activeData: drawingDefalut[0],
+      activeData: drawingList[0],
       activeTabName: "common"
     };
   },
@@ -344,9 +345,9 @@ export default {
   mounted() {
     const drawingListInDB = getDrawingList()
     const hasStorage = Array.isArray(drawingListInDB) && drawingListInDB.length > 0
-    this.drawingList = hasStorage ? drawingListInDB : drawingDefalut;
-    this.activeFormItem(this.drawingList[0]);
-    formConfInDB && (this.formConf = formConfInDB);
+    this.drawingList = hasStorage ? drawingListInDB : drawingDefalut
+    this.activeFormItem(this.drawingList[0])
+    formConfInDB && (this.formConf = formConfInDB)
 
     // const clipboard = new ClipboardJS('#copyNode', {
     //   text: trigger => {

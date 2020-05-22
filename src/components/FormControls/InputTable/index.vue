@@ -273,7 +273,7 @@ export default {
   .input-box
     border none !important
     min-height 40px !important
-    padding-left 0
+    padding-left 0 !important
 
   .el-table .el-table__body
     td

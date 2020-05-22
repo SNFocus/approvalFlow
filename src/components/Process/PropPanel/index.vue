@@ -358,8 +358,8 @@ export default {
       return tag.includes(item.tag)  && this.showingPCons.includes(item.formId);
     },
 
-    initFormOperates(){
-      const formOperates = this.value.properties && this.value.properties.formOperates || []
+    initFormOperates(target){
+      const formOperates = target.properties && target.properties.formOperates || []
       // 自定义组件不加入权限控制
       const res = []
       const defaultType = this.isApproverNode() ? 1 : 2 // 操作权限 0 隐藏 1 只读 2 可编辑
@@ -389,7 +389,7 @@ export default {
     initStartNodeData(){
       this.initInitiator()
       Object.assign(this.startForm, this.value.properties)
-      this.startForm.formOperates = this.initFormOperates()
+      this.startForm.formOperates = this.initFormOperates(this.value)
     },
 
     copyNodeConfirm () {
@@ -532,7 +532,7 @@ export default {
       if (Array.isArray(this.approverForm.approvers)) {
         this.orgCollection[this.approverForm.assigneeType] = approvers
       }
-      this.approverForm.formOperates = this.initFormOperates()
+      this.approverForm.formOperates = this.initFormOperates(this.value)
     },
     /**
      * 初始化条件节点数据
