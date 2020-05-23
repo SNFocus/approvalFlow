@@ -371,7 +371,7 @@ export default {
         const data = {
             formId: t.formId, 
             required: t.required,
-            label: [parentName, t.label].join('.'), 
+            label: parentName ? [parentName, t.label].join('.') : t.label, 
             formOperate: getPermissionById(t.formId)
         }
         res.push(data)

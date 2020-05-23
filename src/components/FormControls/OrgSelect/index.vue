@@ -167,7 +167,7 @@ export default {
 .tags {
   .input-box.as-input{
     border: 1px solid #DCDFE6;
-    padding-left: 1rem;
+    padding-left: 6px;
     font-size: 12px;
     min-height: 32px;
     line-height: 30px;
