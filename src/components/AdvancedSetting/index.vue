@@ -9,8 +9,9 @@
         </el-select>
         <el-checkbox v-model="formData.myAuditAutoPass">发起人审批时自动通过</el-checkbox>
       </el-form-item>
-      <el-form-item label="全局审抄送人" prop="approver">
-        <el-button  plain size="mini">选择抄送人</el-button>
+      <el-form-item label="审批意见">
+        <el-checkbox v-model="formData.remarkRequired">必填</el-checkbox>
+        <el-checkbox v-model="formData.notVisibleForSponsor">对发起人不可见</el-checkbox>
       </el-form-item>
       <el-form-item label="审批意见填写提示" prop="remarkTip">
         <el-input v-model="formData.remarkTip" type="textarea" placeholder="请输入" :maxlength="100"
@@ -29,7 +30,9 @@ export default {
         autoRepeat: false, //审批人去重
         allFollows: '', //全局抄送人
         myAuditAutoPass: false, //发起人审批时自动通过
-        remarkTip: '' //审批意见填写提示
+        remarkTip: '', //审批意见填写提示
+        remarkRequired: false,
+        notVisibleForSponsor: false
       },
       rules: {
         autoRepeat: [{

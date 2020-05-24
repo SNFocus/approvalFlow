@@ -11,7 +11,6 @@
           添加{{title}}
       </el-button>
       <div class="input-box" :class="{'as-input': buttonType === 'input'}"  @click="show = true">
-        <!-- {{selectedLabels || '点击选择' + title}} -->
           <el-tag
             v-bind="tagConfig"
             class="org-tag"
@@ -158,6 +157,7 @@ export default {
     
     onConfirm (data) {
       this.innerValue = data
+      this.initSelectedData()
       this.$emit('change', this.innerValue)
     }
   }

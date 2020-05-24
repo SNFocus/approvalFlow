@@ -74,6 +74,7 @@ export default {
         );
         NodeUtils.setDefaultCondition(this.activeData, this.data)
       }
+      if(NodeUtils.isStartNode(this.activeData)) this.$emit('startNodeChange', this.data)
       this.onClosePanel();
       this.forceUpdate();
     },
