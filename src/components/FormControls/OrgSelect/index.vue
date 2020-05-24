@@ -152,6 +152,7 @@ export default {
       const list = this.innerValue[item.tabKey]
       const index = list.findIndex(t => this.getKey(t, item.tabKey) === item.key)
       index > -1 && list.splice(index, 1)
+      this.initSelectedData()
       this.$emit('change', this.innerValue)
     },
     

@@ -8,7 +8,7 @@ let hasCondition = ( state, formId, needIndex = false ) => {
 const store = new Vuex.Store( {
   state: {
     processConditions: [], // processConditions 用于传递流程图需要的条件
-    formItemList: [] // 流程节点表单权限控制——组件列表
+    formItemList: [], // 流程节点表单权限控制——组件列表
   },
   mutations: {
     //所有mutations中的方法的第一个参数一定是state变量，用来进行对state中的状态的操作

@@ -12,12 +12,18 @@ const routes = [
   {
     path: '/approver',
     name: 'approver',
-    component: Home
+    component: Home,
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/preview',
     name: 'preview',
-    component: () => import( "@/views/custom/preview.vue" )
+    component: () => import( "@/views/custom/preview.vue" ),
+    meta: {
+      keepAlive: false
+    }
   },
   {
     path: '/test',
