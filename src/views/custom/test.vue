@@ -43,11 +43,10 @@ export default {
   mounted () {},
   methods: {
     submitForm() {
-          if (!this.checkTableData()) console.log('false')
-          console.log(this.formData)
+          if (!this.checkTableData()) return 
           this.$refs['elForm'].validate(valid => {
             if(!valid) return
-            console.log(this.formData)
+            console.log("formData: ", this.formData)
             // TODO 提交表单
           })
         },

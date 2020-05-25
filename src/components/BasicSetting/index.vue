@@ -13,7 +13,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="谁可以发起审批" prop="approver">
-        <el-button  plain size="mini">选择发起人</el-button>
+        <fc-org-select
+          ref="org-select"
+          v-model="formData.initiator" 
+          :tabList="['dep&user']" 
+          title="发起人" 
+          @change="emitInitiator" />
+          <span style="font-size: 12px; color: #aaa;">默认所有人</span>
       </el-form-item>
       <el-form-item label="模板图标" prop="icon">
         <img :src="activeIconSrc" style="width: 28px;height: 28px;vertical-align: middle;">
@@ -44,7 +50,7 @@
 <script>
 export default {
   components: {},
-  props: ['tabName'],
+  props: ['tabName', 'initiator'],
   data() {
     const req = require.context( '@/assets/approverIcon', false, /\.png$/ )
     const iconList = req.keys().map((t, idx) => ({src: req(t), id: idx}))
@@ -57,6 +63,7 @@ export default {
         flowImg: '',
         flowGroup: undefined,
         flowRemark: undefined,
+        initiator: null
       },
       rules: {
         flowName: [{
@@ -103,6 +110,11 @@ export default {
   },
   mounted() { },
   methods: {
+    emitInitiator(){
+      this.$nextTick(()=>{
+        this.$emit('initiatorChange', this.formData.initiator, this.$refs['org-select'].selectedLabels)
+      })
+    },
     // 给父级页面提供得获取本页数据得方法
     getData() {
       return new Promise((resolve, reject) => {
@@ -111,10 +123,19 @@ export default {
             reject({ target: this.tabName})
             return
           }
+          this.formData.flowImg = this.activeIcon
           resolve({ formData: this.formData, target: this.tabName})  // TODO 提交表单
         })
       })
     },
+  },
+  watch:{
+    initiator:{
+      handler (val) {
+        this.formData.initiator = val
+      },
+      immediate: true
+    }
   }
 }
 </script>

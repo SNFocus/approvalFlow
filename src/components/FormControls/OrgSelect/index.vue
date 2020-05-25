@@ -11,7 +11,6 @@
           添加{{title}}
       </el-button>
       <div class="input-box" :class="{'as-input': buttonType === 'input'}"  @click="show = true">
-        <!-- {{selectedLabels || '点击选择' + title}} -->
           <el-tag
             v-bind="tagConfig"
             class="org-tag"
@@ -153,11 +152,13 @@ export default {
       const list = this.innerValue[item.tabKey]
       const index = list.findIndex(t => this.getKey(t, item.tabKey) === item.key)
       index > -1 && list.splice(index, 1)
+      this.initSelectedData()
       this.$emit('change', this.innerValue)
     },
     
     onConfirm (data) {
       this.innerValue = data
+      this.initSelectedData()
       this.$emit('change', this.innerValue)
     }
   }
@@ -167,7 +168,7 @@ export default {
 .tags {
   .input-box.as-input{
     border: 1px solid #DCDFE6;
-    padding-left: 1rem;
+    padding-left: 6px;
     font-size: 12px;
     min-height: 32px;
     line-height: 30px;

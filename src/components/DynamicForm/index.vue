@@ -313,26 +313,28 @@ export default {
     drawingList: {
       handler(val) {
         if(!val) return 
-        const canUsedAsPCon = d => {
-          if(!d.proCondition || !d.required) return false
-          if(d.tag === 'el-select' && d.multiple) return false
-          const isRangeCmp = ['fc-date-duration','fc-time-duration'].includes(d.tag)
-          if(isRangeCmp && !d.showDuration) return false
+        const vm = this
+        const canUsedAsPCon = (conf, parent) => {
+          const isRangeCmp = ['fc-date-duration','fc-time-duration'].includes(conf.tag)
+          if(isRangeCmp && !conf.showDuration) return false
+          if(parent && parent.rowType === 'table') return false 
+          if(!conf.proCondition || !conf.required) return false
+          if(conf.tag === 'el-select' && conf.multiple) return false
           return true 
         }
-        const loop = (data, callback) => {
+        const loop = (data, parent) => {
           if(!data) return
-          if(Array.isArray(data.children)){
-            data.children.forEach(t => loop(t, callback))
-          }
+          Array.isArray(data.children) && data.children.forEach(child => loop(child, data))
           if(Array.isArray(data)){
-            data.forEach(t => loop(t, callback))
+            data.forEach(loop)
           }else{
-            canUsedAsPCon(data) && callback(data)
+            canUsedAsPCon(data, parent) 
+            ? vm.$store.commit("addPCondition", data) 
+            : vm.$store.commit("delPCondition", data.formId)
           }
         }
-        loop(val, data => this.$store.commit("addPCondition", data))
-        saveDrawingList(val);
+        loop(val)
+        saveDrawingList(val)
         this.$store.commit('updateFormItemList', val)
         // if (val.length === 0) this.idGlobal = 100;
       },
@@ -384,11 +386,16 @@ export default {
        // .drawing-row-item —— 行容器的类名 ipad里面的组件才会带有
       // 直接拖拽的行容器 最外层含有.drawing-row-item
       // 定制组件 内部含有.drawing-row-item
-      const hasRow = target.classList.contains('.drawing-row-item') || target.querySelector('.drawing-row-item') !== null
-      const isRowContainer = ['布局容器', '表格/明细'].includes(target.innerText) //是阻止从左侧拖拽嵌套
-      const isCusFromLeft = target.classList.contains('custom-component')
-      if(conf.rowType === 'table'){
-        if(isRowContainer || hasRow || isCusFromLeft) return false
+      // const hasRow = target.classList.contains('.drawing-row-item') || target.querySelector('.drawing-row-item') !== null
+      // const isRowContainer = ['布局容器', '表格/明细'].includes(target.innerText) //是阻止从左侧拖拽嵌套
+      // const isCusFromLeft = target.classList.contains('custom-component')
+      const targetConf = target._underlying_vm_
+      const isRowContainer = conf.cmpType === 'common' && conf.rowType === 'layout'
+      if (isRowContainer) return true
+      if (conf.cmpType === 'custom') return false
+      if (conf.rowType === 'table') {
+        if (targetConf.layout === 'rowFormItem') return false
+        if (this.isFilledPCon([targetConf.formId])) return false
       }
       return  true
     },
@@ -508,7 +515,7 @@ export default {
         }
 
         if(this.isEmptyRowContainer()){
-          reject({ msg: '您得行容器中没有组件', target: this.tabName})
+          reject({ msg: '您的行容器中没有组件', target: this.tabName})
           return
         }
         this.AssembleFormData();
@@ -549,8 +556,7 @@ export default {
       document.getElementById("copyNode").click();
     },
     empty() {
-      const processCmp = this.$parent.$children.find(t => t.isProcessCmp)
-      if(processCmp && processCmp.isFilledPCon()) {
+      if(this.isFilledPCon()) {
         this.$message.warning("尚有组件已作为流程判断条件，无法删除");
         return;
       }
@@ -583,12 +589,15 @@ export default {
       }
       return item;
     },
+    isFilledPCon(formIds){
+      const processCmp = this.$parent.$children.find(t => t.isProcessCmp)
+      return processCmp && processCmp.isFilledPCon(formIds)
+    },
     // 判断是已否被流程图作为条件必填项了
     isProCondition(cmp){
       const isPcon = this.$store.state.processConditions.find(t => t.formId == cmp.formId) ? true : false
       if (!isPcon) return false
-      const processCmp = this.$parent.$children.find(t => t.isProcessCmp)
-      if(processCmp && processCmp.isFilledPCon([cmp.formId])) {
+      if(this.isFilledPCon([cmp.formId])) {
         return true
       }
       return false

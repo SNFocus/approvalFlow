@@ -84,6 +84,9 @@ export default {
       return this.cloneData.type === "bet";
     }
   },
+  mounted(){
+    this.update()
+  },
   methods: {
     onTypeChange(newVal) {
       if (newVal === "bet") {

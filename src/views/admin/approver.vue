@@ -23,9 +23,9 @@
       <el-button size="small" class="publish-btn" @click="publish">发布</el-button>
     </header>
     <section class="page__content">
-      <BasicSetting  v-show="activeStep === 'basicSetting'" tabName="basicSetting" ref="basicSetting" /> 
+      <BasicSetting  v-show="activeStep === 'basicSetting'" tabName="basicSetting" ref="basicSetting" @initiatorChange="onInitiatorChange" /> 
       <DynamicForm  v-show="activeStep === 'formDesign'" tabName="formDesign" ref="formDesign"/>
-      <Process  v-show="activeStep === 'processDesign'" tabName="processDesign" ref="processDesign"/>
+      <Process  v-show="activeStep === 'processDesign'" tabName="processDesign" ref="processDesign" @startNodeChange="onStartChange"/>
       <AdvancedSetting  v-show="activeStep === 'advancedSetting'" ref="advancedSetting"/>
     </section>
     <div class="github">
@@ -100,7 +100,7 @@ export default {
           basicSetting: res[0].formData,
           processData: res[2].formData,
           formData: res[1].formData,
-          expandAttr: getCmpData('advancedSetting')
+          advancedSetting: getCmpData('advancedSetting')
         }
         this.sendServer(param)
       })
@@ -128,6 +128,17 @@ export default {
             message: '模拟返回!'
           });
         }).catch(() => { });
+    },
+    onInitiatorChange (val, labels) {
+      const processCmp = this.$refs.processDesign
+      const startNode = processCmp.data
+      startNode.properties.initiator = val['dep&user']
+      startNode.content =  labels  || '所有人'
+      processCmp.forceUpdate()
+    },
+    onStartChange(node){
+      const basicSetting = this.$refs.basicSetting
+      basicSetting.formData.initiator = { 'dep&user': node.properties.initiator }
     }
   },
   components: {

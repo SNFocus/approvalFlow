@@ -240,7 +240,9 @@ export default {
       // 当前节点数据
       properties: {},
       // 发起人  start节点和condition节点需要
-      initiator:null, 
+      initiator:{
+        'dep&user': []
+      }, 
       priorityLength: 0, // 当为条件节点时  显示节点优先级选项的数据
       orgCollection:{
         dep: [],
@@ -282,6 +284,7 @@ export default {
           label: '角色',
           value: 'ROLE'
       }],
+      
       assigneeTypeOptions:[
         {
           label:'指定成员',
@@ -335,7 +338,7 @@ export default {
       }
     },
     onOrgChange(data){
-      console.log(data)
+      // console.log(data)
     },
     timeTangeLabel(item){
       const index = ['fc-time-duration','fc-date-duration'].findIndex(t => t === item.tag)
@@ -371,7 +374,7 @@ export default {
         const data = {
             formId: t.formId, 
             required: t.required,
-            label: [parentName, t.label].join('.'), 
+            label: parentName ? [parentName, t.label].join('.') : t.label, 
             formOperate: getPermissionById(t.formId)
         }
         res.push(data)
@@ -388,7 +391,6 @@ export default {
 
     initStartNodeData(){
       this.initInitiator()
-      Object.assign(this.startForm, this.value.properties)
       this.startForm.formOperates = this.initFormOperates(this.value)
     },
 
@@ -432,8 +434,8 @@ export default {
 
       this.properties.conditions = conditions
       // 发起人虽然是条件 但是这里把发起人放到外部单独判断
-      this.properties.initiator = this.initiator
-      this.initiator && (nodeContent = `[发起人: ${this.getOrgSelectLabel('condition')}]` + '\n' + nodeContent)
+      this.properties.initiator = this.initiator['dep&user']
+      this.initiator['dep&user'] && (nodeContent = `[发起人: ${this.getOrgSelectLabel('condition')}]` + '\n' + nodeContent)
       this.$emit("confirm", this.properties, nodeContent || '请设置条件');
       this.visible = false;
     },
@@ -445,9 +447,9 @@ export default {
      * 开始节点确认保存
      */
     startNodeComfirm() {
-      this.properties.initiator = this.initiator
+      this.properties.initiator = this.initiator['dep&user']
       const formOperates = this.startForm.formOperates.map(t=>({formId: t.formId, formOperate: t.formOperate}))
-      Object.assign(this.properties, this.startForm, {formOperates})
+      Object.assign(this.properties, {formOperates})
       this.$emit("confirm", this.properties, this.getOrgSelectLabel('start') || '所有人');
       this.visible = false;
     },
@@ -520,7 +522,8 @@ export default {
     },
 
     initInitiator(){
-      this.properties.initiator = this.value.properties.initiator
+      const initiator = this.value.properties && this.value.properties.initiator
+      this.initiator['dep&user'] = Array.isArray(initiator) ? initiator : []
     },
         /**
      * 初始化审批节点所需数据
@@ -541,7 +544,7 @@ export default {
       // 初始化条件表单数据
       let nodeConditions = this.value.properties && this.value.properties.conditions
       this.pconditions = JSON.parse(JSON.stringify(this.$store.state.processConditions));
-      this.initiator = this.value.properties.initiator
+      this.initiator['dep&user'] = this.value.properties.initiator
       if(Array.isArray(this.pconditions)){
         let temp = undefined
         this.showingPCons = [-1] // 默认显示发起人
