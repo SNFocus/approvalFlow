@@ -106,15 +106,25 @@ const layouts = {
     return str
   },
   rowFormItem ( element ) {
-    if(element.rowType === 'table'){
-      return this.colFormItem(element)
+    if ( element.rowType === 'table' ) {
+      return this.colFormItem( element )
     }
     const type = element.type === 'default' ? '' : `type="${element.type}"`
     const justify = element.type === 'default' ? '' : `justify="${element.justify}"`
     const align = element.type === 'default' ? '' : `align="${element.align}"`
     const gutter = element.gutter ? `:gutter="${element.gutter}"` : ''
     const children = element.children.map( ( el ) => layouts[el.layout]( el ) )
-    const divider = element.showDivider ? `<el-divider content-position="left">${element.label}</el-divider>` : ''
+    const explain = element.cmpType === 'custom' && element.explain
+      ? `
+      <el-tooltip effect="dark" content="组件说明" placement="top">
+        <i class="el-icon-info"   
+          @click="showExplain(\`${element.explain}\`, '${element.label}')" 
+          style="margin-right: 8px; color: #E6A23C;cursor: pointer;">
+        </i>
+      </el-tooltip>
+      `
+      : ''
+    const divider = element.showDivider ? `<el-divider content-position="left" >${explain + element.label}</el-divider>` : ''
     const rowClass = `class="form-container ${element.showDivider ? 'showDivider' : ''}"`
     let str = `
     ${divider}
@@ -382,6 +392,16 @@ function buildElUploadChild ( conf ) {
   return list.join( '\n' )
 }
 
+function buildDrawer () {
+  return `
+  <el-drawer
+    :title="drawerTitle + '说明'"
+    :visible.sync="drawerVisible">
+    <pre style="padding-left: 1rem;">{{drawerText}}</pre>
+  </el-drawer>
+  `
+}
+
 export function makeUpHtml ( conf, type ) {
   const htmlList = []
   confGlobal = conf
@@ -396,5 +416,5 @@ export function makeUpHtml ( conf, type ) {
     temp = dialogWrapper( temp )
   }
   confGlobal = null
-  return temp
+  return temp + buildDrawer()
 }

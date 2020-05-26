@@ -538,6 +538,7 @@ export const layoutComponents = [{
 
 export const commonComponents = [...inputComponents, ...selectComponents, ...layoutComponents]
   .map( t => Object.assign( { cmpType: 'common' }, t ) )
+
 const getConfigByTag = ( targetList, tag ) => targetList.find( t => t.tag === tag )
 const copyConfigAsCustom = ( rowConf, childrenConf ) => {
   const clone = ( target, conf = {} ) => {
@@ -550,7 +551,7 @@ const copyConfigAsCustom = ( rowConf, childrenConf ) => {
 }
 // 定制组件添加cmpType = custom
 export const customMadeComponents = [
-  copyConfigAsCustom( { label: '请假组件' }, [
+  copyConfigAsCustom( { label: '请假组件', explain: null }, [
     {
       target: getConfigByTag( selectComponents, 'el-select' ),
       config: {
@@ -589,11 +590,11 @@ export const customMadeComponents = [
       config: {
         required: true,
         label: "日期范围",
-        showDuration: true
+        showDuration: true,
       }
     }
   ] ),
-  copyConfigAsCustom( { label: "出差组件" }, [
+  copyConfigAsCustom( { label: "出差组件", explain: null }, [
     {
       target: getConfigByTag( inputComponents, 'el-input' ),
       config: {

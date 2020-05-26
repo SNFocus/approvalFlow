@@ -45,7 +45,7 @@ export function makeUpJs ( conf, type ) {
     propsList.join( '\n' ),
     methodList.join( '\n' ),
     watchFuncList.join( '\n' ),
-    JSON.stringify(tableRefs)
+    JSON.stringify( tableRefs )
   )
   confGlobal = null
   return script
@@ -84,7 +84,7 @@ const setFcOrgSelectRule = ( conf, watchFuncList ) => {
 }
 
 function buildAttributes ( el, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, tableRefs ) {
-  buildData( el, dataList, tableRefs)
+  buildData( el, dataList, tableRefs )
   buildRules( el, ruleList, watchFuncList )
 
   if ( el.options && el.options.length ) {
@@ -124,7 +124,7 @@ function mixinMethod ( type ) {
   const list = [];
   const minxins = {
     file: confGlobal.formBtns ? {
-      submitForm: `submitForm() {
+      submitForm: `submitForm () {
           if (!this.checkTableData()) console.log('false')
           console.log(this.${confGlobal.formModel})
           this.$refs['${confGlobal.formRef}'].validate(valid => {
@@ -136,15 +136,21 @@ function mixinMethod ( type ) {
       resetForm: `resetForm() {
           this.$refs['${confGlobal.formRef}'].resetFields()
         },`,
-        // fc-input-table 需要单独进行表单校验
-      checkTableData: `checkTableData() {
+      // fc-input-table 需要单独进行表单校验
+      checkTableData: `checkTableData () {
           let valid = true
           Object.keys(this.tableRefs).forEach(vModel => {
             const res = this.$refs[vModel].submit()  // 返回false或表单数据
             res ? (this.${confGlobal.formModel}[vModel] = res) : (valid = false)
           })
           return valid
-        },`
+        },`,
+      showExplain: `showExplain (explainText, title) {
+        if(!explainText) return
+        this.drawerTitle = title
+        this.drawerText = explainText
+        this.drawerVisible = true
+      }`
     } : null,
     dialog: {
       onOpen: 'onOpen() {},',
@@ -177,8 +183,8 @@ function buildData ( conf, dataList, tableRefs ) {
   if ( conf.vModel === undefined ) return
 
   let defaultValue
-  if (conf.rowType === 'table') {
-    dataList.push( `${conf.vModel}Conf: ${JSON.stringify(conf)},` )
+  if ( conf.rowType === 'table' ) {
+    dataList.push( `${conf.vModel}Conf: ${JSON.stringify( conf )},` )
     tableRefs[conf.vModel] = conf
   } else if ( typeof ( conf.defaultValue ) === 'string' && !conf.multiple ) {
     defaultValue = `'${conf.defaultValue}'`
@@ -276,6 +282,9 @@ function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props,
   data () {
     return {
       tableRefs: ${tableRefs},
+      drawerVisible: false,
+      drawerTitle: '',
+      drawerText: '',
       ${conf.formModel}: {
         ${data}
       },

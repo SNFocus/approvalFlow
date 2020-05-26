@@ -556,11 +556,14 @@
             <el-switch v-model="activeData.multiple" @change="multipleChange" />
           </el-form-item>
 
+          <el-form-item v-if="activeData.cmpType === 'custom'" label="组件说明">
+            <el-input type="textarea" v-model="activeData.explain" />
+          </el-form-item>
+
           
-          
-          <template v-if="activeData.layoutTree">
+          <!-- draggable -->
+          <!-- <template v-if="activeData.layoutTree">
             <el-divider>布局结构树</el-divider>
-            <!-- draggable -->
             <el-tree
               :data="[activeData]"
               :props="layoutTreeProps"
@@ -574,7 +577,7 @@
                 </span>
               </span>
             </el-tree>
-          </template>
+          </template> -->
 
           <!-- <template v-if="activeData.layout === 'colFormItem'">
             <el-divider>正则校验</el-divider>
