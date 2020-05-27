@@ -250,6 +250,7 @@ import {
   // saveIdGlobal,
   getFormConf
 } from "./utils/db";
+import { debounce } from '@/assets/utils'
 
 const emptyActiveData = { style: {}, autosize: {} };
 let oldActiveId;
@@ -312,31 +313,11 @@ export default {
     },
     drawingList: {
       handler(val) {
-        if(!val) return 
-        const vm = this
-        const canUsedAsPCon = (conf, parent) => {
-          const isRangeCmp = ['fc-date-duration','fc-time-duration'].includes(conf.tag)
-          if(isRangeCmp && !conf.showDuration) return false
-          if(parent && parent.rowType === 'table') return false 
-          if(!conf.proCondition || !conf.required) return false
-          if(conf.tag === 'el-select' && conf.multiple) return false
-          return true 
+        if (!val) return
+        if (!this.afterDrawingChange) {
+          this.afterDrawingChange = debounce(this.handlerListChange, 400) // 使用了deep 所以刷新会比较频繁
         }
-        const loop = (data, parent) => {
-          if(!data) return
-          Array.isArray(data.children) && data.children.forEach(child => loop(child, data))
-          if(Array.isArray(data)){
-            data.forEach(loop)
-          }else{
-            canUsedAsPCon(data, parent) 
-            ? vm.$store.commit("addPCondition", data) 
-            : vm.$store.commit("delPCondition", data.formId)
-          }
-        }
-        loop(val)
-        saveDrawingList(val)
-        this.$store.commit('updateFormItemList', val)
-        // if (val.length === 0) this.idGlobal = 100;
+        this.afterDrawingChange()
       },
       deep: true,
       immediate: true
@@ -371,6 +352,33 @@ export default {
     // })
   },
   methods: {
+    handlerListChange(val){
+      const vm = this
+      this.$store.commit('clearPCondition') // 清除所有条件 重新检测赋值
+      const canUsedAsPCon = (conf, parent) => {
+          const isRangeCmp = ['fc-date-duration','fc-time-duration'].includes(conf.tag)
+          if(isRangeCmp && !conf.showDuration) return false
+          if(parent && parent.rowType === 'table') return false 
+          if(!conf.proCondition || !conf.required) return false
+          if(conf.tag === 'el-select' && conf.multiple) return false
+          return true 
+        }
+        const loop = (data, parent) => {
+          if(!data) return
+          Array.isArray(data.children) && data.children.forEach(child => loop(child, data))
+          if(Array.isArray(data)){
+            data.forEach(loop)
+          }else{
+            canUsedAsPCon(data, parent) 
+            ? vm.$store.commit("addPCondition", data) 
+            : vm.$store.commit("delPCondition", data.formId)
+          }
+        }
+        loop(this.drawingList)
+        saveDrawingList(this.drawingList)
+        this.$store.commit('updateFormItemList', this.drawingList)
+        // if (val.length === 0) this.idGlobal = 100;
+    },
     /**
      * 判断是否是常用组件
      * 非常用组件即套餐组件  不能新填或删除子组件
@@ -593,14 +601,30 @@ export default {
       const processCmp = this.$parent.$children.find(t => t.isProcessCmp)
       return processCmp && processCmp.isFilledPCon(formIds)
     },
-    // 判断是已否被流程图作为条件必填项了
-    isProCondition(cmp){
+    checkColItem (cmp) {
+      if(!cmp) return false
       const isPcon = this.$store.state.processConditions.find(t => t.formId == cmp.formId) ? true : false
-      if (!isPcon) return false
-      if(this.isFilledPCon([cmp.formId])) {
-        return true
+      return isPcon && this.isFilledPCon([cmp.formId])
+    },
+    // 判断是否已被流程图作为条件必填项了
+    isProCondition(cmp){
+      if (Array.isArray(cmp.children) && cmp.children.length) { // 容器组件需要检查子元素
+        if (cmp.rowType === 'table') return false // 表格的子元素不可能为流程条件
+        let flag = false
+        const loop = (el) => {
+          if (flag) return // flag === true 代表找到了一个了 不需要再找下一个
+          if(Array.isArray(el)){
+            el.some(e => {
+              if(e.children) loop(e.children)
+              return this.checkColItem(e)
+            }) && (flag = true)
+          }
+        }
+        loop(cmp.children)
+        return flag
+      }else{
+        return this.checkColItem(cmp)
       }
-      return false
     },
     drawingItemDelete(index, parent) {
       // 首先判断是否是流程条件 再判断是否有节点使用过

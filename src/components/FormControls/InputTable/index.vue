@@ -100,6 +100,7 @@ export default {
   },
 
   created(){
+    console.log(this.config)
     this.tableData = this.filterProps()
     this.formData = [this.getEmptyRow()]
   },
@@ -201,12 +202,16 @@ export default {
     getSummaries (param) {
       const { columns, data } = param;
       const sums = [];
-      if(this.tableData.length + 1 !== columns.length) return []
+      if(this.tableData.length + 1 !== columns.length) return []  // 防止多次加载
+      // 获取数字相关组件的输入值
+      const isNumCmp = tag => ['fc-amount','el-input-number', 'el-slider'].includes(tag)
       const getValue = (arr, key) => {
        const target =  arr.find(t => t.vModel === key)
        if (!target) return NaN
-       return typeof target.value === 'number' ? target.value : NaN
+       if(isNumCmp(target.tag)) return target.value || 0
+       return NaN
       }
+
       columns.forEach((column, index) => {
         if (index === 0) {
           sums[index] = '合计'

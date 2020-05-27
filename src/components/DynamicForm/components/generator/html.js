@@ -330,8 +330,7 @@ const tags = {
     return `<${el.tag} ${ref} ${fileList} ${action} ${autoUpload} ${multiple} ${beforeUpload} ${listType} ${accept} ${name} ${disabled}>${child}</${el.tag}>`
   },
   'fc-input-table': el => {
-    const showSummary = el['show-summary'] ? 'show-summary \n :summary-method="getSummaries"' : ''
-    return `<${el.tag} ref="${el.vModel}" :config="tableRefs['${el.vModel}']" ${showSummary}></${el.tag}>`
+    return `<${el.tag} ref="${el.vModel}" :config="tableRefs['${el.vModel}']"></${el.tag}>`
   }
 }
 

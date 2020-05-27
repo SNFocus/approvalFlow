@@ -69,10 +69,10 @@ export const timeCalculate = ( start, end ) => {
  */
 export const debounce = ( func, gap ) => {
   let timer
-  return function ( ...arg ) {
+  return function () {
     clearTimeout( timer )
     timer = setTimeout( () => {
-      func( ...arg )
+      func.apply(this, arguments )
     }, gap )
   }
 }

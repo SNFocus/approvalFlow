@@ -63,6 +63,9 @@
           <el-form-item v-if="activeData.showDivider !== undefined" label="显示分割线">
             <el-switch v-model="activeData.showDivider" />
           </el-form-item>
+          <el-form-item v-if="activeData['show-summary'] !== undefined" label="显示合计">
+            <el-switch v-model="activeData['show-summary']" />
+          </el-form-item>
           <!-- 
           <el-form-item v-if="activeData.layout==='rowFormItem'" label="栅格间隔">
             <el-input-number v-model="activeData.gutter" :min="0" placeholder="栅格间隔" />
