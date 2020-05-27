@@ -145,12 +145,13 @@ function mixinMethod ( type ) {
           })
           return valid
         },`,
+      // 使用drawer抽屉 显示定制组件 说明
       showExplain: `showExplain (explainText, title) {
         if(!explainText) return
         this.drawerTitle = title
         this.drawerText = explainText
         this.drawerVisible = true
-      }`
+      },`
     } : null,
     dialog: {
       onOpen: 'onOpen() {},',

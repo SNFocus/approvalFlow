@@ -533,7 +533,8 @@ export const layoutComponents = [{
   children: [],
   actionText: '添加',
   tableConf: {},
-  showDivider: false
+  showDivider: false,
+  'show-summary': true
 }]
 
 export const commonComponents = [...inputComponents, ...selectComponents, ...layoutComponents]

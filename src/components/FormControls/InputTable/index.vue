@@ -1,6 +1,13 @@
 <template>
 <div  class="fc-table-box">
-  <el-table :data="formData" border class="fc-table" @cell-click="focusInput" v-bind="config.tableConf || {}">
+  <el-table 
+  :data="formData" 
+  border 
+  class="fc-table"
+  @cell-click="focusInput" 
+  v-bind="config.tableConf || {}"
+  :show-summary="config['show-summary']"
+  :summary-method="getSummaries">
       <el-table-column width="50" align="center">
         <!-- 序号 -->
         <template slot-scope="scope">
@@ -18,7 +25,8 @@
       <el-table-column
         v-for="(head, cindex) in tableData"
         :key="head.formId"
-        :min-width="head['min-width']">
+        :min-width="head['min-width']"
+        :prop="head.vModel">
          <template slot="header">
            <span style="color: #f56c6c;" v-if="head.required">*</span>
            {{head['label']}}
@@ -67,7 +75,7 @@
     <div class="actions">
       <el-button @click="addRow" type="text">
         <i class="el-icon-plus"></i>
-        添加
+        {{ config.actionText }}
         </el-button>
     </div>
 </div>
@@ -188,32 +196,26 @@ export default {
       this.formData.push(this.getEmptyRow())
     },
     /**
-     * 对表格进行合计
+     * 对表格进行合计 目前只支持数字，金额，滑块
      */
     getSummaries (param) {
       const { columns, data } = param;
       const sums = [];
+      if(this.tableData.length + 1 !== columns.length) return []
+      const getValue = (arr, key) => {
+       const target =  arr.find(t => t.vModel === key)
+       if (!target) return NaN
+       return typeof target.value === 'number' ? target.value : NaN
+      }
       columns.forEach((column, index) => {
         if (index === 0) {
-          sums[index] = '合计';
-          return;
+          sums[index] = '合计'
+          return
         }
-        const values = data.map(item => Number(item[column.property]));
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
-            }
-          }, 0);
-          sums[index] += ' 元';
-        } else {
-          sums[index] = 'N/A';
-        }
+        const sumVal = data.reduce((sum, d) => sum + getValue(d, column.property), 0)
+        sums[index] = Number.isNaN(sumVal) ? '' : sumVal
       });
-
+      
       return sums;
     },
 
