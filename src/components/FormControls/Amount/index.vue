@@ -11,7 +11,7 @@ export default {
     prop: 'value',
     event: 'change'
   },
-  props:["cmpType", "tag", "tagIcon", "labelWidth", "step-strictly", "controls", "controls-position", "regList", "changeTag", "proCondition", "showChinese", "formId", "renderKey", "layout", "value"],
+  props:["cmpType", "tag", "tagIcon", "precision", "labelWidth", "step-strictly", "controls", "controls-position", "regList", "changeTag", "proCondition", "showChinese", "formId", "renderKey", "layout", "value"],
   name: 'fc-amount',
   data(){
     return {

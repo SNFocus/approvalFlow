@@ -507,7 +507,7 @@ export const selectComponents = [{
   //   asSummary: false
   // }
 ]
-
+// 容器组件
 export const layoutComponents = [{
   layout: 'rowFormItem',
   rowType: 'layout',
