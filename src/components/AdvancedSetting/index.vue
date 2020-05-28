@@ -23,12 +23,11 @@
 <script>
 export default {
   components: {},
-  props: [],
+  props: ['conf'],
   data() {
     return {
       formData: {
         autoRepeat: false, //审批人去重
-        allFollows: '', //全局抄送人
         myAuditAutoPass: false, //发起人审批时自动通过
         remarkTip: '', //审批意见填写提示
         remarkRequired: false,
@@ -50,10 +49,11 @@ export default {
       }],
     }
   },
-  computed: {},
-  watch: {},
-  created() {},
-  mounted() {},
+  created() {
+    if (typeof this.conf === 'object' && this.conf !== null) {
+      Object.assign(this.formData, this.conf)
+    }
+  },
   methods: {
     getData() {
       return this.formData

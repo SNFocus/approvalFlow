@@ -51,7 +51,9 @@
               <template v-else-if="head.tag === 'el-upload'">
                 <el-upload
                 v-bind="getConfById(head.formId)" 
-                :on-success="(res) => onUploadSuccess(res, formData[scope.$index][cindex])">
+                :on-success="(res) => onUploadSuccess(res, formData[scope.$index][cindex])"
+                @mouseleave.native="hideUploadList"
+                @mouseenter.native="showUploadList">
                   <span slot="default" >
                     已上传
                     {{formData[scope.$index][cindex].value.length}}
@@ -228,6 +230,22 @@ export default {
       !Array.isArray(target.value) && (target.value = [])
       target.value.push(response)
     },
+
+    showUploadList (ev) {
+      const btn = ev.currentTarget
+      const { offsetX, clientX, clientY, offsetY } = ev
+      const list = btn.querySelector('.el-upload-list--text')
+      list && list.classList.add('show')
+      const unit = v => v + 'px'
+      list.style.left = unit(clientX - offsetX)
+      list.style.top = unit(clientY - offsetY + btn.clientHeight)
+    },
+
+    hideUploadList (ev) {
+      const btn = ev.currentTarget
+      const list = btn.querySelector('.el-upload-list--text')
+      list && setTimeout(() => list.classList.remove('show'), 500)
+    }
   }
 };
 </script>
@@ -290,8 +308,11 @@ export default {
         font-size 12px
         padding-left 6px
         color #f56c6c
-      .cell > div
-        width 100%
+      .cell 
+        position relative
+        > div
+          width 100%
+          min-height 40px
       
     td:not(:first-child)
       vertical-align top
@@ -319,11 +340,6 @@ export default {
       &:hover
         &::after, &::before
           border-color red
-
-        .el-upload-list--text
-          position fixed
-          margin-top 4px
-          z-index 9
         
   .fc-org-select
     position relative
@@ -332,15 +348,14 @@ export default {
     padding-left 10px
 
   .el-upload-list--text
-    position absolute
-    margin-top 28px
+    position fixed
     margin-left -6px
     background white
     box-shadow 2px 2px 8px 2px rgba(0, 0, 0, .1)
-    max-width 200px
+    max-width 250px
     transition margin-top .3s
-    &:hover
-      position fixed
-      margin-top 4px
-      z-index 9
+    display none
+    z-index 9
+    &.show
+      display block
 </style>

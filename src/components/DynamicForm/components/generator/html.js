@@ -403,6 +403,7 @@ function buildDrawer () {
 }
 
 export function makeUpHtml ( conf, type ) {
+  debugger
   const htmlList = []
   confGlobal = conf
   someSpanIsNot24 = conf.fields.some( item => item.span !== 24 )

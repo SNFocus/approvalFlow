@@ -266,7 +266,7 @@ export default {
     // FormDrawer,
     // CodeTypeDialog,
   },
-  props:['tabName'],
+  props:['tabName', 'conf'],
   data() {
     const storageList = getDrawingList()
     const drawingList = Array.isArray(storageList) && storageList.length ? storageList : drawingDefalut
@@ -291,7 +291,6 @@ export default {
       activeTabName: "common"
     };
   },
-  computed: {},
   watch: {
     // eslint-disable-next-line func-names
     "activeData.label": function(val, oldVal) {
@@ -329,12 +328,17 @@ export default {
     //   immediate: true
     // }
   },
-  mounted() {
-    const drawingListInDB = getDrawingList()
-    const hasStorage = Array.isArray(drawingListInDB) && drawingListInDB.length > 0
-    this.drawingList = hasStorage ? drawingListInDB : drawingDefalut
+  created() {
+    if (typeof this.conf === 'object' && this.conf !== null) {
+      Object.assign(this.drawingList, this.conf.fields)
+      Object.assign(this.formConf, this.conf)
+    }else{
+      const drawingListInDB = getDrawingList()
+      const hasStorage = Array.isArray(drawingListInDB) && drawingListInDB.length > 0
+      this.drawingList = hasStorage ? drawingListInDB : drawingDefalut
+      formConfInDB && (this.formConf = formConfInDB)
+    }
     this.activeFormItem(this.drawingList[0])
-    formConfInDB && (this.formConf = formConfInDB)
 
     // const clipboard = new ClipboardJS('#copyNode', {
     //   text: trigger => {
@@ -508,8 +512,8 @@ export default {
     },
     AssembleFormData() {
         this.formData = {
-          fields: JSON.parse(JSON.stringify(this.drawingList)),
-          ...this.formConf
+          ...this.formConf,
+          fields: JSON.parse(JSON.stringify(this.drawingList))
         };
     },
     /**

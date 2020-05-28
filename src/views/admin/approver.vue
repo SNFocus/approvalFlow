@@ -23,10 +23,31 @@
       <el-button size="small" class="publish-btn" @click="publish">发布</el-button>
     </header>
     <section class="page__content">
-      <BasicSetting  v-show="activeStep === 'basicSetting'" tabName="basicSetting" ref="basicSetting" @initiatorChange="onInitiatorChange" /> 
-      <DynamicForm  v-show="activeStep === 'formDesign'" tabName="formDesign" ref="formDesign"/>
-      <Process  v-show="activeStep === 'processDesign'" tabName="processDesign" ref="processDesign" @startNodeChange="onStartChange"/>
-      <AdvancedSetting  v-show="activeStep === 'advancedSetting'" ref="advancedSetting"/>
+      <BasicSetting
+        ref="basicSetting" 
+        :conf="mockData.basicSetting"
+        v-show="activeStep === 'basicSetting'" 
+        tabName="basicSetting"
+        @initiatorChange="onInitiatorChange" /> 
+
+      <DynamicForm
+        ref="formDesign"
+        :conf="mockData.formData"
+        v-show="activeStep === 'formDesign'" 
+        tabName="formDesign" />
+
+      <Process  
+        ref="processDesign"
+        :conf="mockData.processData"
+        tabName="processDesign" 
+        v-show="activeStep === 'processDesign'" 
+        @startNodeChange="onStartChange"/>
+
+      <AdvancedSetting
+        ref="advancedSetting"
+        :conf="mockData.advancedSetting"
+        v-show="activeStep === 'advancedSetting'" />
+
     </section>
     <div class="github">
       <el-tooltip effect="dark" content="前往Github" placement="top">
@@ -44,7 +65,7 @@ import Process from "@/components/Process";
 import DynamicForm from "@/components/DynamicForm";
 import BasicSetting from '@/components/BasicSetting'
 import AdvancedSetting from '@/components/AdvancedSetting'
-
+import MockData from './mockData.js'
 const beforeUnload = function (e) {
   var confirmationMessage = '离开网站可能会丢失您编辑得内容';
   (e || window.event).returnValue = confirmationMessage;     // Gecko and Trident
@@ -61,6 +82,7 @@ export default {
   },
   data() {
     return {
+      mockData: MockData, // 可选择诸如 $route.param，Ajax获取数据等方式自行注入
       activeStep: "basicSetting", // 激活的步骤面板
       steps: [
         { label: "基础设置", key: "basicSetting" },
@@ -102,20 +124,20 @@ export default {
           formData: res[1].formData,
           advancedSetting: getCmpData('advancedSetting')
         }
-        this.sendServer(param)
+        this.sendToServer(param)
       })
       .catch(err => {
         err.target && (this.activeStep = err.target)
         err.msg && this.$message.warning(err.msg)
       })
     },
-    sendServer(param){
+    sendToServer(param){
       this.$notify({
         title: '数据已整合完成',
         message: '请在控制台中查看数据输出',
         position: 'bottom-right'
       });
-      console.log(param)
+      console.log('配置数据', param)
     },
     exit() {
       this.$confirm('离开此页面您得修改将会丢失, 是否继续?', '提示', {
@@ -129,6 +151,9 @@ export default {
           });
         }).catch(() => { });
     },
+    /**
+     * 同步基础设置发起人和流程节点发起人
+     */
     onInitiatorChange (val, labels) {
       const processCmp = this.$refs.processDesign
       const startNode = processCmp.data
@@ -136,6 +161,9 @@ export default {
       startNode.content =  labels  || '所有人'
       processCmp.forceUpdate()
     },
+    /**
+     * 监听 流程节点发起人改变 并同步到基础设置 发起人数据
+     */
     onStartChange(node){
       const basicSetting = this.$refs.basicSetting
       basicSetting.formData.initiator = { 'dep&user': node.properties.initiator }

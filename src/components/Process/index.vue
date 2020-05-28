@@ -5,10 +5,14 @@ import { NodeUtils, getMockData } from "./FlowCard/util.js";
 
 export default {
   name: 'Process',
-  props:['tabName'],
+  props:['tabName', 'conf'],
   data() {
+    let data = getMockData()
+    if (typeof this.conf === 'object' && this.conf !== null) {
+      Object.assign(data, this.conf)
+    }
     return {
-      data: getMockData(), // 流程图数据
+      data, // 流程图数据
       scaleVal: 100, // 流程图缩放比例 100%
       step: 5, // 缩放步长
       updateId: 0, // key值 用于模拟$forceUpdate

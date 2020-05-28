@@ -50,7 +50,7 @@
 <script>
 export default {
   components: {},
-  props: ['tabName', 'initiator'],
+  props: ['tabName', 'initiator', 'conf'],
   data() {
     const req = require.context( '@/assets/approverIcon', false, /\.png$/ )
     const iconList = req.keys().map((t, idx) => ({src: req(t), id: idx}))
@@ -108,7 +108,11 @@ export default {
       return icon ? icon.src : ''
     }
   },
-  mounted() { },
+  created() {
+    if (typeof this.conf === 'object' && this.conf !== null) {
+      Object.assign(this.formData, this.conf)
+    }
+  },
   methods: {
     emitInitiator(){
       this.$nextTick(()=>{
