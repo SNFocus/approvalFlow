@@ -969,7 +969,7 @@ export default {
       this.$set(this.activeData, "format", val);
     },
     spanChange(val) {
-      this.formConf.span = val;
+      // this.formConf.span = val;
     },
     multipleChange(val) {
       this.$set(this.activeData, "defaultValue", val ? [] : "");

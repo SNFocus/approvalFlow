@@ -111,6 +111,7 @@ export default {
     }
   },
   render: function(h) {
+    NodeUtils.globalID =  NodeUtils.getMaxNodeId(this.data)
     return (
       <div class="flow-container">
         <div class="scale-slider">

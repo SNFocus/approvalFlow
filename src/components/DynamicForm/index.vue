@@ -333,7 +333,7 @@ export default {
   },
   created() {
     if (typeof this.conf === 'object' && this.conf !== null) {
-      Object.assign(this.drawingList, this.conf.fields)
+      this.drawingList = this.conf.fields
       Object.assign(this.formConf, this.conf)
     }else{
       const drawingListInDB = getDrawingList()
@@ -466,7 +466,7 @@ export default {
     cloneComponent(origin) {
       const clone = JSON.parse(JSON.stringify(origin));
       clone.formId = this.getNextId();
-      clone.span = formConf.span;
+      // clone.span = formConf.span;
       clone.renderKey = clone.formId + new Date().getTime(); // 改变renderKey后可以实现强制更新组件
       if (!clone.layout) clone.layout = "colFormItem";
       if (clone.layout === "colFormItem") {
@@ -491,7 +491,7 @@ export default {
         let children = rowFormItem.children;
         children.forEach((clone, index) => {
           clone.formId = rowFormItem.formId + index + 1;
-          clone.span = formConf.span;
+          // clone.span = formConf.span;
           clone.renderKey = clone.formId + new Date().getTime(); // 改变renderKey后可以实现强制更新组件
           if (!clone.layout) clone.layout = "colFormItem";
           if (clone.layout === "colFormItem") {

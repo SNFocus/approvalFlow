@@ -1,15 +1,35 @@
 import nodeConfig from "./config.js";
 const isEmpty = data => data === null || data === undefined || data === ''
 const isEmptyArray = data => Array.isArray( data ) ? data.length === 0 : true
+
 export class NodeUtils {
   static globalID = 10000
+  /**
+   * 获取最大的节点ID 转换成10进制
+   * @param {*} data - 整个流程数据 
+   */
+  static getMaxNodeId ( data ) {
+    let max = data.nodeId
+    const loop = node => {
+      if ( !node ) return
+      max < node.nodeId && ( max = node.nodeId )
+      node.childNode && ( loop( node.childNode ) )
+      Array.isArray( node.conditionNodes ) && node.conditionNodes.forEach( c => loop( c ) )
+    }
+    loop( data )
+    const chars = '0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz';
+    const len = chars.length
+    return max.split( '' ).reduce( ( sum, c, i ) => {
+      return sum + chars.indexOf( c ) * Math.pow( len, i )
+    }, 0 )
+  }
   /**
    * 根据自增数生成64进制id
    * @returns 64进制id字符串
    */
   static idGenerator () {
     let qutient = ++this.globalID
-    const chars = '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ';
+    const chars = '0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz';
     const charArr = chars.split( "" )
     const radix = chars.length;
     const res = []
