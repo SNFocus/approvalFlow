@@ -435,25 +435,25 @@ export const selectComponents = [{
   proCondition: true,
   asSummary: false
 },
-//   {
-//     label: '评分',
-//     tag: 'el-rate',
-//     tagIcon: 'rate',
-//     defaultValue: 0,
-//     span: 24,
-//     labelWidth: null,
-//     style: {},
-//     max: 5,
-//     'allow-half': false,
-//     'show-text': false,
-//     'show-score': false,
-//     disabled: false,
-//     required: false,
-//     regList: [],
-//     changeTag: true,
-// proCondition: false,
-// asSummary: false
-//   },
+{
+  label: '评分',
+  tag: 'el-rate',
+  tagIcon: 'rate',
+  defaultValue: 0,
+  span: 24,
+  labelWidth: null,
+  style: {},
+  max: 5,
+  'allow-half': false,
+  'show-text': false,
+  'show-score': false,
+  disabled: false,
+  required: false,
+  regList: [],
+  changeTag: true,
+  proCondition: false,
+  asSummary: false
+},
 //   {
 //     label: '颜色选择',
 //     tag: 'el-color-picker',
@@ -533,7 +533,6 @@ export const layoutComponents = [{
   children: [],
   actionText: '添加',
   tableConf: {},
-  showDivider: false,
   'show-summary': true
 }]
 

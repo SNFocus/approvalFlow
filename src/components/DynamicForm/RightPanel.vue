@@ -102,7 +102,7 @@
           <el-form-item v-if="activeData.style&&activeData.style.width!==undefined" label="组件宽度">
             <el-input v-model="activeData.style.width" placeholder="请输入组件宽度" clearable />
           </el-form-item>
-          <el-form-item v-if="activeData.vModel!==undefined" label="默认值">
+          <el-form-item v-if="activeData.vModel!==undefined && activeData.layout !== 'rowFormItem'" label="默认值">
             <el-input
               :value="setDefaultValue(activeData.defaultValue)"
               placeholder="请输入默认值"

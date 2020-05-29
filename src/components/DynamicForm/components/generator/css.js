@@ -6,10 +6,7 @@
  *GitHub: https://github.com/JakHuang/form-generator
  */
 const defaultCss = `
-.showDivider.form-container{
-  margin-bottom: 2rem;
-}
-
+.showDivider.form-container { margin-bottom: 2rem; }
 `
 const styles = {
   'el-rate': '.el-rate{ display: inline-block; vertical-align: text-top; }',
