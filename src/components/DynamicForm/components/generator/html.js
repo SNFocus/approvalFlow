@@ -96,9 +96,8 @@ const layouts = {
       labelWidth = `label-width="${element.labelWidth}px"`
     }
     let rules = '', label = `label="${element.label}"`, prop = `prop="${element.vModel}"`
-    const required = !trigger[element.tag] && element.required ? 'required' : ''
+    const required = ( !trigger[element.tag] && element.required ) || element.tag === 'fc-org-select' ? 'required' : ''
     const tagDom = tags[element.tag] ? tags[element.tag]( element ) : null
-
     let str = `<el-form-item ${labelWidth} ${label} ${prop}  ${required} ${rules}>
         ${tagDom}
       </el-form-item>`

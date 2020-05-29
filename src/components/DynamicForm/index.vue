@@ -142,7 +142,7 @@
         <el-button class="delete-btn" icon="el-icon-delete" type="text" @click="empty">清空</el-button>
       </div>
       <div id="ipad">
-        <div class="outeripad">
+        <div class="outeripad" :class="[ipadMode]">
           <div class="ipadbody">
             <div class="ipadscreen">
               <el-scrollbar class="center-scrollbar">
@@ -180,7 +180,9 @@
               </el-scrollbar>
             </div>
             <div class="ipadcamera"></div>
-            <div class="ipadhomebutton"></div>
+            <el-tooltip effect="dark" content="切换横/竖模式" placement="top">
+              <div class="ipadhomebutton" @click="ipadMode = ipadMode === 'landscape' ? 'portrait' : 'landscape'"></div>
+            </el-tooltip>
           </div>
         </div>
       </div>
@@ -288,7 +290,8 @@ export default {
       generateConf: null,
       showFileName: false,
       activeData: drawingList[0],
-      activeTabName: "common"
+      activeTabName: "common",
+      ipadMode: 'portrait'
     };
   },
   watch: {
@@ -707,11 +710,12 @@ export default {
 @import './styles/home';
 
 #ipad {
-  text-align: center;
-  padding-top: 15px;
+    height: 100%;
+    display: flex;
 
   .outeripad, .ipadbody, .ipadscreen {
     position: relative;
+    height: 100%;
   }
 
   .ipadcamera, .ipadhomebutton {
@@ -723,10 +727,34 @@ export default {
 .outeripad {
   box-shadow: 0 0 13px 3px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  padding: 45px 25px;
-  max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: auto;
+
+  &.portrait{
+      padding: 45px 25px;
+      height: 85% !important;
+      width: 68%;
+      min-height: 560px;
+  }
+
+  &.landscape{
+    width: 90%;
+    padding: 25px 45px;
+    height: 78% !important;
+
+    .ipadcamera{
+      left: -20px;
+      top: 50%;
+      margin-top: -10px;
+    }
+
+    .ipadhomebutton{
+      margin-right: -38px;
+      top: 50%;
+      right: 0;
+      left: unset;
+      margin-top: -18px;
+    }
+  }
 
   .ipadbody {
     background-color: white;
@@ -757,6 +785,7 @@ export default {
     margin-top: 6px;
     margin-left: -15px;
     left: 50%;
+    cursor: pointer;
   }
 
   .el-radio-group {
