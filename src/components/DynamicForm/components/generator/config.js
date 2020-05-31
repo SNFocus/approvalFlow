@@ -493,19 +493,20 @@ export const selectComponents = [{
   proCondition: false,
   asSummary: false
 },
-  // {
-  //   label: '计算公式',
-  //   tag: 'fc-calculation',
-  //   tagIcon: 'upload',
-  //   defaultValue: null,
-  //   labelWidth: null,
-  //   disabled: false,
-  //   required: true,
-  //   changeTag: true,
-  //   calculationTarget: [],
-  //   proCondition: true,
-  //   asSummary: false
-  // }
+{
+  label: '计算公式',
+  type: 'calculate',
+  tag: 'fc-calculate',
+  tagIcon: 'upload',
+  defaultValue: null,
+  labelWidth: null,
+  disabled: false,
+  required: false,
+  changeTag: true,
+  expression: [],
+  proCondition: false,
+  asSummary: false
+}
 ]
 // 容器组件
 export const layoutComponents = [{

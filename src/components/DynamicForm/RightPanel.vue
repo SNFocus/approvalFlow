@@ -522,8 +522,10 @@
             <el-switch v-model="activeData.disabled" />
           </el-form-item>-->
 
-           
-   
+          
+          <el-form-item v-if="activeData.expression !== undefined" label="计算公式">
+            <div @click="expDialogVisible = true">{{activeData.expression}}</div>
+          </el-form-item>
           
           <el-form-item v-if="activeData.required !== undefined" label="是否必填">
             <el-switch v-model="activeData.required" @change="requireChange" :disabled="!couldChangeRequire" />
@@ -656,6 +658,47 @@
       :current="activeData[currentIconModel]"
       @select="setIcon"
     />
+    <el-dialog
+      title="编辑计算公式"
+      :visible.sync="expDialogVisible"
+      width="600px">
+      <div style="font-size: 12px;line-height: 2">
+        <div style="border: 1px solid #e5e5e5; border-radius: 4px;min-height: 60px;"></div>
+        <div style="margin: 10px 0;font-size: 12px;color: #aaa;">编辑计算公式可用来完成审批单内数据的自动结算，例如：采购单内设置计算公式“合计=单价×数量”，发起人填写单价、数量后，组件将自动计算出合计金额，免手动计算</div>
+        <div>
+          <span>计算对象：</span>
+          <span 
+          v-for="item in calculateCmps" 
+          :key="item.vModel"
+          @click="expressionTemp.push(item)"
+          style="padding: 4px 8px;margin-right: 10px;background: #e5e5e5;cursor: pointer;">
+            {{item.label}}
+          </span>
+        </div>
+        <div style="margin: 10px 0;"><span>计算符号：</span>
+          <span 
+          v-for="item in ['+', '-', '×', '÷', '(', ')']" 
+          :key="item"
+          @click="expressionTemp.push(item)"
+          style="padding: 4px 8px;margin-right: 10px;background: #e5e5e5;cursor: pointer;text-align: center;">{{item}}</span>
+        </div>
+
+        <div style="margin: 10px 0;">
+            <span style="float: left;">数字键盘：</span>
+          <div style="width: 110px;line-height: 2.5;overflow: hidden;">
+            <span 
+          v-for="item in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.']" 
+          :key="item"
+          @click="expressionTemp.push(item)"
+          style="padding: 4px 8px;margin-right: 10px;background: #e5e5e5;cursor: pointer;text-align: center;">{{item}}</span>
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="expDialogVisible = false" size="mini">取 消</el-button>
+        <el-button type="primary" @click="expDialogVisible = false"  size="mini">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -690,12 +733,15 @@ export default {
   props: ["showField", "activeData", "formConf", "couldChangeRequire"],
   data() {
     return {
+      expressionTemp: [],
+      calcChars:[],
       proConditionCmp: ["el-input-number", "el-select", "el-radio-group"], // 可作为流程图条件的组件
       currentTab: "field",
       currentNode: null,
       dialogVisible: false,
       iconsVisible: false,
       currentIconModel: null,
+      expDialogVisible: false,
       themeOptions:[
         {value: 'dark', label: '深色'},
         {value: 'light', label: '亮色'},
@@ -834,6 +880,26 @@ export default {
           options: selectComponents
         }
       ];
+    },
+    calculateCmps () {
+      const calcList = []
+      const loop = (data, parent) => {
+        if(!data) return
+        if(Array.isArray(data.children)) {
+          loop(data.children, data)
+        }
+        if(Array.isArray(data)) data.forEach(d => loop(d, parent)) 
+        if (['el-input-number', 'fc-amount'].includes(data.tag)){
+          calcList.push({
+            vModel: data.vModel,
+            label: parent ? parent.label + '.' + data.label : data.label
+          })
+        }
+      }
+      loop(this.$store.state.formItemList)
+      // this.$store.state.formItemList.filter(t => ['el-input-number', 'fc-amount'].includes()
+      console.log(calcList)
+      return calcList
     }
   },
   watch: {
@@ -845,11 +911,6 @@ export default {
     }
   },
   methods: {
-    // PCon => ProcessCondition 
-    isUsdAsPCon () {
-      
-    },
-
     requireChange(required) {
       // 下拉 单选 计数 日期区间 时间区间 需要写进流程条件中
       if (!this.activeData.proCondition) return;

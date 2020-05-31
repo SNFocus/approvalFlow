@@ -1,17 +1,20 @@
 <template>
-  <div>
-    <el-cascader v-model="innerValue" v-bind="$props" v-on="$listeners"></el-cascader>
+  <div class="fc-amount">
+    <el-input-number v-model="innerValue" v-bind="$props" v-on="$listeners"></el-input-number>
+    <div class="explain-text" v-if="showChinese">大写：{{chinese}}</div>
   </div>
 </template>
 <script>
 import {getAmountChinese} from '@/assets/utils'
 export default {
-  model:{
-    prop: 'value',
-    event: 'change'
-  },
-  props:["cmpType", "tag", "tagIcon", "labelWidth", "calculationTarget", "regList", "changeTag", "proCondition", "formId", "renderKey", "layout", "value"],
-  name: 'fc-calculation',
+  props:[
+    "tag",
+    "showChinese",
+    "formId",
+    "formData",
+    "expression"
+  ],
+  name: 'fc-calculate',
   data(){
     return {
       innerValue: this.value
@@ -19,12 +22,7 @@ export default {
   },
   computed:{
     chinese(){
-      return getAmountChinese(this.innerValue)
-    }
-  },
-  watch:{
-    innerValue(val){
-      this.$emit('change', +val.toFixed(2))
+      return this.showChinese ? getAmountChinese(this.innerValue) : ''
     }
   }
 }
