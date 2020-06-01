@@ -71,7 +71,6 @@ export const debounce = ( func, gap ) => {
   let timer
   return function () {
     timer && clearTimeout( timer )
-    console.log( timer )
     timer = setTimeout( () => {
       func.apply( this, arguments )
     }, gap )

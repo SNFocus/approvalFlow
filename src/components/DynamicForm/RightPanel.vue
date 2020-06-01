@@ -524,7 +524,8 @@
 
           
           <el-form-item v-if="activeData.expression !== undefined" label="计算公式">
-            <div @click="expDialogVisible = true; reloadExpressionTemp()" style="padding: 0 10px; cursor: pointer;min-height: 32px; border: 1px solid #e5e5e5; border-radius: 4px;">
+            <div @click="expDialogVisible = true;" 
+            class="pane-calc-preview">
               <span 
                 v-for="(item, index) in activeData.expression"
                 :key="index"
@@ -933,6 +934,10 @@ export default {
         saveFormConf(val);
       },
       deep: true
+    },
+    activeData (val) {
+      if (val.tag !== 'fc-calculate') return
+      this.reloadExpressionTemp()
     }
   },
   methods: {
@@ -944,6 +949,7 @@ export default {
       this.expressionTemp = this.activeData.expression.map(t => {
         return typeof t === 'string' || isValid(t) ? t : { vModel: t.vModel, label: '无效的值'}
       })
+      this.activeData.expression = this.expressionTemp
     },
     requireChange(required) {
       // 下拉 单选 计数 日期区间 时间区间 需要写进流程条件中
@@ -1208,7 +1214,7 @@ export default {
 
 .calc-btn{
   padding: 4px 8px;
-  margin-right: 10px;
+  margin:0 6px;
   background: #e5e5e5;
   cursor: pointer;
   &.error{
@@ -1220,6 +1226,13 @@ export default {
   }
 }
 
+.pane-calc-preview{
+  padding: 0 10px;
+  cursor: pointer;min-height: 32px;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  font-size: 12px;
+}
 .calc-dialog{
   >>> .el-dialog__body{
     padding-top: 0;

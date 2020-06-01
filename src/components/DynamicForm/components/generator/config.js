@@ -498,7 +498,7 @@ export const selectComponents = [{
   type: 'calculate',
   tag: 'fc-calculate',
   showChinese: true,
-  tagIcon: 'upload',
+  tagIcon: 'calculate',
   defaultValue: null,
   labelWidth: null,
   disabled: false,
@@ -525,7 +525,7 @@ export const layoutComponents = [{
 {
   layout: 'rowFormItem',
   rowType: 'table',
-  tagIcon: 'row',
+  tagIcon: 'table',
   tag: 'fc-input-table',
   type: 'default',
   justify: 'start',
