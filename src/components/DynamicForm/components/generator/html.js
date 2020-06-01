@@ -196,6 +196,13 @@ const tags = {
     const showChinese = el.showChinese ? `:showChinese='${el.showChinese}'` : ''
     return addPropToTag( tag, showChinese )
   },
+  'fc-calculate': function ( el ) {
+    const { vModel } = attrBuilder( el )
+    const showChinese = el.showChinese ? `:showChinese='${el.showChinese}'` : ''
+    const formData = `:formData="${confGlobal.formModel}"`
+    const expression = `:expression="${el.vModel}Exps" `
+    return createTagHTML( el.tag, vModel, showChinese, formData, expression )
+  },
   'el-select': el => {
     const {
       disabled, vModel, clearable, placeholder, width
@@ -329,7 +336,7 @@ const tags = {
     return `<${el.tag} ${ref} ${fileList} ${action} ${autoUpload} ${multiple} ${beforeUpload} ${listType} ${accept} ${name} ${disabled}>${child}</${el.tag}>`
   },
   'fc-input-table': el => {
-    return `<${el.tag} ref="${el.vModel}" :config="tableRefs['${el.vModel}']"></${el.tag}>`
+    return `<${el.tag} ref="${el.vModel}" :config="tableRefs['${el.vModel}']" :value.sync="${confGlobal.formModel}.${el.vModel}"></${el.tag}>`
   }
 }
 

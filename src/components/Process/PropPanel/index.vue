@@ -43,7 +43,7 @@
         <row-wrapper 
           :key="index" 
           :title="item.label" 
-          v-if="couldShowIt(item,'el-input-number','fc-date-duration','fc-time-duration','fc-amount')">
+          v-if="couldShowIt(item,'el-input-number','fc-date-duration','fc-time-duration','fc-amount', 'fc-calculate')">
           <num-input
             :key="index"
             :title="timeTangeLabel(item)"
@@ -413,7 +413,7 @@ export default {
         if(cValue === undefined || cValue === null){
           return 
         }
-        const numberTypeCmp = ['el-input-number','fc-date-duration','fc-time-duration','fc-amount']
+        const numberTypeCmp = ['el-input-number','fc-date-duration','fc-time-duration','fc-amount', 'fc-calculate']
         if(numberTypeCmp.includes(t.tag)){
           if(cValue.type === 'bet'){
             const numVal = cValue.value

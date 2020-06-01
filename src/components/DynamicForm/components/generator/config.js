@@ -497,6 +497,7 @@ export const selectComponents = [{
   label: '计算公式',
   type: 'calculate',
   tag: 'fc-calculate',
+  showChinese: true,
   tagIcon: 'upload',
   defaultValue: null,
   labelWidth: null,
@@ -504,7 +505,7 @@ export const selectComponents = [{
   required: false,
   changeTag: true,
   expression: [],
-  proCondition: false,
+  proCondition: true,
   asSummary: false
 }
 ]

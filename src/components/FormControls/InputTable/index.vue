@@ -37,8 +37,8 @@
                 <el-select  
                 v-model="formData[scope.$index][cindex].value" placeholder="请选择" 
                 :multiple="head.tag === 'el-checkbox-group' || getConfById(head.formId).multiple"
-                @change="onFormDataChange(scope.$index, cindex)"
-                >
+                @change="onFormDataChange(scope.$index, cindex, 'el-select')"
+                > 
                   <el-option
                     v-for="(opt, oindex) in head.options" 
                     :key="oindex"
@@ -66,7 +66,7 @@
                 :is="head.tag" 
                 v-model="formData[scope.$index][cindex].value" 
                 v-bind="getConfById(head.formId)"
-                @change="onFormDataChange(scope.$index, cindex)">
+                @change="onFormDataChange(scope.$index, cindex, head.tag)">
               </component>
               <div class="error-tip" v-show="!formData[scope.$index][cindex].valid">
                 不能为空
@@ -92,17 +92,20 @@ export default {
       type: Object,
       default: ()=> {}
     },
+    value: {
+      type: Array,
+      default: ()=>([])
+    }
   },
 
-  data() {
+  data () {
     return {
       formData:[],
       tableData: [],
     };
   },
 
-  created(){
-    console.log(this.config)
+  created () {
     this.tableData = this.filterProps()
     this.formData = [this.getEmptyRow()]
   },
@@ -112,7 +115,7 @@ export default {
      * @event cell-click Table 单元格点击事件
      * 点击单元格 聚焦单元格中的input
      */
-    focusInput(row, column, cell, event){
+    focusInput (row, column, cell, event) {
       const child = cell.querySelector('.cell').firstElementChild
       const input = child && child.querySelector('input')
       input && input.focus()
@@ -120,7 +123,7 @@ export default {
     /**
      * 过滤不需要的组件配置， 表格中的组件需要统一样式
      */
-    filterProps(){
+    filterProps () {
       const conf = this.config.children
       if (!conf) return []
       const getUseableProp = item => useableProps.find(t => t.tag === item.tag)
@@ -131,15 +134,19 @@ export default {
       })
     },
     
-    onFormDataChange(rowIndex, colIndex){
+    onFormDataChange (rowIndex, colIndex, tag) {
       const data = this.formData[rowIndex][colIndex]
       data.required && (data.valid = this.checkData(data))
+      if (['fc-amount', 'el-input-number'].includes(tag)) {
+        const newVal = this.formData.map(row => row.reduce((p, c) => (p[c.vModel] = c.value, p), {}))
+        this.$emit('update:value', newVal)
+      }
     },
     /**
      * 校验单个表单数据
      * @param {CmpConfig} 组件配置对象
      */
-    checkData({ tag, value}){
+    checkData ({ tag, value}) {
       if([null, undefined, ''].includes(value)) return false
       if(tag === 'fc-org-select') return this.checkOrgData(value)
       if(Array.isArray(value)) return value.length > 0
@@ -148,7 +155,7 @@ export default {
     /**
      * 对组织机构部门控数据单独校验
      */
-    checkOrgData(data){
+    checkOrgData (data) {
       const isArray = Array.isArray
       if(typeof data !== 'object' || isArray(data)) return false
       let count = 0
@@ -160,7 +167,7 @@ export default {
     /**
      * 校验表格数据必填项
      */
-    submit(){
+    submit () {
       let res = true
       const checkCol = col => col.required && !this.checkData(col) && (res = col.valid = false) 
       this.formData.forEach(row => row.forEach(checkCol))
@@ -169,13 +176,13 @@ export default {
     /**
      * 根据formid获取完整组件配置
      */
-    getConfById(formId){
+    getConfById (formId) {
       return this.tableData.find(t => t.formId === formId)
     },
     /**
      * 获取默认行数据
      */
-    getEmptyRow(){
+    getEmptyRow () {
       return this.tableData.map((t) => {
         let res = {
           tag: t.tag,

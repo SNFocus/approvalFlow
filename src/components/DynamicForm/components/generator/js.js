@@ -96,6 +96,10 @@ function buildAttributes ( el, dataList, ruleList, optionsList, methodList, prop
     }
   }
 
+  if ( el.expression ) {
+    buildExps( el, optionsList )
+  }
+
   if ( el.props && el.props.props ) {
     buildProps( el, propsList )
   }
@@ -115,6 +119,7 @@ function buildAttributes ( el, dataList, ruleList, optionsList, methodList, prop
     el.children.forEach( ( el2, index ) => {
       el2.isChild = true  // 临时变量
       el2.childIndex = index  // 临时变量
+      el2.parentVmodel = el.vModel
       buildAttributes( el2, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, tableRefs )
     } )
   }
@@ -185,11 +190,12 @@ function mixinMethod ( type ) {
 }
 
 function buildData ( conf, dataList, tableRefs ) {
-  if ( conf.vModel === undefined ) return
-
+  if ( conf.vModel === undefined || conf.isChild ) return
   let defaultValue
   if ( conf.rowType === 'table' ) {
-    dataList.push( `${conf.vModel}Conf: ${JSON.stringify( conf )},` )
+    defaultValue = {}
+    conf.children.forEach( t => ( defaultValue[t.vModel] = t.defaultValue === undefined ? null : t.defaultValue ) )
+    defaultValue = JSON.stringify( [defaultValue] )
     tableRefs[conf.vModel] = conf
   } else if ( typeof ( conf.defaultValue ) === 'string' && !conf.multiple ) {
     defaultValue = `'${conf.defaultValue}'`
@@ -227,6 +233,10 @@ function buildOptions ( conf, optionsList ) {
   if ( conf.dataType === 'dynamic' ) { conf.options = [] }
   const str = `field${conf.formId}Options: ${JSON.stringify( conf.options )},`
   optionsList.push( str )
+}
+
+function buildExps ( conf, optionsList ) {
+  optionsList.push( `${conf.vModel}Exps: ${JSON.stringify( conf.expression )},` )
 }
 
 function buildProps ( conf, propsList ) {

@@ -524,7 +524,15 @@
 
           
           <el-form-item v-if="activeData.expression !== undefined" label="计算公式">
-            <div @click="expDialogVisible = true">{{activeData.expression}}</div>
+            <div @click="expDialogVisible = true; reloadExpressionTemp()" style="padding: 0 10px; cursor: pointer;min-height: 32px; border: 1px solid #e5e5e5; border-radius: 4px;">
+              <span 
+                v-for="(item, index) in activeData.expression"
+                :key="index"
+                :class="{'calc-btn': typeof item !== 'string',
+                'error': typeof item !== 'string' && item.label === '无效的值'}" >
+                  {{typeof item !== 'string' ? item.label : item}}
+              </span>
+            </div>
           </el-form-item>
           
           <el-form-item v-if="activeData.required !== undefined" label="是否必填">
@@ -660,43 +668,60 @@
     />
     <el-dialog
       title="编辑计算公式"
+      custom-class="calc-dialog"
       :visible.sync="expDialogVisible"
       width="600px">
-      <div style="font-size: 12px;line-height: 2">
-        <div style="border: 1px solid #e5e5e5; border-radius: 4px;min-height: 60px;"></div>
-        <div style="margin: 10px 0;font-size: 12px;color: #aaa;">编辑计算公式可用来完成审批单内数据的自动结算，例如：采购单内设置计算公式“合计=单价×数量”，发起人填写单价、数量后，组件将自动计算出合计金额，免手动计算</div>
+      <div class="calc-box">
+        <el-alert v-show="!expValid" title="编辑的公式不符合计算法则，无法计算" type="error" show-icon> </el-alert>
+        <div class="calc-preview" :class="{error: !expValid}">
+          计算公式 = 
+          <span 
+            v-for="(item, index) in expressionTemp" 
+            :key="index"
+            :class="{'calc-btn': typeof item !== 'string',
+            'error': typeof item !== 'string' && item.label === '无效的值'}"
+            >
+          {{typeof item !== 'string' ? item.label : item}}
+          </span>
+          <div class="preview-actions">
+            <i class="el-icon-price-tag" style="transform: rotate(-90deg);"  @click="expressionTemp.pop()"></i>
+            <i class="el-icon-delete" @click="expressionTemp = []"></i>
+          </div>
+        </div>
+        <div class="calc-tip">编辑计算公式可用来完成审批单内数据的自动结算，例如：采购单内设置计算公式“合计=单价×数量”，发起人填写单价、数量后，组件将自动计算出合计金额，免手动计算</div>
         <div>
           <span>计算对象：</span>
           <span 
-          v-for="item in calculateCmps" 
-          :key="item.vModel"
-          @click="expressionTemp.push(item)"
-          style="padding: 4px 8px;margin-right: 10px;background: #e5e5e5;cursor: pointer;">
-            {{item.label}}
+            v-for="item in calculateCmps" 
+            :key="item.vModel"
+            @click="expressionTemp.push(item)"
+            class="calc-btn" >
+          {{item.label}}
           </span>
         </div>
-        <div style="margin: 10px 0;"><span>计算符号：</span>
+        <div style="margin: 10px 0;">
+          <span>计算符号：</span>
           <span 
           v-for="item in ['+', '-', '×', '÷', '(', ')']" 
+          class="calc-btn" 
           :key="item"
-          @click="expressionTemp.push(item)"
-          style="padding: 4px 8px;margin-right: 10px;background: #e5e5e5;cursor: pointer;text-align: center;">{{item}}</span>
+          @click="expressionTemp.push(item)">{{item}}</span>
         </div>
 
         <div style="margin: 10px 0;">
-            <span style="float: left;">数字键盘：</span>
+          <span style="float: left;">数字键盘：</span>
           <div style="width: 110px;line-height: 2.5;overflow: hidden;">
             <span 
-          v-for="item in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.']" 
-          :key="item"
-          @click="expressionTemp.push(item)"
-          style="padding: 4px 8px;margin-right: 10px;background: #e5e5e5;cursor: pointer;text-align: center;">{{item}}</span>
-          </div>
+              :key="item"
+              class="calc-btn" 
+              v-for="item in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.']" 
+              @click="expressionTemp.push(item)" >{{item}}</span>
+            </div>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="expDialogVisible = false" size="mini">取 消</el-button>
-        <el-button type="primary" @click="expDialogVisible = false"  size="mini">确 定</el-button>
+        <el-button @click="expDialogVisible = false;expressionTemp = []" size="mini">取 消</el-button>
+        <el-button type="primary" @click="checkExpression"  size="mini">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -714,6 +739,7 @@ import {
 } from "./components/generator/config";
 import { saveFormConf } from "./utils/db";
 import draggable from "vuedraggable";
+import {mergeNumberOfExps, validExp, toRPN, calcRPN} from '@/assets/utils/index.js'
 const dateTimeFormat = {
   date: "yyyy-MM-dd",
   week: "yyyy 第 WW 周",
@@ -734,7 +760,6 @@ export default {
   data() {
     return {
       expressionTemp: [],
-      calcChars:[],
       proConditionCmp: ["el-input-number", "el-select", "el-radio-group"], // 可作为流程图条件的组件
       currentTab: "field",
       currentNode: null,
@@ -742,6 +767,7 @@ export default {
       iconsVisible: false,
       currentIconModel: null,
       expDialogVisible: false,
+      expValid: true,
       themeOptions:[
         {value: 'dark', label: '深色'},
         {value: 'light', label: '亮色'},
@@ -890,15 +916,14 @@ export default {
         }
         if(Array.isArray(data)) data.forEach(d => loop(d, parent)) 
         if (['el-input-number', 'fc-amount'].includes(data.tag)){
+          const isTableChild = parent && parent.rowType === 'table'
           calcList.push({
-            vModel: data.vModel,
-            label: parent ? parent.label + '.' + data.label : data.label
+            vModel: isTableChild ? parent.vModel + '.' + data.vModel : data.vModel,
+            label: isTableChild ? parent.label + '.' + data.label : data.label
           })
         }
       }
       loop(this.$store.state.formItemList)
-      // this.$store.state.formItemList.filter(t => ['el-input-number', 'fc-amount'].includes()
-      console.log(calcList)
       return calcList
     }
   },
@@ -911,6 +936,15 @@ export default {
     }
   },
   methods: {
+    reloadExpressionTemp(){
+      const isValid = d => {
+        const target = this.calculateCmps.find(cmp => cmp.vModel === d.vModel && cmp.label === d.label)
+        return target ? true : false
+      }
+      this.expressionTemp = this.activeData.expression.map(t => {
+        return typeof t === 'string' || isValid(t) ? t : { vModel: t.vModel, label: '无效的值'}
+      })
+    },
     requireChange(required) {
       // 下拉 单选 计数 日期区间 时间区间 需要写进流程条件中
       if (!this.activeData.proCondition) return;
@@ -925,6 +959,15 @@ export default {
         this.$store.commit("addPCondition", this.activeData);
       } else {
         this.$store.commit("delPCondition", this.activeData.formId);
+      }
+    },
+    checkExpression(){
+      let formatExp = mergeNumberOfExps(this.expressionTemp)
+      const temp = formatExp.map(t => typeof t === 'object' ? 1 : t)
+      this.expValid = validExp(temp, false)
+      if(this.expValid) {
+        this.activeData.expression = this.expressionTemp // calcRPN(toRPN(formatExp))
+        this.expDialogVisible = false
       }
     },
     addReg() {
@@ -1161,5 +1204,66 @@ export default {
 
 .node-icon {
   color: #bebfc3;
+}
+
+.calc-btn{
+  padding: 4px 8px;
+  margin-right: 10px;
+  background: #e5e5e5;
+  cursor: pointer;
+  &.error{
+    background: #f56c6c;
+    color: white;
+  }
+  &:hover{
+    background: #f5f5f5;
+  }
+}
+
+.calc-dialog{
+  >>> .el-dialog__body{
+    padding-top: 0;
+  }
+  .calc-box{
+    font-size: 12px;
+    line-height: 2
+    .calc-tip{
+      margin: 10px 0;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .calc-preview{
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      min-height: 60px;
+      padding: 4px 10px;
+      position: relative;
+
+      &.error{
+        border: 1px solid red;
+      }
+      
+      .preview-actions{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        > i {
+          font-size: 14px;
+          margin-right: 8px;
+          cursor: pointer;
+          &:hover{
+            color: red;
+          }
+        }
+      }
+    }
+  }
+}
+</style>
+<style lang="stylus">
+.calc-dialog  .el-dialog__body{
+  padding-top: 0;
+  padding-bottom: 0;
 }
 </style>
