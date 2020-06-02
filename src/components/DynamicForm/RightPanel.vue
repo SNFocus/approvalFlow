@@ -77,7 +77,7 @@
             </el-radio-group>
           </el-form-item>-->
           <el-form-item
-            v-if="activeData.justify!==undefined&&activeData.type==='flex'"
+            v-if="activeData.justify !== undefined && activeData.type==='flex'"
             label="水平排列"
           >
             <el-select v-model="activeData.justify" placeholder="请选择水平排列" :style="{width: '100%'}">
@@ -89,7 +89,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item v-if="activeData.align!==undefined&&activeData.type==='flex'" label="垂直排列">
+          <el-form-item v-if="activeData.align!==undefined && activeData.type==='flex'" label="垂直排列">
             <el-radio-group v-model="activeData.align">
               <el-radio-button label="top" />
               <el-radio-button label="middle" />
@@ -179,6 +179,12 @@
           </el-form-item>
           <el-form-item v-if="activeData.actionText !== undefined" label="动作文字">
             <el-input v-model="activeData.actionText" placeholder="请输入动作文字" />
+          </el-form-item>
+          <el-form-item v-if="activeData.tag === 'fc-input-table'" label="类型">
+            <el-select size="small" v-model="activeData.type">
+              <el-option label="列表" value="list"></el-option>
+              <el-option label="表格" value="table"></el-option>
+            </el-select>
           </el-form-item>
           <!-- <el-form-item v-if="activeData['active-text'] !== undefined" label="开启提示">
             <el-input v-model="activeData['active-text']" placeholder="请输入开启提示" />

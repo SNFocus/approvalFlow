@@ -527,7 +527,7 @@ export const layoutComponents = [{
   rowType: 'table',
   tagIcon: 'row',
   tag: 'fc-input-table',
-  type: 'default',
+  type: 'table', // list
   justify: 'start',
   align: 'top',
   label: '表格/明细',

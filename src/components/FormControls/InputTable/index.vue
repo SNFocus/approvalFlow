@@ -1,13 +1,14 @@
 <template>
-<div  class="fc-table-box">
+<div class="fc-table-box" :class="[config.type]">
   <el-table 
-  :data="formData" 
-  border 
-  class="fc-table"
-  @cell-click="focusInput" 
-  v-bind="config.tableConf || {}"
-  :show-summary="config['show-summary']"
-  :summary-method="getSummaries">
+    v-if="['table', 'default'].includes(config.type)"
+    :data="formData" 
+    border 
+    class="fc-table"
+    @cell-click="focusInput" 
+    v-bind="config.tableConf || {}"
+    :show-summary="config['show-summary']"
+    :summary-method="getSummaries">
       <el-table-column width="50" align="center">
         <!-- 序号 -->
         <template slot-scope="scope">
@@ -74,6 +75,45 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <template v-if="config.type === 'list'">
+      <div v-for="(row, rindex) in formData" :key="rindex" class="list-row">
+        <div v-for="(conf, cindex) in config.children" :key="cindex" class="row-item">
+          <render 
+          :conf="conf"
+          :key="conf.renderKey"
+          style="max-width: 350px;"
+          @input="event => { 
+            $set(conf, 'defaultValue', event);
+            $set(formData[rindex][cindex], 'value', event);
+            onFormDataChange(rindex, cindex, conf.tag);
+          }" />
+          <!-- 上传 -->
+          <!-- <template v-if="conf.tag === 'el-upload'">
+            <el-upload
+            v-bind="conf" 
+            :on-success="(res) => onUploadSuccess(res, formData[rindex][cindex])"
+            @mouseleave.native="hideUploadList"
+            @mouseenter.native="showUploadList">
+              <span slot="default" >
+                已上传
+                {{formData[rindex][cindex].value.length}}
+              </span>
+            </el-upload>
+          </template>
+          <component 
+            v-else 
+            :is="conf.tag" 
+            v-model="formData[rindex][cindex].value" 
+            v-bind="conf"
+            @change="onFormDataChange(rindex, cindex, conf.tag)">
+          </component> -->
+          <div class="error-tip" v-show="!formData[rindex][cindex].valid">
+            不能为空
+          </div>
+        </div>
+      </div>
+    </template>
     <div class="actions">
       <el-button @click="addRow" type="text">
         <i class="el-icon-plus"></i>
@@ -83,7 +123,8 @@
 </div>
 </template>
 <script>
-import { testProp, useableProps } from './config'
+import { useableProps } from './config'
+import render from '@/components/DynamicForm/components/render.js'
 // useableProps —— 需要的组件属性 很多属性在表格中没用 需要过滤
 export default {
   name: "fc-input-table",
@@ -106,7 +147,8 @@ export default {
   },
 
   created () {
-    this.tableData = this.filterProps()
+    this.tableData = this.config.type === 'table' ? this.filterProps() : this.config.children
+    debugger
     this.formData = [this.getEmptyRow()]
   },
 
@@ -137,7 +179,7 @@ export default {
     onFormDataChange (rowIndex, colIndex, tag) {
       const data = this.formData[rowIndex][colIndex]
       data.required && (data.valid = this.checkData(data))
-      if (['fc-amount', 'el-input-number'].includes(tag)) {
+      if (['fc-amount', 'el-input-number'].includes(tag)) { // 金额变动 更新数据 触发计算公式更新
         const newVal = this.formData.map(row => row.reduce((p, c) => (p[c.vModel] = c.value, p), {}))
         this.$emit('update:value', newVal)
       }
@@ -253,6 +295,10 @@ export default {
       const list = btn.querySelector('.el-upload-list--text')
       list && setTimeout(() => list.classList.remove('show'), 500)
     }
+  },
+
+  components:{
+    render
   }
 };
 </script>
@@ -262,13 +308,29 @@ export default {
     .el-icon-delete
       display none
       cursor pointer
-  
+
   .actions
     text-align center
     border 1px solid #EBEEF5
     border-top none
+
+
+  &.list
+    .list-row
+      padding 18px 0 10px
+      border-bottom: 1px solid #e5e5e5
+      &:first-child
+        padding-top 0
+    .row-item
+      margin-bottom 10px
+      display flex
+
+    .error-tip 
+      font-size 12px
+      padding-left 6px
+      color #f56c6c
   
-.fc-table-box >>> 
+.fc-table-box.table >>> 
 
   // 索引和删除按钮切换
   .el-table__row:hover
