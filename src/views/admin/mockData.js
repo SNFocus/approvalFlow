@@ -370,7 +370,7 @@ export default {
         "rowType": "table",
         "tagIcon": "row",
         "tag": "fc-input-table",
-        "type": "default",
+        "type": "table",
         "justify": "start",
         "align": "top",
         "label": "工作经历",

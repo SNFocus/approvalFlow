@@ -79,38 +79,41 @@
     <template v-if="config.type === 'list'">
       <div v-for="(row, rindex) in formData" :key="rindex" class="list-row">
         <div v-for="(conf, cindex) in config.children" :key="cindex" class="row-item">
-          <render 
-          :conf="conf"
-          :key="conf.renderKey"
-          style="max-width: 350px;"
-          @input="event => { 
-            $set(conf, 'defaultValue', event);
-            $set(formData[rindex][cindex], 'value', event);
-            onFormDataChange(rindex, cindex, conf.tag);
-          }" />
-          <!-- 上传 -->
-          <!-- <template v-if="conf.tag === 'el-upload'">
-            <el-upload
-            v-bind="conf" 
-            :on-success="(res) => onUploadSuccess(res, formData[rindex][cindex])"
-            @mouseleave.native="hideUploadList"
-            @mouseenter.native="showUploadList">
-              <span slot="default" >
-                已上传
-                {{formData[rindex][cindex].value.length}}
-              </span>
-            </el-upload>
-          </template>
-          <component 
-            v-else 
-            :is="conf.tag" 
-            v-model="formData[rindex][cindex].value" 
-            v-bind="conf"
-            @change="onFormDataChange(rindex, cindex, conf.tag)">
-          </component> -->
-          <div class="error-tip" v-show="!formData[rindex][cindex].valid">
-            不能为空
+          <div>
+            {{conf.label}}
+            <span class="error-tip" v-show="!formData[rindex][cindex].valid">
+              不能为空
+            </span>
           </div>
+            <render 
+            :conf="conf"
+            :value="formData[rindex][cindex]"
+            :key="conf.renderKey"
+            style="max-width: 350px;"
+            @input="payload => { 
+              $set(formData[rindex][cindex], 'value', payload);
+              onFormDataChange(rindex, cindex, conf.tag);
+            }" />
+            <!-- 上传 -->
+            <!-- <template v-if="conf.tag === 'el-upload'">
+              <el-upload
+              v-bind="conf" 
+              :on-success="(res) => onUploadSuccess(res, formData[rindex][cindex])"
+              @mouseleave.native="hideUploadList"
+              @mouseenter.native="showUploadList">
+                <span slot="default" >
+                  已上传
+                  {{formData[rindex][cindex].value.length}}
+                </span>
+              </el-upload>
+            </template>
+            <component 
+              v-else 
+              :is="conf.tag" 
+              v-model="formData[rindex][cindex].value" 
+              v-bind="conf"
+              @change="onFormDataChange(rindex, cindex, conf.tag)">
+            </component> -->
         </div>
       </div>
     </template>
@@ -124,7 +127,7 @@
 </template>
 <script>
 import { useableProps } from './config'
-import render from '@/components/DynamicForm/components/render.js'
+import render from './render.js'
 // useableProps —— 需要的组件属性 很多属性在表格中没用 需要过滤
 export default {
   name: "fc-input-table",
@@ -148,7 +151,6 @@ export default {
 
   created () {
     this.tableData = this.config.type === 'table' ? this.filterProps() : this.config.children
-    debugger
     this.formData = [this.getEmptyRow()]
   },
 
@@ -321,10 +323,6 @@ export default {
       border-bottom: 1px solid #e5e5e5
       &:first-child
         padding-top 0
-    .row-item
-      margin-bottom 10px
-      display flex
-
     .error-tip 
       font-size 12px
       padding-left 6px
