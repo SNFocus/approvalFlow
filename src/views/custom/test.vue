@@ -4,8 +4,6 @@
   </div>
 </template>
 <script>
-import {AnimeLoader, Stack} from './Stack.js'
-
 export default {
   data () {
     return {
