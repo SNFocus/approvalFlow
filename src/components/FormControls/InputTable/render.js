@@ -122,7 +122,8 @@ export default {
         vNode.attrs[key] = val
       }
     } )
+    this.size && ( vNode.props.size = vNode.attrs.size = this.size )
     return h( this.conf.tag, vNode, children )
   },
-  props: ['conf', 'value']
+  props: ['conf', 'value', 'size']
 }

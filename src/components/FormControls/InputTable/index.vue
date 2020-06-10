@@ -78,42 +78,24 @@
 
     <template v-if="config.type === 'list'">
       <div v-for="(row, rindex) in formData" :key="rindex" class="list-row">
-        <div v-for="(conf, cindex) in config.children" :key="cindex" class="row-item">
-          <div>
+        <div v-for="(conf, cindex) in config.children" :key="cindex" class="row-item" :class="{error: !formData[rindex][cindex].valid}">
+          <div :style="{width: labelWidth}">
+            <span style="color: #f56c6c;" v-if="conf.required">*</span>
             {{conf.label}}
-            <span class="error-tip" v-show="!formData[rindex][cindex].valid">
-              不能为空
-            </span>
           </div>
-            <render 
+            <render
             :conf="conf"
+            :size="formSize"
             :value="formData[rindex][cindex]"
             :key="conf.renderKey"
-            style="max-width: 350px;"
-            @input="payload => { 
+            style="max-width: 350px;overflow: hidden;"
+            @input="payload => {
               $set(formData[rindex][cindex], 'value', payload);
               onFormDataChange(rindex, cindex, conf.tag);
             }" />
-            <!-- 上传 -->
-            <!-- <template v-if="conf.tag === 'el-upload'">
-              <el-upload
-              v-bind="conf" 
-              :on-success="(res) => onUploadSuccess(res, formData[rindex][cindex])"
-              @mouseleave.native="hideUploadList"
-              @mouseenter.native="showUploadList">
-                <span slot="default" >
-                  已上传
-                  {{formData[rindex][cindex].value.length}}
-                </span>
-              </el-upload>
-            </template>
-            <component 
-              v-else 
-              :is="conf.tag" 
-              v-model="formData[rindex][cindex].value" 
-              v-bind="conf"
-              @change="onFormDataChange(rindex, cindex, conf.tag)">
-            </component> -->
+            <span class="error-tip" >
+              不能为空
+            </span>
         </div>
       </div>
     </template>
@@ -139,19 +121,25 @@ export default {
     value: {
       type: Array,
       default: ()=>([])
-    }
+    },
+    labelWidth: String,
+    formSize: String
   },
 
   data () {
     return {
       formData:[],
       tableData: [],
+      getIn: true // list类型下 进入页面 number类型组件会进行校验 产生不需要的结果 在这里进行进入页面判断 hack
     };
   },
 
   created () {
     this.tableData = this.config.type === 'table' ? this.filterProps() : this.config.children
     this.formData = [this.getEmptyRow()]
+    this.$nextTick(() => {
+      this.getIn = false
+    })
   },
 
   methods:{
@@ -179,6 +167,7 @@ export default {
     },
     
     onFormDataChange (rowIndex, colIndex, tag) {
+      if (this.getIn) return
       const data = this.formData[rowIndex][colIndex]
       data.required && (data.valid = this.checkData(data))
       if (['fc-amount', 'el-input-number'].includes(tag)) { // 金额变动 更新数据 触发计算公式更新
@@ -306,6 +295,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .fc-table-box
+  margin-bottom 18px
   .row-action
     .el-icon-delete
       display none
@@ -320,13 +310,37 @@ export default {
   &.list
     .list-row
       padding 18px 0 10px
+      text-align left
       border-bottom: 1px solid #e5e5e5
-      &:first-child
-        padding-top 0
+      .row-item
+        margin-bottom 18px
+        position relative
+        &.error 
+          .error-tip
+            top 74%
+            z-index 1
+          >>> .el-input__inner
+            border-color #F56C6C
+        > div 
+          &:first-child
+            text-align right
+            vertical-align middle
+            float left
+            font-size 14px
+            color #606266
+            line-height 32px
+            padding 0 12px 0 0
+            box-sizing border-box
     .error-tip 
       font-size 12px
       padding-left 6px
       color #f56c6c
+      position absolute
+      left 100px
+      top 0
+      z-index -1
+      transition bottom .3s
+        
   
 .fc-table-box.table >>> 
 

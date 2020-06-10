@@ -25,7 +25,7 @@ export default {
   },
   watch:{
     innerValue(val){
-     this.$emit('change', +val.toFixed(2))
+     val && this.$emit('change', +val.toFixed(2))
     }
   }
 }

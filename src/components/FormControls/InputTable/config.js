@@ -1,3 +1,18 @@
+export const trigger = {
+  'el-input': 'blur',
+  'el-input-number': 'blur',
+  'el-select': 'change',
+  'el-radio-group': 'change',
+  'el-checkbox-group': 'change',
+  'el-cascader': 'change',
+  'el-time-picker': 'change',
+  'el-date-picker': 'change',
+  'el-rate': 'change',
+  'fc-amount': 'change',
+  'fc-time-duration': 'change',
+  'fc-date-duration': 'change',
+  'fc-org-select': 'change'
+}
 // forceProp 强制使用的属性 用于覆盖用户或者默认设置
 export const useableProps = [
   {
