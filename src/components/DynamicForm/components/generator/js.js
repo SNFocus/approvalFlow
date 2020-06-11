@@ -145,7 +145,13 @@ function mixinMethod ( type ) {
         },`,
       resetForm: `resetForm() {
           this.$refs['${confGlobal.formRef}'].resetFields()
+          this.resetTableData()
         },`,
+      resetTableData: `resetTableData(){
+        Object.keys(this.tableRefs).forEach(vModel => {
+          const res = this.$refs[vModel].reset()
+        })
+      },`,
       // fc-input-table 需要单独进行表单校验
       checkTableData: `checkTableData () {
           let valid = true

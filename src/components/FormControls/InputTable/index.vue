@@ -8,7 +8,7 @@
     @cell-click="focusInput" 
     v-bind="config.tableConf || {}"
     :show-summary="config['show-summary']"
-    :summary-method="getSummaries">
+    :summary-method="getTableSummaries">
       <el-table-column width="50" align="center">
         <!-- 序号 -->
         <template slot-scope="scope">
@@ -83,28 +83,43 @@
             <span style="color: #f56c6c;" v-if="conf.required">*</span>
             {{conf.label}}
           </div>
-            <render
-            :conf="conf"
-            :size="formSize"
-            :value="formData[rindex][cindex]"
-            :key="conf.renderKey"
-            style="max-width: 350px;overflow: hidden;"
-            @input="payload => {
-              $set(formData[rindex][cindex], 'value', payload);
-              onFormDataChange(rindex, cindex, conf.tag);
-            }" />
+            <div :style="{'margin-left': labelWidth}">
+              <render
+                :conf="conf"
+                :size="formSize"
+                :value="formData[rindex][cindex]"
+                :key="conf.renderKey"
+                style="max-width: 350px;"
+                @input="payload => {
+                  $set(formData[rindex][cindex], 'value', payload);
+                  onFormDataChange(rindex, cindex, conf.tag);
+                }" />
+            </div>
             <span class="error-tip" >
               不能为空
             </span>
         </div>
+        
       </div>
+      
     </template>
+    <div
+    class="list-summary"
+    v-if="config.type === 'list' && config['show-summary']">
+          <div style="padding:6px 12px;float:left;">合计</div>
+          <div style="overflow: hidden;padding-top: 6px;;">
+            <div v-for="(val, name) in listSummation" :key="name" >
+              {{val.label}}：{{val.sum}}
+            </div>
+          </div>
+        </div>
     <div class="actions">
       <el-button @click="addRow" type="text">
         <i class="el-icon-plus"></i>
         {{ config.actionText }}
         </el-button>
     </div>
+    
 </div>
 </template>
 <script>
@@ -130,19 +145,22 @@ export default {
     return {
       formData:[],
       tableData: [],
-      getIn: true // list类型下 进入页面 number类型组件会进行校验 产生不需要的结果 在这里进行进入页面判断 hack
+      listSummation: {},
+      isAddRow: true // list类型下 添加行数据 number类型组件会进行校验 产生不需要的结果 在这里进行添加行数据判断 hack
     };
   },
 
   created () {
     this.tableData = this.config.type === 'table' ? this.filterProps() : this.config.children
-    this.formData = [this.getEmptyRow()]
-    this.$nextTick(() => {
-      this.getIn = false
-    })
+    this.addRow()
   },
 
   methods:{
+    clearAddRowFlag () {
+      this.$nextTick(() => {
+        this.isAddRow = false
+      })
+    },
     /**
      * @event cell-click Table 单元格点击事件
      * 点击单元格 聚焦单元格中的input
@@ -167,12 +185,15 @@ export default {
     },
     
     onFormDataChange (rowIndex, colIndex, tag) {
-      if (this.getIn) return
+      if (this.isAddRow) return
       const data = this.formData[rowIndex][colIndex]
       data.required && (data.valid = this.checkData(data))
       if (['fc-amount', 'el-input-number'].includes(tag)) { // 金额变动 更新数据 触发计算公式更新
         const newVal = this.formData.map(row => row.reduce((p, c) => (p[c.vModel] = c.value, p), {}))
         this.$emit('update:value', newVal)
+        if (this.config.type === 'list') {
+          this.getListSummaries()
+        }
       }
     },
     /**
@@ -236,35 +257,54 @@ export default {
     },
  
     addRow () {
+      this.isAddRow = true
+      if (!Array.isArray(this.formData)) {
+        this.formData = []
+      }
       this.formData.push(this.getEmptyRow())
+      this.clearAddRowFlag()
+    },
+    getCmpValOfRow (row, key) {
+      // 获取数字相关组件的输入值
+      const isNumCmp = tag => ['fc-amount','el-input-number', 'el-slider'].includes(tag)
+      const target =  row.find(t => t.vModel === key)
+      if (!target) return NaN
+      if(isNumCmp(target.tag)) return target.value || 0
+      return NaN
+    },
+
+    getListSummaries () {
+      console.log(this.listSummation)
+      this.tableData.forEach(row => {
+        const isNumCmp = tag => ['fc-amount','el-input-number', 'el-slider'].includes(tag)
+        if (!isNumCmp(row.tag)) return
+        const sum = this.formData
+            .reduce((sum, d) => sum + this.getCmpValOfRow(d, row.vModel), 0)
+        this.$set(this.listSummation, row.vModel, {
+          label: row.label,
+          sum
+        })
+      })
     },
     /**
      * 对表格进行合计 目前只支持数字，金额，滑块
      */
-    getSummaries (param) {
+    getTableSummaries (param) {
       const { columns, data } = param;
       const sums = [];
       if(this.tableData.length + 1 !== columns.length) return []  // 防止多次加载
-      // 获取数字相关组件的输入值
-      const isNumCmp = tag => ['fc-amount','el-input-number', 'el-slider'].includes(tag)
-      const getValue = (arr, key) => {
-       const target =  arr.find(t => t.vModel === key)
-       if (!target) return NaN
-       if(isNumCmp(target.tag)) return target.value || 0
-       return NaN
-      }
-
       columns.forEach((column, index) => {
         if (index === 0) {
           sums[index] = '合计'
           return
         }
-        const sumVal = data.reduce((sum, d) => sum + getValue(d, column.property), 0)
+        const sumVal = data.reduce((sum, d) => sum + this.getCmpValOfRow(d, column.property), 0)
         sums[index] = Number.isNaN(sumVal) ? '' : sumVal
       });
-      
       return sums;
     },
+
+    
 
     onUploadSuccess(response, target) {
       !Array.isArray(target.value) && (target.value = [])
@@ -285,6 +325,16 @@ export default {
       const btn = ev.currentTarget
       const list = btn.querySelector('.el-upload-list--text')
       list && setTimeout(() => list.classList.remove('show'), 500)
+    },
+
+    reset () {
+      this.tableData.map((t) => {
+        let index = this.formData[0].findIndex(c => c.vModel === t.vModel)
+        if (index === -1) return
+        for (let i = 0; i < this.formData.length; i++) {
+          this.formData[i][index].value = t.defaultValue
+        }
+      })
     }
   },
 
@@ -305,6 +355,12 @@ export default {
     text-align center
     border 1px solid #EBEEF5
     border-top none
+  .list-summary
+    line-height 24px
+    overflow hidden
+    border 1px solid #e5e5e5
+    border-top none
+
 
 
   &.list
