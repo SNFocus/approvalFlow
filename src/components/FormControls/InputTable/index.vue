@@ -78,6 +78,9 @@
 
     <template v-if="config.type === 'list'">
       <div v-for="(row, rindex) in formData" :key="rindex" class="list-row">
+        <el-tooltip content="删除">
+          <i class="el-icon-delete delete-btn" @click="removeRow(rindex)"></i>
+        </el-tooltip>
         <div v-for="(conf, cindex) in config.children" :key="cindex" class="row-item" :class="{error: !formData[rindex][cindex].valid}">
           <div :style="{width: labelWidth}">
             <span style="color: #f56c6c;" v-if="conf.required">*</span>
@@ -99,9 +102,7 @@
               不能为空
             </span>
         </div>
-        
       </div>
-      
     </template>
     <div
     class="list-summary"
@@ -368,6 +369,18 @@ export default {
       padding 18px 0 10px
       text-align left
       border-bottom: 1px solid #e5e5e5
+      position relative
+      &:hover .delete-btn
+        display block
+      .delete-btn
+        position absolute
+        right 10px
+        top 20px
+        z-index 999
+        cursor pointer
+        display none
+        &:hover
+          color #000
       .row-item
         margin-bottom 18px
         position relative
