@@ -76,9 +76,8 @@ const setFcOrgSelectRule = ( conf, watchFuncList ) => {
       callback(new Error('${conf.title}不能为空'))
     }
   }, trigger: '${trigger[conf.tag]}', type: 'object' }`
-  const key = conf.isChild ? conf.vModel.replace( 'index', conf.childIndex ) : conf.vModel
-  buildWatchInHook( key, `function (newVal, oldVal) {
-      this.$refs["elForm"].validateField("${key}",()=>{ })
+  buildWatchInHook( conf.vModel, `function (newVal, oldVal) {
+      this.$refs["elForm"].validateField("${conf.vModel}",()=>{ })
   }`, watchFuncList )
   return rule
 }
@@ -118,8 +117,7 @@ function buildAttributes ( el, dataList, ruleList, optionsList, methodList, prop
   if ( el.children ) {
     el.children.forEach( ( el2, index ) => {
       el2.isChild = true  // 临时变量
-      el2.childIndex = index  // 临时变量
-      el2.parentVmodel = el.vModel
+      el2.isTableChild = el.rowType === 'table'
       buildAttributes( el2, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, tableRefs )
     } )
   }
@@ -197,7 +195,7 @@ function mixinMethod ( type ) {
 }
 
 function buildData ( conf, dataList, tableRefs ) {
-  if ( conf.vModel === undefined || conf.isChild ) return
+  if ( conf.vModel === undefined || conf.isTableChild ) return
   let defaultValue
   if ( conf.rowType === 'table' ) {
     defaultValue = {}
@@ -215,7 +213,7 @@ function buildData ( conf, dataList, tableRefs ) {
 function buildRules ( conf, ruleList, watchFuncList ) {
   if ( conf.vModel === undefined ) return
   const rules = []
-  if ( trigger[conf.tag] ) {
+  if ( trigger[conf.tag] && !conf.isTableChild ) {
     if ( conf.required ) {
       const type = isArray( conf.defaultValue ) ? 'type: \'array\',' : ''
       let message = isArray( conf.defaultValue ) ? `请至少选择一个` : conf.placeholder

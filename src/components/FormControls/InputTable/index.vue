@@ -348,6 +348,9 @@ export default {
 .fc-table-box
   margin-bottom 18px
   .row-action
+    display flex
+    justify-content center
+    align-items center
     .el-icon-delete
       display none
       cursor pointer
