@@ -115,7 +115,7 @@ function buildAttributes ( el, dataList, ruleList, optionsList, methodList, prop
   }
 
   if ( el.children ) {
-    el.children.forEach( ( el2, index ) => {
+    el.children.forEach( el2 => {
       el2.isChild = true  // 临时变量
       el2.isTableChild = el.rowType === 'table'
       buildAttributes( el2, dataList, ruleList, optionsList, methodList, propsList, uploadVarList, watchFuncList, tableRefs )

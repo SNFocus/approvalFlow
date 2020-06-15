@@ -6,7 +6,7 @@ export class NodeUtils {
   static globalID = 10000
   /**
    * 获取最大的节点ID 转换成10进制
-   * @param {*} data - 整个流程数据 
+   * @param {*} data - 整个流程数据
    */
   static getMaxNodeId ( data ) {
     let max = data.nodeId
@@ -300,7 +300,7 @@ export class NodeUtils {
       // 和后一个数组项交换位置 Array.prototype.splice会返回包含被删除的项的集合（数组）
       lastNode.properties.priority = index
       branchData[index].properties.priority = index + 1
-      lastNode = branchData.splice( index, 1, lastNode )[0]
+      branchData[index + 1] = branchData.splice( index, 1, branchData[index + 1] )[0]
     }
   }
   /**
