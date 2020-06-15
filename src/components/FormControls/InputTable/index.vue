@@ -412,6 +412,7 @@ export default {
       top 0
       z-index -1
       transition bottom .3s
+      min-height auto
         
   
 .fc-table-box.table >>> 

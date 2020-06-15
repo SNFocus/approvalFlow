@@ -151,7 +151,7 @@
                 @change="onOrgChange" />
               </div>
             </div>
-            <div class="option-box" style="border-bottom: 1px solid #e5e5e5;" v-if="approverForm.approvers && approverForm.approvers.length > 1 && !['optional','myself'].includes(approverForm.assigneeType)">
+            <div class="option-box" style="border-bottom: 1px solid #e5e5e5;" v-if="orgCollection[approverForm.assigneeType] && orgCollection[approverForm.assigneeType].length > 1 || ['optional'].includes(approverForm.assigneeType)">
               <p>多人审批时采用的审批方式</p>
               <el-radio v-model="approverForm.counterSign" :label="true" class="radio-item">会签（须所有审批人同意）</el-radio>
               <br>
