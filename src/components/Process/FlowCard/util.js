@@ -245,21 +245,25 @@ export class NodeUtils {
   /**
    * 重设节点优先级（条件节点）
    * @param {Node} cnode - 当前节点
-   * @param {Number} oldIndex - 替换前的优先级（在数组中的顺序）
+   * @param {Number} oldPriority - 替换前的优先级（在数组中的顺序）
    * @param {Node} processData - 整个流程图节点数据
    */
-  static resortPrioByCNode ( cnode, oldIndex, processData ) {
+  static resortPrioByCNode ( cnode, oldPriority, processData ) {
+    // 当前节点为默认节点 取消修改优先级
     if ( cnode.properties.isDefault ) {
+      cnode.properties.priority = oldPriority
       return
     }
     let prevNode = this.getPreviousNode( cnode.prevId, processData )
-    let newIndex = cnode.properties.priority
-    if ( prevNode.conditionNodes[newIndex].properties.isDefault ) {
+    let newPriority = cnode.properties.priority
+    // 替换节点为默认节点 取消修改优先级
+    if ( prevNode.conditionNodes[newPriority].properties.isDefault ) {
+      cnode.properties.priority = oldPriority
       return
     }
-    let delNode = prevNode.conditionNodes.splice( newIndex, 1, cnode )[0]
-    delNode.properties.priority = oldIndex
-    prevNode.conditionNodes[oldIndex] = delNode
+    let delNode = prevNode.conditionNodes.splice( newPriority, 1, cnode )[0]
+    delNode.properties.priority = oldPriority
+    prevNode.conditionNodes[oldPriority] = delNode
   }
 
   /**

@@ -69,8 +69,7 @@ export default {
       let oldProp = this.activeData.properties;
       this.activeData.properties = value;
       // 修改优先级
-      if (NodeUtils.isConditionNode(this.activeData)) {
-        value.priority !== oldProp.priority
+      if (NodeUtils.isConditionNode(this.activeData) && value.priority !== oldProp.priority) {
         NodeUtils.resortPrioByCNode(
           this.activeData,
           oldProp.priority,
