@@ -31,11 +31,10 @@ export default {
   },
   mounted() {
     // defaultData 可以将默认formData覆盖到data中
-    let { jsCode, htmlCode, cssCode } = this.$route.params.formData
+    const { jsCode, htmlCode, cssCode } = this.$route.params.formData
     loadStyle(cssCode)
-    const CONFIG = loadVueOption(jsCode, htmlCode, {})
-    debugger
-    let Form = Vue.extend(CONFIG)
+    const OPTION = loadVueOption(jsCode, htmlCode, {})
+    const Form = Vue.extend(OPTION)
     new Form().$mount("#customForm")
   },
   beforeDestroy(){

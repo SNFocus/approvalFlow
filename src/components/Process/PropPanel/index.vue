@@ -225,6 +225,15 @@ const rangeType = {
   'gte':'≥',
   'eq': '=',
 }
+const defaultApproverForm = {
+  approvers:[], // 审批人集合
+  assigneeType: "user", // 指定审批人
+  formOperates:[], // 表单操作权限集合
+  counterSign: true, //是否为会签
+  // 审批类型为自选 出现 optionalMultiUser optionalRange
+  optionalMultiUser: false,
+  optionalRange: 'ALL', // USER<最多十个> / ALL / ROLE 
+}
 export default {
   props: [/*当前节点数据*/"value", /*整个节点数据*/"processData"],
   data() {
@@ -255,15 +264,7 @@ export default {
       startForm:{
         formOperates: []
       },
-      approverForm: {
-        approvers:[], // 审批人集合
-        assigneeType: "user", // 指定审批人
-        formOperates:[], // 表单操作权限集合
-        counterSign: true, //是否为会签
-        // 审批类型为自选 出现 optionalMultiUser optionalRange
-        optionalMultiUser: false,
-        optionalRange: 'ALL', // USER<最多十个> / ALL / ROLE 
-      },
+      approverForm: JSON.parse(JSON.stringify(defaultApproverForm)),
 
       optionalOptions: [
         {
@@ -470,7 +471,8 @@ export default {
       this.approverForm.approvers = this.orgCollection[assigneeType]
       Object.assign(this.properties, this.approverForm, {formOperates})
       this.$emit("confirm", this.properties, content || '请设置审批人')
-      this.visible = false;
+      this.visible = false
+      
     },
     // 确认修改
     confirm() {
@@ -560,7 +562,10 @@ export default {
   },
   watch: {
     visible(val) {
-      if (!val) return
+      if (!val) {
+        this.approverForm = JSON.parse(JSON.stringify(defaultApproverForm)) // 重置数据为默认状态
+        return
+      }
       this.processData.properties.formOperates = 
         this.initFormOperates(this.processData)
         .map(t=>({formId: t.formId, formOperate: t.formOperate}))
