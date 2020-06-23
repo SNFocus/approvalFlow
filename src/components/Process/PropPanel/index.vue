@@ -472,7 +472,6 @@ export default {
       Object.assign(this.properties, this.approverForm, {formOperates})
       this.$emit("confirm", this.properties, content || '请设置审批人')
       this.visible = false
-      
     },
     // 确认修改
     confirm() {
@@ -531,7 +530,11 @@ export default {
      * 初始化审批节点所需数据
      */
     initApproverNodeData() {
-      Object.assign(this.approverForm, this.value.properties)
+      for (const key in this.approverForm) {
+        if (this.value.properties.hasOwnProperty(key)) {
+          this.approverForm[key] = this.value.properties[key];
+        }
+      }
       const approvers = this.approverForm.approvers
       this.resetOrgColl()
       if (Array.isArray(this.approverForm.approvers)) {
