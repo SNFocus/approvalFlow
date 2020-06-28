@@ -1,6 +1,6 @@
 <template>
   <div class="fc-amount">
-    <el-input-number :style="{width: width}" v-model="innerValue" v-bind="$props" v-on="$listeners"></el-input-number>
+    <el-input-number :style="{width: $vnode.data.style.width}" v-model="innerValue" v-bind="$props" v-on="$listeners"></el-input-number>
     <div class="explain-text" v-if="showChinese">大写：{{chinese}}</div>
   </div>
 </template>
@@ -11,7 +11,7 @@ export default {
     prop: 'value',
     event: 'change'
   },
-  props:["cmpType", "tag","tagIcon", "precision", "labelWidth", "step-strictly", "controls", "controls-position", "regList", "changeTag", "proCondition", "showChinese", "formId", "renderKey", "layout", "width"],
+  props:["cmpType", "tag","tagIcon", "precision", "labelWidth", "step-strictly", "controls", "controls-position", "regList", "changeTag", "proCondition", "showChinese", "formId", "renderKey", "layout"],
   name: 'fc-amount',
   data(){
     return {
@@ -28,6 +28,7 @@ export default {
      val && this.$emit('change', +val.toFixed(2))
     },
     value(val){
+      console.log(this)
       this.innerValue = val
     }
   }

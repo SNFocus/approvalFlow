@@ -200,8 +200,7 @@ const tags = {
   'fc-amount': function ( el ) {
     const tag = this['el-input-number']( el )
     const showChinese = el.showChinese ? `:showChinese='${el.showChinese}'` : ''
-    const width = el.style.width ? `width="${el.style.width}"` : ''
-    return addPropToTag( tag, showChinese, width )
+    return addPropToTag( tag, showChinese )
   },
   'fc-calculate': function ( el ) {
     const { vModel } = attrBuilder( el )
