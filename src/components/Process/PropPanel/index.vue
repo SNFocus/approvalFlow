@@ -104,7 +104,7 @@
 
     <!-- 审批人 -->
     <section class="approver-pane" style="height:100%;" v-if="value && (isApproverNode() || isStartNode())">
-      <el-tabs v-model="activeName" style="height:100%;">
+      <el-tabs v-model="activeName"  class="pane-tab">
         <el-tab-pane :label="'设置' + (value.type === 'approver' ? '审批人' : '发起人')" name="config">
           <!-- 开始节点 -->
           <el-row style="padding: 10px;"  v-if="value.type === 'start'">
@@ -614,7 +614,11 @@ export default {
     overflow: hidden;
   }
 
-  >>> .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  .pane-tab{
+    height: 100%;
+  }
+
+  .pane-tab >>>  .el-tabs__item.is-top:nth-child(2) {
     padding-left: 20px;
   }
 

@@ -17,71 +17,24 @@
       <div class="transfer__body">
         <!-- 左边穿梭框 -->
         <div class="transfer-pane">
-          <!-- 操作栏 -->
           <div class="transfer-pane__tools">
             <el-input
               v-model="searchString"
               class="search-input"
               size="mini"
+              style="width: 180px;"
               type="search"
               placeholder="搜索人员"
               :disabled="!searchable"
             ></el-input>
+            <span>
+              <span style="margin-right: 1rem;font-size: 14px;">{{ selectedNum }} / {{ maxNum }}</span>
+              <el-tooltip placement="top" content="清空">
+                <i class="el-icon-delete" @click="removeAll"></i>
+              </el-tooltip>
+            </span>
           </div>
-          <!-- 穿梭框 -->
-          <div class="transfer-pane__body">
-            <div class="enough-mask" v-show="isEnough">
-              <span class="p-center">最多选择{{ maxNum }}项</span>
-            </div>
-            <div
-              class="searchResPane"
-              :class="{ active: searchMode }"
-              v-loading="searchLoading" >
-              <div class="hidden-tag" @click="searchString = ''">关闭</div>
-              <div v-for="(item, index) in searchRes" :key="index" class="item">
-                <div>
-                  <div>{{ getNodeProp(item, 'label') }}</div>
-                  <div class="text-ellipsis search-res-tip" >
-                    {{ getNodeProp(item, 'searchResTip') }}
-                  </div>
-                </div>
-                <el-checkbox @change="checked => checked ? addData(item) : removeData(item, activeTabName, true)"></el-checkbox>
-              </div>
-            </div>
-
-            <el-tabs
-              v-model="activeTabName"
-              type="border-card"
-              style="height:100%;overflow:auto;"
-            >
-              <el-tab-pane v-for="(tab_item, idx) in tabConfig" :name="tab_item.tabKey" :label="tab_item.tabName" :key="idx">
-                <el-tree
-                  :ref="tab_item.tabKey"
-                  lazy
-                  show-checkbox
-                  :props="{
-                    children: tab_item.children,
-                    label: tab_item.label,
-                    isLeaf: tab_item.isLeaf,
-                    disabled: tab_item.disabled
-                  }"
-                  :load="onLoad"
-                  node-key="nodeId"
-                  :check-strictly="true"
-                  @check-change="(data, checked) => onCheckChange(data, checked, tab_item.tabKey)"
-                >
-                </el-tree>
-              </el-tab-pane>
-            </el-tabs>
-          </div>
-        </div>
-        <!-- 右边穿梭框 -->
-        <div class="transfer-pane">
-          <div class="transfer-pane__tools">
-            <span>已选择数 ( {{ selectedNum }} / {{ maxNum }} )</span>
-            <span @click="removeAll">清空列表</span>
-          </div>
-          <div class="transfer-pane__body shadow right-pane">
+          <el-scrollbar class="transfer-pane__body shadow right-pane">
             <template v-for="type in tabKeys">
               <div
                 v-for="(item, index) in selectedData[type]"
@@ -116,13 +69,70 @@
                 ></i>
               </div>
             </template>
+          </el-scrollbar>
+          <footer class="transfer__footer">
+            <el-button type="info" plain size="mini" @click="confirm" >确定</el-button >
+            <el-button plain size="mini" @click="closeTransfer">取消</el-button>
+          </footer>
+        </div>
+        <!-- 右边穿梭框 -->
+        
+        <div class="transfer-pane">
+          <!-- 操作栏 -->
+          <!-- <div class="transfer-pane__tools">
+            
+          </div> -->
+          <!-- 穿梭框 -->
+          <div class="transfer-pane__body" style="height: 370px;">
+            <div class="enough-mask" v-show="isEnough">
+              <span class="p-center">最多选择{{ maxNum }}项</span>
+            </div>
+            <div
+              class="searchResPane"
+              :class="{ active: searchMode }"
+              v-loading="searchLoading" >
+              <div class="hidden-tag" @click="searchString = ''">关闭</div>
+              <div v-for="(item, index) in searchRes" :key="index" class="item">
+                <div>
+                  <div>{{ getNodeProp(item, 'label') }}</div>
+                  <div class="text-ellipsis search-res-tip" >
+                    {{ getNodeProp(item, 'searchResTip') }}
+                  </div>
+                </div>
+                <el-checkbox @change="checked => checked ? addData(item) : removeData(item, activeTabName, true)"></el-checkbox>
+              </div>
+            </div>
+
+            <el-scrollbar style="height:100%;">
+              <el-tabs
+                v-model="activeTabName"
+                type="border-card"
+                style="min-height: 370px;"
+              >
+                <el-tab-pane v-for="(tab_item, idx) in tabConfig" :name="tab_item.tabKey" :label="tab_item.tabName" :key="idx">
+                  <el-tree
+                    :ref="tab_item.tabKey"
+                    lazy
+                    show-checkbox
+                    :props="{
+                      children: tab_item.children,
+                      label: tab_item.label,
+                      isLeaf: tab_item.isLeaf,
+                      disabled: tab_item.disabled
+                    }"
+                    :load="onLoad"
+                    node-key="nodeId"
+                    :check-strictly="true"
+                    @check-change="(data, checked) => onCheckChange(data, checked, tab_item.tabKey)"
+                  >
+                  </el-tree>
+                </el-tab-pane>
+              </el-tabs>
+            </el-scrollbar>
           </div>
         </div>
       </div>
-      <footer class="transfer__footer">
-        <el-button type="primary" plain size="small" @click="confirm" >确定</el-button >
-        <el-button plain size="small" @click="closeTransfer">取消</el-button>
-      </footer>
+      
     </div>
   </section>
 </template>
@@ -514,7 +524,7 @@ export default {
 
 .transfer__header {
   margin-bottom: 6px;
-  background: #409efe;
+  background: #565656;
   padding: 6px 24px;
   color: white;
   .el-icon-close{
@@ -524,13 +534,9 @@ export default {
   }
 }
 
-.transfer__footer {
-  text-align: right;
-  padding: 6px 18px 12px;
-}
 
 .transfer__body {
-  padding: 4px 12px;
+  padding: 12px 0;
   display: flex;
   justify-content: space-around;
 }
@@ -546,7 +552,7 @@ export default {
   }
 
 .transfer-pane__tools {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   height: 30px;
   display: flex;
   justify-content: space-between;
@@ -555,7 +561,6 @@ export default {
 
 
   span:last-child {
-    color: #409efe;
     cursor: pointer;
   }
 }
@@ -566,6 +571,10 @@ export default {
   height: 330px;
   overflow hidden
   font-size: 14px;
+
+  >>> .el-scrollbar__view{
+    height: 100%;
+  }
 
   .el-tabs__item {
     height: 26px;
@@ -624,8 +633,9 @@ export default {
 
 .right-pane {
   box-sizing: border-box;
-  overflow: auto;
-  border: 1px solid #DCDFE6;
+  overflow-x: hidden;
+  height: 290px;
+  margin-bottom: 10px;
 
   .selected-item {
     padding: 0px 12px;
