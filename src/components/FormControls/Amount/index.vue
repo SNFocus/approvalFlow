@@ -28,7 +28,6 @@ export default {
      val && this.$emit('change', +val.toFixed(2))
     },
     value(val){
-      console.log(this)
       this.innerValue = val
     }
   }

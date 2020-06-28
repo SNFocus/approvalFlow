@@ -141,7 +141,7 @@
         >预览</el-button>
         <el-button class="delete-btn" icon="el-icon-delete" type="text" @click="empty">清空</el-button>
       </div>
-      <div id="ipad">
+      <div id="ipad" ref="ipad">
         <div class="outeripad" :class="[ipadMode]">
           <div class="ipadbody">
             <div class="ipadscreen">
@@ -181,7 +181,8 @@
             </div>
             <div class="ipadcamera"></div>
             <el-tooltip effect="dark" content="切换横/竖模式" placement="top">
-              <div class="ipadhomebutton" @click="ipadMode = ipadMode === 'landscape' ? 'portrait' : 'landscape'"></div>
+              <div class="ipadhomebutton" @click="ipadMode = ipadMode === 'landscape' ? 'portrait' : 'landscape'">
+              </div>
             </el-tooltip>
           </div>
         </div>
@@ -342,6 +343,7 @@ export default {
       formConfInDB && (this.formConf = formConfInDB)
     }
     this.activeFormItem(this.drawingList[0])
+    this.$nextTick(_ => this.getIpadMode())
 
     // const clipboard = new ClipboardJS('#copyNode', {
     //   text: trigger => {
@@ -359,6 +361,10 @@ export default {
     // })
   },
   methods: {
+    getIpadMode () {
+      const {clientHeight, clientWidth} = this.$refs.ipad
+      this.ipadMode = clientWidth * 0.74 > clientHeight ? 'landscape' : 'portrait'
+    },
     handlerListChange(val){
       const vm = this
       this.$store.commit('clearPCondition') // 清除所有条件 重新检测赋值
@@ -732,7 +738,7 @@ export default {
   &.portrait{
       padding: 45px 25px;
       height: 85% !important;
-      width: 68%;
+      width: 74%;
       min-height: 560px;
   }
 
