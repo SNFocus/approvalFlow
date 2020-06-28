@@ -177,7 +177,7 @@ const tags = {
     return `<${el.tag} ${vModel} ${type} ${placeholder} ${maxlength} ${showWordLimit} ${readonly} ${disabled} ${clearable} ${prefixIcon} ${suffixIcon} ${showPassword} ${autosize} ${width}>${child}</${el.tag}>`
   },
   'el-input-number': el => {
-    const { disabled, vModel, placeholder } = attrBuilder( el )
+    const { disabled, vModel, placeholder, width } = attrBuilder( el )
     const controlsPosition = el['controls-position'] ? `controls-position=${el['controls-position']}` : ''
     const min = el.min ? `:min='${el.min}'` : ''
     const max = el.max ? `:max='${el.max}'` : ''
@@ -185,7 +185,7 @@ const tags = {
     const stepStrictly = el['step-strictly'] ? 'step-strictly' : ''
     const precision = el.precision ? `:precision='${el.precision}'` : ''
 
-    return `<${el.tag} ${vModel} ${placeholder} ${step} ${stepStrictly} ${precision} ${controlsPosition} ${min} ${max} ${disabled}></${el.tag}>`
+    return `<${el.tag} ${vModel} ${placeholder} ${step} ${stepStrictly} ${precision} ${controlsPosition} ${min} ${max} ${width} ${disabled}></${el.tag}>`
   },
   'fc-org-select': function ( el ) {
     const { disabled, vModel, placeholder, width } = attrBuilder( el )
