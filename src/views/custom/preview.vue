@@ -23,6 +23,11 @@ const loadVueOption = (jsCode, htmlCode, defaultData) => {
   main.template = `<div style="padding:3rem 2rem;">${htmlCode}</div>`
   return main
 }
+
+/**
+ * 默认数据  预览已经填写过的表单时
+ * 将以下数据合并到Vue实例中即可
+ */
 const defData = {
   "field2": "21",
   "field3": "专科",
@@ -38,7 +43,7 @@ const defData = {
       "field9": []
     }
   ],
-  "field10": 21
+  "field10": 21,
 }
 export default {
   data(){
