@@ -153,7 +153,11 @@ export default {
 
   created () {
     this.tableData = this.config.type === 'table' ? this.filterProps() : this.config.children
-    this.addRow()
+    if (this.value && this.value.length) {
+      this.value.forEach(t => this.addRow(t))
+    }else{
+      this.addRow()
+    }
   },
 
   methods:{
@@ -237,12 +241,12 @@ export default {
     /**
      * 获取默认行数据
      */
-    getEmptyRow () {
+    getEmptyRow (val) {
       return this.tableData.map((t) => {
         let res = {
           tag: t.tag,
           formId: t.formId,
-          value: t.defaultValue,
+          value: val[t.vModel] || t.defaultValue,
           options: t.options, // 下拉 单选 多选
           valid: true,
           vModel: t.vModel,
@@ -257,14 +261,15 @@ export default {
       this.formData.splice(index, 1)
     },
  
-    addRow () {
+    addRow (val) {
       this.isAddRow = true
       if (!Array.isArray(this.formData)) {
         this.formData = []
       }
-      this.formData.push(this.getEmptyRow())
+      this.formData.push(this.getEmptyRow(val))
       this.clearAddRowFlag()
     },
+
     getCmpValOfRow (row, key) {
       // 获取数字相关组件的输入值
       const isNumCmp = tag => ['fc-amount','el-input-number', 'el-slider'].includes(tag)
@@ -275,7 +280,6 @@ export default {
     },
 
     getListSummaries () {
-      console.log(this.listSummation)
       this.tableData.forEach(row => {
         const isNumCmp = tag => ['fc-amount','el-input-number', 'el-slider'].includes(tag)
         if (!isNumCmp(row.tag)) return
