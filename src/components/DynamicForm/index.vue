@@ -544,20 +544,25 @@ export default {
       })
     },
     preview(){
-      this.AssembleFormData();
-      let htmlCode = makeUpHtml(this.formData, "file");
-      let jsCode = makeUpJs(this.formData, "file");
-      let cssCode = makeUpCss(this.formData);
-      this.$router.push({
-        name: "preview",
-        params: {
-          formData: {
-            htmlCode,
-            jsCode,
-            cssCode
-          }
-        }
-      });
+       this.AssembleFormData();
+      // 这是沿用form-generator 创建文本模板的方法
+      /** 
+       let htmlCode = makeUpHtml(this.formData, "file");
+       let jsCode = makeUpJs(this.formData, "file");
+       let cssCode = makeUpCss(this.formData);
+       this.$router.push({
+         name: "preview",
+         params: {
+           formData: {
+             htmlCode,
+             jsCode,
+             cssCode
+           }
+         }
+       });
+      */
+     // 这是使用jsx渲染
+     this.$router.push({ name: "preview2", params: { formData: this.formData } });
     },
     generate(data) {
       const func = this[`exec${titleCase(this.operationType)}`];

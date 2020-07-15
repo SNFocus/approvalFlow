@@ -246,7 +246,7 @@ export default {
         let res = {
           tag: t.tag,
           formId: t.formId,
-          value: val[t.vModel] || t.defaultValue,
+          value: val && val[t.vModel] || t.defaultValue,
           options: t.options, // 下拉 单选 多选
           valid: true,
           vModel: t.vModel,
@@ -350,7 +350,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .fc-table-box
-  margin-bottom 18px
+  margin-bottom 0px
   .row-action
     display flex
     justify-content center

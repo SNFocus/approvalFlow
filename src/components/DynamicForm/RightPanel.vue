@@ -102,7 +102,7 @@
           <el-form-item v-if="activeData.style&&activeData.style.width!==undefined" label="组件宽度">
             <el-input v-model="activeData.style.width" placeholder="请输入组件宽度" clearable />
           </el-form-item>
-          <el-form-item v-if="activeData.vModel!==undefined && activeData.layout !== 'rowFormItem'" label="默认值">
+          <el-form-item v-if="activeData.vModel!==undefined && activeData.layout !== 'rowFormItem' && notObject(activeData.defaultValue)" label="默认值">
             <el-input
               :value="setDefaultValue(activeData.defaultValue)"
               placeholder="请输入默认值"
@@ -947,6 +947,9 @@ export default {
     }
   },
   methods: {
+    notObject(val) {
+      return val === null || val === undefined || Object(val) !== val
+    },
     reloadExpressionTemp(){
       const isValid = d => {
         const target = this.calculateCmps.find(cmp => cmp.vModel === d.vModel && cmp.label === d.label)

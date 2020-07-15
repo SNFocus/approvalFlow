@@ -70,7 +70,7 @@ const layouts = {
                 </el-col>
 
     if (noFormItem) {
-      var tableTitle = <div style="font-size: 14px;padding:6px 0px;margin-bottom: 4px;border-bottom: 1px solid #e5e5e5;">{conf.label}</div>
+      var tableTitle = <el-col span={24} style="font-size: 14px;padding:6px 0px;margin-bottom: 4px;border-bottom: 1px solid #e5e5e5;">{conf.label}</el-col>
       return [tableTitle, item]
     }
     return item
@@ -100,12 +100,14 @@ const layouts = {
       if (conf.cmpType === 'custom' && conf.explain) {
         explain = <el-tooltip effect="dark" content="组件说明" placement="top">
                     <i class="el-icon-info"
-                      onClick={ctx.showExplain(conf.explain, conf.label)}
+                      onClick={ctx.showExplain.bind(this, conf.explain, conf.label)}
                       style="margin-right: 8px; color: #E6A23C;cursor: pointer;">
                     </i>
                   </el-tooltip>
       }
-      divider = <el-divider content-position="left" >{explain} {conf.label}</el-divider>
+      divider = <el-col span={24}>
+                  <el-divider content-position="left" >{explain} {conf.label}</el-divider>
+                </el-col>
       return [divider, row]
     } 
     return row
@@ -115,7 +117,7 @@ const layouts = {
 
 export default {
   data () {
-    var confGlobal = this.$route.params.confGlobal || mockData.formData
+    var confGlobal = this.$route.params.formData || mockData.formData
     Object.freeze(confGlobal)
     return {
       tableRefs: {},
@@ -174,6 +176,20 @@ export default {
       this.drawerVisible = true
     },
 
+    buildDrawer (h) {
+      var content = <pre style="padding-left: 1rem;">{this.drawerText}</pre>
+      return h('el-drawer', {
+        props: {
+          title: this.drawerTitle + '说明',
+          visible: this.drawerVisible,
+        },
+        on: {
+          'update:visible': val => this.drawerVisible = val
+        }
+      },
+      [content])
+    },
+
     buildForm (h) {
       let labelPosition = this.confGlobal.labelPosition || 'left'
       const content = this.confGlobal.fields.map(c => layouts[c.layout](c, h, this))
@@ -206,12 +222,7 @@ export default {
               <div  class="width-slider">
                 <el-slider vModel={this.containerWidth} min={30} max={96}></el-slider>
               </div>
-              <el-drawer
-                title={this.drawerTitle + '说明'}
-                visible={ this.drawerVisible }
-                {...{on: {'update:visible': val => this.drawerVisible = val}}} >
-                <pre style="padding-left: 1rem;">{this.drawerText}</pre>
-              </el-drawer>
+              {this.buildDrawer(h)}
             </div>
   }
 }
@@ -227,4 +238,8 @@ export default {
     position absolute
     top 0
     right 2rem
+
+.showDivider.form-container { 
+  margin-bottom: 2rem; 
+}
 </style>

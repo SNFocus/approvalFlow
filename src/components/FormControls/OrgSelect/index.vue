@@ -37,7 +37,7 @@
 export default {
   model:{
     prop: 'value',
-    event: 'change'
+    event: 'input'
   },
   name:'fc-org-select',
   props:{
@@ -113,7 +113,7 @@ export default {
     reloadCmpData(){
       this.innerValue = {}
       this.tabKeys.forEach(key => {
-        this.innerValue[key] = this.value && this.value[key] ? this.value[key] : []
+        this.innerValue[key] = this.value && this.value[key] ? JSON.parse(JSON.stringify(this.value[key])) : []
       })
       // transfer 可能还未加载成功
       this.$nextTick(_ => {
@@ -153,13 +153,13 @@ export default {
       const index = list.findIndex(t => this.getKey(t, item.tabKey) === item.key)
       index > -1 && list.splice(index, 1)
       this.initSelectedData()
-      this.$emit('change', this.innerValue)
+      this.$emit('input', this.innerValue)
     },
     
     onConfirm (data) {
       this.innerValue = data
       this.initSelectedData()
-      this.$emit('change', this.innerValue)
+      this.$emit('input', this.innerValue)
     }
   }
 }

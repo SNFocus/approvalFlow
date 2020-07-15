@@ -29,8 +29,8 @@ const loadVueOption = (jsCode, htmlCode, defaultData) => {
  * 将以下数据合并到Vue实例中即可
  */
 const defData = {
-  "field2": "21",
-  "field3": "专科",
+  "field2": "22",
+  "field3": "本科",
   "field4": "男",
   "field5": [
     {

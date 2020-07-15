@@ -26,6 +26,14 @@ const routes = [
     }
   },
   {
+    path: '/preview2',
+    name: 'preview2',
+    component: () => import( "@/views/custom/preview2.vue" ),
+    meta: {
+      keepAlive: false
+    }
+  },
+  {
     path: '/test',
     name: 'test',
     component: () => import( "@/views/custom/test.vue" )
