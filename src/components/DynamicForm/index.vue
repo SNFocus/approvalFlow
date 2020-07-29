@@ -454,20 +454,27 @@ export default {
       this.drawingList.push(clone);
       this.activeFormItem(clone);
     },
-    getMaxId(){
+    getMaxId () {
       if(this.drawingList.length){
-        return this.drawingList.reduce((maxId, cmp) => {
-          cmp.formId > maxId && (maxId = cmp.formId )
-          if(Array.isArray(cmp.children)){
-            maxId = cmp.children.reduce((max, child) => Math.max(max, child.formId), maxId)
+        let maxId = 0
+        const loop = (data, parent) => {
+          if(!data) return
+          Array.isArray(data.children) && data.children.forEach(child => loop(child, data))
+          if(Array.isArray(data)) {
+            data.forEach(loop)
+          }else{
+            maxId = Math.max(data.formId, maxId)
           }
-          return maxId
-        }, 0)
+        }
+        loop(this.drawingList)
+        return maxId
       }
       return 0
     },
     getNextId(){
-      return this.getMaxId() + 1
+      let maxId = this.getMaxId() + 1
+      console.log(maxId)
+      return maxId
     },
     cloneComponent(origin) {
       const clone = JSON.parse(JSON.stringify(origin));
