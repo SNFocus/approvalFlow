@@ -11,11 +11,11 @@ export default {
     prop: 'value',
     event: 'change'
   },
-  props:["cmpType", "showDuration","tag", "tagIcon", "defaultValue", "labelWidth", "range-separator", "start-placeholder", "end-placeholder", "clearable", "format", "value-format", "regList", "changeTag", "proCondition", "asSummary", "formId", "renderKey", "layout", "value"],
+  props:["value","cmpType", "showDuration","tag", "tagIcon", "defaultValue", "labelWidth", "range-separator", "start-placeholder", "end-placeholder", "clearable", "format", "value-format", "regList", "changeTag", "proCondition", "asSummary", "formId", "renderKey", "layout", "value"],
   name: 'fc-date-duration',
   data(){
     return {
-      timeRange: this.value,
+      timeRange: this.value || this.defaultValue || ['', ''],
       duration: ''
     }
   },
@@ -31,6 +31,13 @@ export default {
         this.$emit('change', val)
       },
       immediate: true
+    },
+    value (val) {
+      if (!val) {
+        this.timeRange = ['', '']
+      } else if (Array.isArray(val) && this.timeRange + '' !== val + '') {
+        this.timeRange = val
+      }
     }
   }
 }

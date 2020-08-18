@@ -29,21 +29,21 @@ const loadVueOption = (jsCode, htmlCode, defaultData) => {
  * 将以下数据合并到Vue实例中即可
  */
 const defData = {
-  "field2": "22",
-  "field3": "本科",
-  "field4": "男",
-  "field5": [
-    {
-      "field6": [
-        "2020-07-01",
-        "2020-08-03"
-      ],
-      "field7": "212",
-      "field8": "后端",
-      "field9": []
-    }
-  ],
-  "field10": 21,
+  // "field2": "22",
+  // "field3": "本科",
+  // "field4": "男",
+  // "field5": [
+  //   {
+  //     "field6": [
+  //       "2020-07-01",
+  //       "2020-08-03"
+  //     ],
+  //     "field7": "212",
+  //     "field8": "后端",
+  //     "field9": []
+  //   }
+  // ],
+  // "field10": 21,
 }
 export default {
   data(){
