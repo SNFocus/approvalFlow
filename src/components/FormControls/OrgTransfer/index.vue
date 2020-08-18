@@ -375,7 +375,10 @@ export default {
 
     show: {
       handler: function (show) {
-        show && this.dataInit() && this.isNumEnough()
+        if (show) {
+          this.dataInit() 
+          this.isNumEnough()
+        }
       },
       immediate: true
     },

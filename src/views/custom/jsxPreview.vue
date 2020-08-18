@@ -8,6 +8,7 @@ import { trigger } from '@/components/DynamicForm/components/generator/config.js
 const setFcOrgSelectRule = ( conf, ctx ) => {
   return { 
     validator: (rule, value, callback) => {
+      console.log('validator')
       var count = 0
       var val = ctx[ctx.confGlobal.formModel][rule.field]
       conf.tabList.forEach(key => {
@@ -55,16 +56,20 @@ var _isMounted = false // 收集默认值 渲染完成之后防止重复收集�
 const buildData = (ctx, value, prop) => setData(ctx, value, prop, true)
 
 const layouts = {
-  colFormItem: function (conf,  h, ctx, noFormItem = false,) {
+  colFormItem: function (conf,  h, ctx, isList = false,) {
     buildRules(conf, ctx)
     !_isMounted && buildData(ctx, conf.defaultValue, conf.vModel)
     let labelWidth = ''
     if ( conf.labelWidth ) labelWidth = `${conf.labelWidth}px`
-    if ( noFormItem ) labelWidth = "0px"
+    if ( isList ) labelWidth = "0px"
     const required = ( !trigger[conf.tag] && conf.required ) || conf.tag === 'fc-org-select' 
-    console.log('formData', ctx[ctx.confGlobal.formModel])
+
     let item =  <el-col span={conf.span}>
-                  <el-form-item label-width={labelWidth} label={noFormItem ? '' : conf.label} prop={conf.vModel}  required={required}>
+                  <el-form-item 
+                  label-width={labelWidth} 
+                  label={isList ? '' : conf.label} 
+                  prop={conf.vModel}  
+                  required={required}>
                     <render
                     formData={ctx[ctx.confGlobal.formModel]}
                     conf={conf} 
@@ -75,7 +80,7 @@ const layouts = {
                   </el-form-item>
                 </el-col>
 
-    if (noFormItem) {
+    if (isList) {
       var tableTitle = <el-col span={24} style="font-size: 14px;padding:6px 0px;margin-bottom: 4px;border-bottom: 1px solid #e5e5e5;">{conf.label}</el-col>
       return [tableTitle, item]
     }
@@ -162,7 +167,8 @@ export default {
 
     resetTableData(){
       Object.keys(this.tableRefs).forEach(vModel => {
-        const res = this.$refs[vModel].reset()
+        // 由于render.js返回的动态组件 所以动态组件相当于是render的子组件
+        const res = this.$refs[vModel]['$children'][0].reset()
       })
     },
 

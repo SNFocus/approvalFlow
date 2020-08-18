@@ -26,7 +26,6 @@ const isAttr = makeMap(
 
 function vModel ( self, dataObject, value ) {
   // dataObject.props.value = value
-  self.$set( dataObject.props, 'value', value )
   dataObject.on.input = val => {
     self.$emit( 'input', val )
   }
@@ -95,15 +94,16 @@ const componentChild = {
 
 export default {
   render ( h ) {
+    const confClone = JSON.parse( JSON.stringify( this.conf ) )
     const dataObject = {
       attrs: {},
       props: {
-        formData: this.formData
+        formData: this.formData,
+        value: this.value || confClone['defaultValue']
       },
       on: {},
       style: {}
     }
-    const confClone = JSON.parse( JSON.stringify( this.conf ) )
     const children = []
 
     const childObjs = componentChild[confClone.tag]

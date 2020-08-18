@@ -26,9 +26,9 @@ const routes = [
     }
   },
   {
-    path: '/preview2',
-    name: 'preview2',
-    component: () => import( "@/views/custom/preview2.vue" ),
+    path: '/jsxPreview',
+    name: 'jsxPreview',
+    component: () => import( "@/views/custom/jsxPreview.vue" ),
     meta: {
       keepAlive: false
     }

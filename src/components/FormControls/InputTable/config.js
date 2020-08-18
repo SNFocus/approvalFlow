@@ -333,5 +333,29 @@ export const useableProps = [
       "defaultValue": [],
     },
     "tag": "el-upload"
-  }
+  },
+  {
+    "props": [
+      "label",
+      "type",
+      "tag",
+      "showChinese",
+      "defaultValue",
+      "labelWidth",
+      "disabled",
+      "required",
+      "expression",
+      "vModel",
+      "precision",
+      "round",
+      "formId",
+      "formData"
+    ],
+    "forceProp": {
+      "min-width": 120,
+      "showChinese": false
+    },
+    "tag": "fc-calculate"
+  },
+
 ]
