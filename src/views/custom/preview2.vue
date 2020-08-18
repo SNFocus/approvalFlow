@@ -47,8 +47,7 @@ function buildRules ( conf, ctx ) {
 
 var setData = (ctx, val, prop, init = false) => {
   if (!prop) return
-  if (init) ctx.$set(ctx[ctx.confGlobal.formModel], prop, val)
-  else ctx[ctx.confGlobal.formModel][prop] = val
+  ctx.$set(ctx[ctx.confGlobal.formModel], prop, val)
 }
 
 var _isMounted = false // 收集默认值 渲染完成之后防止重复收集默认值
@@ -63,9 +62,16 @@ const layouts = {
     if ( conf.labelWidth ) labelWidth = `${conf.labelWidth}px`
     if ( noFormItem ) labelWidth = "0px"
     const required = ( !trigger[conf.tag] && conf.required ) || conf.tag === 'fc-org-select' 
+    console.log('formData', ctx[ctx.confGlobal.formModel])
     let item =  <el-col span={conf.span}>
                   <el-form-item label-width={labelWidth} label={noFormItem ? '' : conf.label} prop={conf.vModel}  required={required}>
-                    <render onInput={val => setData(ctx, val, conf.vModel)} value={ctx[ctx.confGlobal.formModel][conf.vModel]} ref={conf.rowType === 'table'  ? conf.vModel : undefined} conf={conf}  />
+                    <render
+                    formData={ctx[ctx.confGlobal.formModel]}
+                    conf={conf} 
+                    value={ctx[ctx.confGlobal.formModel][conf.vModel]} 
+                    ref={conf.rowType === 'table' ? conf.vModel : undefined} 
+                    onInput={val => setData(ctx, val, conf.vModel)} 
+                    />
                   </el-form-item>
                 </el-col>
 

@@ -25,14 +25,13 @@ const isAttr = makeMap(
 )
 
 function vModel ( self, dataObject, value ) {
-  dataObject.props.value = value
+  // dataObject.props.value = value
+  self.$set( dataObject.props, 'value', value )
   dataObject.on.input = val => {
-    console.log( 'input' )
     self.$emit( 'input', val )
   }
   // 因为有些组件的v-model绑定的事件是change 所以这里也得监听
   dataObject.on.change = val => {
-    console.log( 'change' )
     self.$emit( 'input', val )
   }
 }
@@ -98,7 +97,9 @@ export default {
   render ( h ) {
     const dataObject = {
       attrs: {},
-      props: {},
+      props: {
+        formData: this.formData
+      },
       on: {},
       style: {}
     }
@@ -129,5 +130,10 @@ export default {
     } )
     return h( this.conf.tag, dataObject, children )
   },
-  props: ['conf', 'value']
+  watch: {
+    value () {
+      console.log( 'value change ****' )
+    }
+  },
+  props: ['conf', 'value', 'formData']
 }

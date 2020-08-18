@@ -7,13 +7,13 @@
 <script>
 import {getAmountChinese} from '@/assets/utils'
 export default {
-  model:{
+  model: {
     prop: 'value',
     event: 'change'
   },
-  props:["value", "cmpType", "tag","tagIcon", "precision", "labelWidth", "step-strictly", "controls", "controls-position", "regList", "changeTag", "proCondition", "showChinese", "formId", "renderKey", "layout"],
+  props: ["value", "cmpType", "tag","tagIcon", "precision", "labelWidth", "step-strictly", "controls", "controls-position", "regList", "changeTag", "proCondition", "showChinese", "formId", "renderKey", "layout"],
   name: 'fc-amount',
-  data(){
+  data () {
     return {
       innerValue: this.value
     }
@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     handleInput (val) {
-      this.$emit('change', val)      
+      this.$emit('change', val)   
     },
   },
   watch:{

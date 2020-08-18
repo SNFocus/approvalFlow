@@ -57,9 +57,13 @@ export default {
       this.$emit('change', this.innerValue)
     }
   },
+  mounted(){
+    console.log('222', this.formData)
+  },
   watch:{
     formData:{
-      handler: function(val){
+      handler: function(val) {
+        console.log('calculate', val, this.$root.formData)
         if(!val) return
         if (!this.computeExps) { // formData更新可能比较频繁
           this.computeExps = debounce(this.execRPN, 500)

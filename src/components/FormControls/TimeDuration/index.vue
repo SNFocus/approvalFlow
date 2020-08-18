@@ -15,7 +15,6 @@ export default {
   props:["value", "cmpType", "showDuration", "tag", "tagIcon", "defaultValue", "labelWidth", "clearable", "is-range", "range-separator", "start-placeholder", "end-placeholder", "format", "value-format", "regList", "changeTag", "proCondition", "asSummary", "formId", "renderKey", "layout", "value"],
   name: 'fc-time-duration',
   data(){
-    console.log(this.value , this.defaultValue , defaultVal)
     return {
       timeRange: this.value || this.defaultValue || defaultVal ,
       duration: ''
