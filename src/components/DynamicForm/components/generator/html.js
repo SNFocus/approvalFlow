@@ -347,7 +347,8 @@ const tags = {
       labelWidth = `label-width="${el.labelWidth || confGlobal.labelWidth}px"`
       formSize = `form-size="${confGlobal.size}"`
     }
-    return `<${el.tag} ref="${el.vModel}" ${formSize} ${labelWidth} :config="tableRefs['${el.vModel}']" :value.sync="${confGlobal.formModel}.${el.vModel}"></${el.tag}>`
+    const formData = `:formData="${confGlobal.formModel}"`
+    return `<${el.tag} ${formData} ref="${el.vModel}" ${formSize} ${labelWidth} :config="tableRefs['${el.vModel}']" :value.sync="${confGlobal.formModel}.${el.vModel}"></${el.tag}>`
   }
 }
 

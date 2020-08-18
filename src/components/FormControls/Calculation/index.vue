@@ -76,7 +76,6 @@ export default {
   watch:{
     formData:{
       handler: function(val) {
-        console.log('formData chagne')
         if(!val) return
         if (!this.computeExps) { // formData更新可能比较频繁
           this.computeExps = debounce(this.execRPN, 500)

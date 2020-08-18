@@ -2,7 +2,7 @@
 <div class="fc-table-box" :class="[config.type]">
   <el-table 
     v-if="['table', 'default'].includes(config.type)"
-    :data="formData" 
+    :data="tableFormData" 
     border 
     class="fc-table"
     @cell-click="focusInput" 
@@ -36,7 +36,7 @@
              <!-- 单选框组 多选框组 都替换成下拉 并添加options -->
               <template v-if="['el-select', 'el-checkbox-group','el-radio-group'].includes(head.tag)">
                 <el-select  
-                v-model="formData[scope.$index][cindex].value" placeholder="请选择" 
+                v-model="tableFormData[scope.$index][cindex].value" placeholder="请选择" 
                 :multiple="head.tag === 'el-checkbox-group' || getConfById(head.formId).multiple"
                 @change="onFormDataChange(scope.$index, cindex, 'el-select')"
                 > 
@@ -52,12 +52,12 @@
               <template v-else-if="head.tag === 'el-upload'">
                 <el-upload
                 v-bind="getConfById(head.formId)" 
-                :on-success="(res) => onUploadSuccess(res, formData[scope.$index][cindex])"
+                :on-success="(res) => onUploadSuccess(res, tableFormData[scope.$index][cindex])"
                 @mouseleave.native="hideUploadList"
                 @mouseenter.native="showUploadList">
                   <span slot="default" >
                     已上传
-                    {{formData[scope.$index][cindex].value.length}}
+                    {{tableFormData[scope.$index][cindex].value.length}}
                   </span>
                 </el-upload>
               </template>
@@ -65,11 +65,12 @@
               <component 
                 v-else 
                 :is="head.tag" 
-                v-model="formData[scope.$index][cindex].value" 
+                v-model="tableFormData[scope.$index][cindex].value" 
                 v-bind="getConfById(head.formId)"
+                :formData="formData"
                 @change="onFormDataChange(scope.$index, cindex, head.tag)">
               </component>
-              <div class="error-tip" v-show="!formData[scope.$index][cindex].valid">
+              <div class="error-tip" v-show="!tableFormData[scope.$index][cindex].valid">
                 不能为空
               </div>
         </template>
@@ -77,24 +78,25 @@
     </el-table>
 
     <template v-if="config.type === 'list'">
-      <div v-for="(row, rindex) in formData" :key="rindex" class="list-row">
+      <div v-for="(row, rindex) in tableFormData" :key="rindex" class="list-row">
         <el-tooltip content="删除">
           <i class="el-icon-delete delete-btn" @click="removeRow(rindex)"></i>
         </el-tooltip>
-        <div v-for="(conf, cindex) in config.children" :key="cindex" class="row-item" :class="{error: !formData[rindex][cindex].valid}">
+        <div v-for="(conf, cindex) in config.children" :key="cindex" class="row-item" :class="{error: !tableFormData[rindex][cindex].valid}">
           <div :style="{width: labelWidth}">
             <span style="color: #f56c6c;" v-if="conf.required">*</span>
             {{conf.label}}
           </div>
             <div :style="{'margin-left': labelWidth}">
               <render
+                :formData="formData"
                 :conf="conf"
                 :size="formSize"
-                :value="formData[rindex][cindex]"
+                :value="tableFormData[rindex][cindex]"
                 :key="conf.renderKey"
                 style="max-width: 350px;"
                 @input="payload => {
-                  $set(formData[rindex][cindex], 'value', payload);
+                  $set(tableFormData[rindex][cindex], 'value', payload);
                   onFormDataChange(rindex, cindex, conf.tag);
                 }" />
             </div>
@@ -138,13 +140,14 @@ export default {
       type: Array,
       default: ()=>([])
     },
+    formData: Object,
     labelWidth: String,
     formSize: String
   },
 
   data () {
     return {
-      formData:[],
+      tableFormData:[],
       tableData: [],
       listSummation: {},
       isAddRow: true // list类型下 添加行数据 number类型组件会进行校验 产生不需要的结果 在这里进行添加行数据判断 hack
@@ -191,10 +194,10 @@ export default {
     
     onFormDataChange (rowIndex, colIndex, tag) {
       if (this.isAddRow) return
-      const data = this.formData[rowIndex][colIndex]
+      const data = this.tableFormData[rowIndex][colIndex]
       data.required && (data.valid = this.checkData(data))
       if (['fc-amount', 'el-input-number'].includes(tag)) { // 金额变动 更新数据 触发计算公式更新
-        const newVal = this.formData.map(row => row.reduce((p, c) => (p[c.vModel] = c.value, p), {}))
+        const newVal = this.tableFormData.map(row => row.reduce((p, c) => (p[c.vModel] = c.value, p), {}))
         this.$emit('update:value', newVal)
         if (this.config.type === 'list') {
           this.getListSummaries()
@@ -229,8 +232,8 @@ export default {
     submit () {
       let res = true
       const checkCol = col => col.required && !this.checkData(col) && (res = col.valid = false) 
-      this.formData.forEach(row => row.forEach(checkCol))
-      return res ? this.formData.map(row => row.reduce((p, c) => (p[c.vModel] = c.value, p), {})) : false
+      this.tableFormData.forEach(row => row.forEach(checkCol))
+      return res ? this.tableFormData.map(row => row.reduce((p, c) => (p[c.vModel] = c.value, p), {})) : false
     },
     /**
      * 根据formid获取完整组件配置
@@ -258,15 +261,15 @@ export default {
     },
 
     removeRow (index) {
-      this.formData.splice(index, 1)
+      this.tableFormData.splice(index, 1)
     },
  
     addRow (val) {
       this.isAddRow = true
-      if (!Array.isArray(this.formData)) {
-        this.formData = []
+      if (!Array.isArray(this.tableFormData)) {
+        this.tableFormData = []
       }
-      this.formData.push(this.getEmptyRow(val))
+      this.tableFormData.push(this.getEmptyRow(val))
       this.clearAddRowFlag()
     },
 
@@ -283,7 +286,7 @@ export default {
       this.tableData.forEach(row => {
         const isNumCmp = tag => ['fc-amount','el-input-number', 'el-slider'].includes(tag)
         if (!isNumCmp(row.tag)) return
-        const sum = this.formData
+        const sum = this.tableFormData
             .reduce((sum, d) => sum + this.getCmpValOfRow(d, row.vModel), 0)
         this.$set(this.listSummation, row.vModel, {
           label: row.label,
@@ -334,10 +337,10 @@ export default {
 
     reset () {
       this.tableData.map((t) => {
-        let index = this.formData[0].findIndex(c => c.vModel === t.vModel)
+        let index = this.tableFormData[0].findIndex(c => c.vModel === t.vModel)
         if (index === -1) return
-        for (let i = 0; i < this.formData.length; i++) {
-          this.formData[i][index].value = t.defaultValue
+        for (let i = 0; i < this.tableFormData.length; i++) {
+          this.tableFormData[i][index].value = t.defaultValue
         }
       })
     }

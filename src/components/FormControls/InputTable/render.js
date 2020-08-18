@@ -95,7 +95,9 @@ export default {
       // 普通的 HTML attribute
       attrs: {},
       // 组件 prop
-      props: {},
+      props: {
+        formData: this.formData
+      },
       // 事件监听器在 `on` 内，
       // 但不再支持如 `v-on:keyup.enter` 这样的修饰器。
       // 需要在处理函数中手动检查 keyCode。
@@ -125,5 +127,5 @@ export default {
     this.size && ( vNode.props.size = vNode.attrs.size = this.size )
     return h( this.conf.tag, vNode, children )
   },
-  props: ['conf', 'value', 'size']
+  props: ['conf', 'value', 'size', 'formData']
 }
