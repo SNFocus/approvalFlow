@@ -1,12 +1,23 @@
 /**
  * 金额转中文
- * 思路：
- * 个 十   百   千   万
- *    十万 百万 千万 亿 
- *    十亿 百亿 千亿
- * 1  2    3    4    5
- *    6    7    8    9   
- *    10
+ * 思路：                       
+ *                              个
+ *      十     百      千       万
+ *      十万   百万    千万     亿 
+ *      十亿   百亿    千亿    
+ *                              
+ *                              1
+ *      2      3       4        5
+ *      6      7       8        9   
+ *      10
+ * 
+ * 计算步骤
+ * 1. 获取当前数值大小
+ * 2. 排除个位后 数值按个，十，百，千有规律的重复 所以计算其和4的余数 pos % 4
+ * 3. pos = 0 ~ 3 没有最大单位
+ *    pos = 4 ~ 7 最大单位是万
+ *    pos = 8 ~ 11 最大单位是亿
+ * pos / 4 的整数就是最大单位
  * 
  */
 export function getAmountChinese ( val ) {
@@ -15,29 +26,36 @@ export function getAmountChinese ( val ) {
   const NUMBER = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
   const N_UNIT1 = ['', '拾', '佰', '仟']
   const N_UNIT2 = ['', '万', '亿']
-  const D_UNIT = ['角', '分']
-  let [integer, decimal] = amount.toFixed( 2 ).split( '.' )
+  const D_UNIT = ['角', '分', '厘', '毫']
+  let [integer, decimal] = amount.toString().split( '.' )
   if ( integer && integer.length > 12 ) return '金额过大无法计算'
   let res = ''
   // 整数部分
   if ( integer ) {
     for ( let i = 0, len = integer.length; i < len; i++ ) {
       const num = integer.charAt( i )
-      const pos = len - i - 1 // -1 排除个位干扰
-      if ( i === len - 1 && num === '0' ) break
-      res += NUMBER[num] + N_UNIT1[( pos ) % 4]
-      if ( pos % 4 === 0 ) { // 排除个位数后 万和亿位置都是4的倍数
-        res += N_UNIT2[Math.floor( ( pos ) / 4 )]
+      const pos = len - i - 1 // 排除个位后 所处的索引位置
+      if ( num === '0' ) { // 当前位 等于 0 且下一位也等于 0 则可跳过计算
+        if ( i === len - 1 ) {
+          if ( integer.length === 1 ) res += '零'  // 0.35 这种情况不可跳过计算
+          break
+        }
+        if ( integer.charAt( i + 1 ) === '0' ) continue
       }
+      res += NUMBER[num]
+      if ( parseInt( num ) ) res += N_UNIT1[( pos ) % 4]
+      res += N_UNIT2[Math.floor( pos / 4 )]
     }
   }
   res += '圆'
-  if ( decimal ) {
-    // 小数部分
-    for ( let i = 0; i < 2; i++ ) {
+  // 小数部分
+  if ( parseInt( decimal ) ) {
+    for ( let i = 0; i < 4; i++ ) {
       const num = decimal.charAt( i )
-      num !== '0' && ( res += NUMBER[num] + D_UNIT[i] )
+      if ( parseInt( num ) ) res += NUMBER[num] + D_UNIT[i]
     }
+  } else {
+    res += '整'
   }
   return res
 }

@@ -338,9 +338,7 @@ export default {
         this.$set(this.orgCollection, key, [])
       }
     },
-    onOrgChange(data){
-      // console.log(data)
-    },
+    onOrgChange(data){ },
     timeTangeLabel(item){
       const index = ['fc-time-duration','fc-date-duration'].findIndex(t => t === item.tag)
       if(index > -1){

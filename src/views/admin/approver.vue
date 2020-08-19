@@ -101,7 +101,7 @@ export default {
     next()
   },
   computed:{
-    translateX(){
+    translateX () {
       return `translateX(${this.steps.findIndex(t => t.key === this.activeStep) * 100}%)`
     }
   },

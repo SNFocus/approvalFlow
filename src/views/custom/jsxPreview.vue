@@ -8,7 +8,6 @@ import { trigger } from '@/components/DynamicForm/components/generator/config.js
 const setFcOrgSelectRule = ( conf, ctx ) => {
   return { 
     validator: (rule, value, callback) => {
-      console.log('validator')
       var count = 0
       var val = ctx[ctx.confGlobal.formModel][rule.field]
       conf.tabList.forEach(key => {

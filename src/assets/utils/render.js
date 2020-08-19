@@ -130,10 +130,5 @@ export default {
     } )
     return h( this.conf.tag, dataObject, children )
   },
-  watch: {
-    value () {
-      console.log( 'value change ****' )
-    }
-  },
   props: ['conf', 'value', 'formData']
 }
