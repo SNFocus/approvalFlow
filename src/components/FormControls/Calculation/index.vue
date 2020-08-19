@@ -17,7 +17,8 @@ export default {
     "showChinese",
     "formId",
     "formData",
-    "expression"
+    "expression",
+    "rowIndex" // 计算公式放在表格中时， 需要获取在表格中的行位置
   ],
   name: 'fc-calculate',
   data(){

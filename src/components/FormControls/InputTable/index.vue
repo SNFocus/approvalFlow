@@ -65,6 +65,7 @@
               <component 
                 v-else 
                 :is="head.tag" 
+                :rowIndex="scope.$index"
                 v-model="tableFormData[scope.$index][cindex].value" 
                 v-bind="getConfById(head.formId)"
                 :formData="formData"
@@ -90,7 +91,7 @@
             <div :style="{'margin-left': labelWidth}">
               <render
                 :formData="formData"
-                :conf="conf"
+                :conf="Object.assign({rowIndex: rindex},conf)"
                 :size="formSize"
                 :value="tableFormData[rindex][cindex]"
                 :key="conf.renderKey"
