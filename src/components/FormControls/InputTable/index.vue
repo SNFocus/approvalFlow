@@ -199,7 +199,7 @@ export default {
       data.required && (data.valid = this.checkData(data))
       if (['fc-amount', 'el-input-number'].includes(tag)) { // 金额变动 更新数据 触发计算公式更新
         const newVal = this.tableFormData.map(row => row.reduce((p, c) => (p[c.vModel] = c.value, p), {}))
-        this.$emit('update:value', newVal)
+        this.$emit('input', newVal)
         if (this.config.type === 'list') {
           this.getListSummaries()
         }

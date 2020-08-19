@@ -22,6 +22,7 @@ export default {
   ],
   name: 'fc-calculate',
   data(){
+    console.log(toRPN(mergeNumberOfExps(this.expression)))
     return {
       innerValue: this.value,
       RPN_EXP: toRPN(mergeNumberOfExps(this.expression))

@@ -537,7 +537,8 @@ export const layoutComponents = [{
   children: [],
   actionText: '添加',
   tableConf: {},
-  'show-summary': true
+  'show-summary': true,
+  defaultValue: []
 }]
 
 export const commonComponents = [...inputComponents, ...selectComponents, ...layoutComponents]

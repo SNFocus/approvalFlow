@@ -6,7 +6,7 @@
 </template>
 <script>
 import { timeCalculate } from '@/assets/utils' 
-const defaultVal = [new Date(2016, 9, 10, 8, 40), new Date(2016, 9, 10, 9, 40)]
+const defaultVal = ['','']
 export default {
   model:{
     prop: 'value',

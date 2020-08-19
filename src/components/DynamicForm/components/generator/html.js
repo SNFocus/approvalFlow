@@ -348,7 +348,7 @@ const tags = {
       formSize = `form-size="${confGlobal.size}"`
     }
     const formData = `:formData="${confGlobal.formModel}"`
-    return `<${el.tag} ${formData} ref="${el.vModel}" ${formSize} ${labelWidth} :config="tableRefs['${el.vModel}']" :value.sync="${confGlobal.formModel}.${el.vModel}"></${el.tag}>`
+    return `<${el.tag} ${formData} ref="${el.vModel}" ${formSize} ${labelWidth} :config="tableRefs['${el.vModel}']" v-model="${confGlobal.formModel}.${el.vModel}"></${el.tag}>`
   }
 }
 
