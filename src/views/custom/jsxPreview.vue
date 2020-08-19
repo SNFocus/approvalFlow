@@ -16,11 +16,13 @@ const setFcOrgSelectRule = ( conf, ctx ) => {
       callback(count ? undefined : new Error(`${conf.title}不能为空`))
     }, 
     trigger: trigger[conf.tag],
-    type: 'object' 
+    type: 'object',
+    required: true, 
   }
 }
 /**
  * 收集表单必填项并组装成ElementUI表单校验得rules选项
+ * 表格除外 表格自带校验
  */
 function buildRules ( conf, ctx ) {
   if ( conf.vModel === undefined ||  !trigger[conf.tag]) return
@@ -62,19 +64,28 @@ const layouts = {
     if ( conf.labelWidth ) labelWidth = `${conf.labelWidth}px`
     if ( isList ) labelWidth = "0px"
     const required = ( !trigger[conf.tag] && conf.required ) || conf.tag === 'fc-org-select' 
-
+    const handleInput = val => {
+      setData(ctx, val, conf.vModel)
+      if (conf.tag === 'fc-org-select') {
+        /**
+         * 组织机构组件数据复杂 
+         * async-validator不一定能准确捕获到数据变化 
+         * 所以在这里手动校验一次
+         */
+        ctx.$refs[ctx.confGlobal.formRef].validateField(conf.vModel,()=>{ })
+      }
+    }
     let item =  <el-col span={conf.span}>
                   <el-form-item 
                   label-width={labelWidth} 
                   label={isList ? '' : conf.label} 
-                  prop={conf.vModel}  
-                  required={required}>
+                  prop={conf.vModel}>
                     <render
                     formData={ctx[ctx.confGlobal.formModel]}
                     conf={conf} 
                     value={ctx[ctx.confGlobal.formModel][conf.vModel]} 
                     ref={conf.rowType === 'table' ? conf.vModel : undefined} 
-                    onInput={val => setData(ctx, val, conf.vModel)} 
+                    onInput={handleInput} 
                     />
                   </el-form-item>
                 </el-col>
