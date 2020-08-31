@@ -44,7 +44,7 @@ export function getAmountChinese ( val ) {
       }
       res += NUMBER[num]
       if ( parseInt( num ) ) res += N_UNIT1[( pos ) % 4]
-      res += N_UNIT2[Math.floor( pos / 4 )]
+      if ( pos % 4 === 0 ) res += N_UNIT2[Math.floor( pos / 4 )]
     }
   }
   res += '圆'
