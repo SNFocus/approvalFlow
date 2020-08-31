@@ -36,7 +36,7 @@
              <!-- 单选框组 多选框组 都替换成下拉 并添加options -->
               <template v-if="['el-select', 'el-checkbox-group','el-radio-group'].includes(head.tag)">
                 <el-select  
-                v-model="tableFormData[scope.$index][cindex].value" placeholder="请选择" 
+                v-model="tableFormData[scope.$index][cindex].value" placeholder="请选择"
                 :multiple="head.tag === 'el-checkbox-group' || getConfById(head.formId).multiple"
                 @change="onFormDataChange(scope.$index, cindex, 'el-select')"
                 > 
@@ -360,7 +360,10 @@ export default {
     justify-content center
     align-items center
     .el-icon-delete
-      display none
+      position absolute
+      opacity 0
+      z-index -1
+      transform translate(-50%, -50%)
       cursor pointer
 
   .actions
@@ -430,7 +433,8 @@ export default {
     .index
       display none
     .el-icon-delete
-      display inline
+      z-index 9
+      opacity 1
 
   // 去除输入框边框
   .el-input__inner, .el-textarea__inner
