@@ -174,7 +174,7 @@ export class NodeUtils {
       } )
       delete data.conditionNodes
     }
-    if ( oldChildNode && oldChildNode.type === 'empty' ) {
+    if ( oldChildNode && oldChildNode.type === 'empty' && newChildNode.type !== 'empty' ) {
       this.deleteNode( oldChildNode, data )
     }
   }
