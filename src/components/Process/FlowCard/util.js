@@ -116,6 +116,8 @@ export class NodeUtils {
       // !this.isConditionNode(nodeData) && this.deleteNode(nodeData, processData)
       return
     }
+
+
     let concatChild = ( prev, delNode ) => {
       prev.childNode = delNode.childNode
       isEmptyArray( prev.conditionNodes ) && ( prev.conditionNodes = delNode.conditionNodes )
@@ -139,6 +141,9 @@ export class NodeUtils {
           endNode.childNode.prevId = endNode.nodeId
         }
         concatChild( prevNode, anotherCon )
+        if (prevNode.childNode && prevNode.childNode.type === 'empty') {
+          this.deleteNode(prevNode.childNode, prevNode)
+        }
       }
       // 重新编排优先级
       cons.forEach( ( c, i ) => c.properties.priority = i )
