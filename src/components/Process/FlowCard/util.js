@@ -3,32 +3,14 @@ const isEmpty = data => data === null || data === undefined || data === ''
 const isEmptyArray = data => Array.isArray( data ) ? data.length === 0 : true
 
 export class NodeUtils {
-  static globalID = 10000
-  /**
-   * 获取最大的节点ID 转换成10进制
-   * @param {*} data - 整个流程数据
-   */
-  static getMaxNodeId ( data ) {
-    let max = data.nodeId
-    const loop = node => {
-      if ( !node ) return
-      max < node.nodeId && ( max = node.nodeId )
-      node.childNode && ( loop( node.childNode ) )
-      Array.isArray( node.conditionNodes ) && node.conditionNodes.forEach( c => loop( c ) )
-    }
-    loop( data )
-    const chars = '0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz';
-    const len = chars.length
-    return max.split( '' ).reduce( ( sum, c, i ) => {
-      return sum + chars.indexOf( c ) * Math.pow( len, i )
-    }, 0 )
-  }
+ 
   /**
    * 根据自增数生成64进制id
    * @returns 64进制id字符串
    */
   static idGenerator () {
-    let qutient = ++this.globalID
+    let qutient = (new Date() - new Date('2020-08-01'))
+    qutient += Math.ceil(Math.random() * 1000) // 防止重複
     const chars = '0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz';
     const charArr = chars.split( "" )
     const radix = chars.length;
@@ -226,6 +208,7 @@ export class NodeUtils {
     let nodeData = data
     // 由于conditionNodes是数组 不能添加下级分支 故在两个分支树之间添加一个不会显示的正常节点 兼容此种情况
     if ( Array.isArray( data.conditionNodes ) && data.conditionNodes.length ) {
+      debugger
       if ( isBottomBtnOfBranch ) {
         // 添加一个模拟用的空白节点并返回这个节点，作为新分支的父节点
         nodeData = this.addEmptyNode( nodeData, true )
