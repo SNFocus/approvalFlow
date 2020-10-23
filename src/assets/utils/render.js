@@ -25,7 +25,7 @@ const isAttr = makeMap(
 )
 
 function vModel ( self, dataObject, value ) {
-  // dataObject.props.value = value
+  dataObject.props.value = value
   dataObject.on.input = val => {
     self.$emit( 'input', val )
   }

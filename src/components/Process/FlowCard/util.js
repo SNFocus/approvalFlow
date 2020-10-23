@@ -86,8 +86,10 @@ export class NodeUtils {
   static deleteNode ( nodeData, processData, checkEmpty = true ) {
     let prevNode = this.getPreviousNode( nodeData.prevId, processData )
     if ( checkEmpty && prevNode.type === 'empty' ) {
-      if ( this.isConditionNode( nodeData ) ) {
-        this.deleteNode( prevNode, processData )
+      if ( this.isConditionNode( nodeData )) {
+        const willDelBranch = prevNode.conditionNodes.length === 2
+        const target = willDelBranch ? prevNode : nodeData
+        this.deleteNode( target, processData,  willDelBranch)
       } else {
         if ( isEmptyArray( prevNode.conditionNodes ) ) {
           this.deleteNode( prevNode, processData )
@@ -161,7 +163,7 @@ export class NodeUtils {
       } )
       delete data.conditionNodes
     }
-    if ( oldChildNode && oldChildNode.type === 'empty' && newChildNode.type !== 'empty' ) {
+    if ( oldChildNode && oldChildNode.type === 'empty' && newChildNode.type !== 'empty' && oldChildNode.conditionNodes.length === 0 ) {
       this.deleteNode( oldChildNode, data )
     }
   }
@@ -208,7 +210,6 @@ export class NodeUtils {
     let nodeData = data
     // 由于conditionNodes是数组 不能添加下级分支 故在两个分支树之间添加一个不会显示的正常节点 兼容此种情况
     if ( Array.isArray( data.conditionNodes ) && data.conditionNodes.length ) {
-      debugger
       if ( isBottomBtnOfBranch ) {
         // 添加一个模拟用的空白节点并返回这个节点，作为新分支的父节点
         nodeData = this.addEmptyNode( nodeData, true )
