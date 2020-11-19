@@ -144,7 +144,7 @@
 /* eslint-disable handle-callback-err */
 
 import { DEP_CONFIG, ROLE_CONFIG, CONFIG_LIST } from './config.js'
-import { debounce } from '@/assets/utils/index.js'
+import { debounce } from '@/utils/index.js'
 
 export default {
   name: 'fc-org-transfer',

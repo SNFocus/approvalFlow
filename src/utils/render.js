@@ -93,6 +93,9 @@ const componentChild = {
 }
 
 export default {
+  create(){
+
+  },
   render ( h ) {
     const confClone = JSON.parse( JSON.stringify( this.conf ) )
     const dataObject = {
@@ -119,7 +122,7 @@ export default {
     Object.keys( confClone ).forEach( key => {
       const val = confClone[key]
       if ( key === 'vModel' ) {
-        vModel( this, dataObject, this.value || confClone['defaultValue'] )
+        vModel( this, dataObject, [null, undefined].includes(this.value) ? confClone['defaultValue'] : this.value )
       } else if ( dataObject[key] ) {
         dataObject[key] = val
       } else if ( !isAttr( key ) ) {

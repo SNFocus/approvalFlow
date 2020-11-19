@@ -746,7 +746,7 @@ import {
 } from "./components/generator/config";
 import { saveFormConf } from "./utils/db";
 import draggable from "vuedraggable";
-import {mergeNumberOfExps, validExp, toRPN, calcRPN} from '@/assets/utils/index.js'
+import {mergeNumberOfExps, validExp, toRPN, calcRPN} from '@/utils/index.js'
 const dateTimeFormat = {
   date: "yyyy-MM-dd",
   week: "yyyy 第 WW 周",

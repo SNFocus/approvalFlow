@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import {getAmountChinese} from '@/assets/utils'
+import {getAmountChinese} from '@/utils'
 export default {
   model: {
     prop: 'value',

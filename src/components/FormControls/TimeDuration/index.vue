@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import { timeCalculate } from '@/assets/utils' 
+import { timeCalculate } from '@/utils' 
 const defaultVal = ['','']
 export default {
   model:{

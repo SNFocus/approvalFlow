@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import { timeCalculate } from '@/assets/utils' 
+import { timeCalculate } from '@/utils' 
 export default {
   model:{
     prop: 'value',

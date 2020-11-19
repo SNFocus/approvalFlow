@@ -1,5 +1,5 @@
 <script>
-import render from '@/assets/utils/render.js'
+import render from '@/utils/render.js'
 import mockData from '../admin/mockData.js'
 import { trigger } from '@/components/DynamicForm/components/generator/config.js'
 /**
@@ -8,8 +8,13 @@ import { trigger } from '@/components/DynamicForm/components/generator/config.js
 const setFcOrgSelectRule = ( conf, ctx ) => {
   return { 
     validator: (rule, value, callback) => {
-      var count = 0
       var val = ctx[ctx.confGlobal.formModel][rule.field]
+      if (Object.keys(val || {}).length === 0) {
+        callback()
+        return
+      }
+
+      var count = 0
       conf.tabList.forEach(key => {
         val && Array.isArray(val[key]) && (count += val[key].length)
       })

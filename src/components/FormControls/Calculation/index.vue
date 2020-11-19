@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import { getAmountChinese, mergeNumberOfExps, validExp, toRPN, calcRPN, debounce } from '@/assets/utils'
+import { getAmountChinese, mergeNumberOfExps, validExp, toRPN, calcRPN, debounce } from '@/utils'
 export default {
   model:{
     prop: 'value',

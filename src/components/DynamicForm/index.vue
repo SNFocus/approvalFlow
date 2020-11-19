@@ -253,7 +253,7 @@ import {
   // saveIdGlobal,
   getFormConf
 } from "./utils/db";
-import { debounce } from '@/assets/utils'
+import { debounce } from '@/utils'
 
 const emptyActiveData = { style: {}, autosize: {} };
 let oldActiveId;
