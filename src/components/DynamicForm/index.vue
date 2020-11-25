@@ -297,17 +297,7 @@ export default {
   },
   watch: {
     // eslint-disable-next-line func-names
-    "activeData.label": function(val, oldVal) {
-      if (
-        this.activeData.placeholder === undefined ||
-        !this.activeData.tag ||
-        oldActiveId !== this.activeId
-      ) {
-        return;
-      }
-      this.activeData.placeholder =
-        this.activeData.placeholder.replace(oldVal, "") + val;
-    },
+   
     activeId: {
       handler(val) {
         oldActiveId = val;
