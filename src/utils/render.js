@@ -122,7 +122,7 @@ export default {
     Object.keys( confClone ).forEach( key => {
       const val = confClone[key]
       if ( key === 'vModel' ) {
-        vModel( this, dataObject, [null, undefined].includes(this.value) ? confClone['defaultValue'] : this.value )
+        vModel( this, dataObject, this.value === undefined ? confClone['defaultValue'] : this.value )
       } else if ( dataObject[key] ) {
         dataObject[key] = val
       } else if ( !isAttr( key ) ) {
