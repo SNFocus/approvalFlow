@@ -58,6 +58,6 @@
 
 ## 捐赠
 项目发布到现在收到了很多问题反馈和留言，感谢大家的关注，对此我也非常的开心。有同学留言希望能有捐赠通道表示对项目的认同，我也感到非常惊喜。再次表达对大家的感谢之情。
-[![DTcMUs.png](https://s3.ax1x.com/2020/12/03/DTcMUs.png)](https://imgchr.com/i/DTcMUs)
+![DTcMUs.png](./public/pay.png)
 
 
