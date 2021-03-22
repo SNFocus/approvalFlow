@@ -549,9 +549,9 @@ export default {
       this.pconditions = JSON.parse(JSON.stringify(this.$store.state.processConditions));
       this.initiator['dep&user'] = this.value.properties.initiator
       if(Array.isArray(this.pconditions)){
-        let temp = undefined
         this.showingPCons = [-1] // 默认显示发起人
         this.pconditions.forEach(t => {
+          let temp = undefined
           if(Array.isArray(nodeConditions)){
             const con = nodeConditions.find(item => item.formId == t.formId)
             con && con.conditionValue && (temp = con.conditionValue, this.showingPCons.push(t.formId))
