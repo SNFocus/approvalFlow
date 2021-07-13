@@ -1,31 +1,31 @@
 /**
  * 金额转中文
  * 思路：                       
- *                              个
+ *                             个
  *      十     百      千       万
- *      十万   百万    千万     亿 
- *      十亿   百亿    千亿    
+ *      十万   百万    千万      亿 
+ *      十亿   百亿    千亿      万亿
  *                              
- *                              1
- *      2      3       4        5
- *      6      7       8        9   
- *      10
+ *                              0
+ *      1      2       3        4
+ *      5      6       7        8   
+ *      9      10      11       12
  * 
  * 计算步骤
  * 1. 获取当前数值大小
  * 2. 排除个位后 数值按个，十，百，千有规律的重复 所以计算其和4的余数 pos % 4
- * 3. pos = 0 ~ 3 没有最大单位
+ * 3. 补充最大单位，例如上面第三，四行的万和亿
+ *    pos = 0 ~ 3 没有最大单位
  *    pos = 4 ~ 7 最大单位是万
  *    pos = 8 ~ 11 最大单位是亿
- * pos / 4 的整数就是最大单位
- * 
+ *    pos / 4 的整数就是最大单位
  */
 export function getAmountChinese ( val ) {
   const amount = +val
   if ( Number.isNaN( amount ) || amount < 0 ) return ''
   const NUMBER = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
   const N_UNIT1 = ['', '拾', '佰', '仟']
-  const N_UNIT2 = ['', '万', '亿']
+  const N_UNIT2 = ['', '万', '亿', '万亿']
   const D_UNIT = ['角', '分', '厘', '毫']
   let [integer, decimal] = amount.toString().split( '.' )
   if ( integer && integer.length > 12 ) return '金额过大无法计算'
@@ -33,26 +33,27 @@ export function getAmountChinese ( val ) {
   // 整数部分
   if ( integer ) {
     for ( let i = 0, len = integer.length; i < len; i++ ) {
-      const num = integer.charAt( i )
-      const pos = len - i - 1 // 排除个位后 所处的索引位置
-      if ( num === '0' ) { // 当前位 等于 0 且下一位也等于 0 则可跳过计算
-        if ( i === len - 1 ) {
-          if ( integer.length === 1 ) res += '零'  // 0.35 这种情况不可跳过计算
-          break
-        }
-        if ( integer.charAt( i + 1 ) === '0' ) continue
+      const num = integer.charAt( i );
+      const isZero = num === '0';
+      const pos = len - i - 1; // 排除个位后 所处的索引位置
+      const isMaxUniPos = pos % 4 === 0;
+      const isZeroNext = integer.charAt( i + 1 ) === '0';
+      if ( !(isZero && (isZeroNext || isMaxUniPos))) { // 当前位 等于 0 且下一位也等于 0 则可跳过计算
+        res += NUMBER[num];
+        if (!isZero) res += N_UNIT1[pos % 4];
       }
-      res += NUMBER[num]
-      if ( parseInt( num ) ) res += N_UNIT1[( pos ) % 4]
-      if ( pos % 4 === 0 ) res += N_UNIT2[Math.floor( pos / 4 )]
+      if(isMaxUniPos) {
+        res += N_UNIT2[Math.floor( pos / 4 )];
+      };
     }
+    res += '圆'
   }
-  res += '圆'
   // 小数部分
   if ( parseInt( decimal ) ) {
-    for ( let i = 0; i < 4; i++ ) {
+    const loopCount = Math.min(decimal.length, 4);
+    for ( let i = 0; i < loopCount; i++ ) {
       const num = decimal.charAt( i )
-      if ( parseInt( num ) ) res += NUMBER[num] + D_UNIT[i]
+      if ( num !== '0' ) res += NUMBER[num] + D_UNIT[i];
     }
   } else {
     res += '整'
