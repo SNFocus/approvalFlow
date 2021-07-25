@@ -2,11 +2,9 @@ import PROVINCE from './province.js'
 
 export const formConf = {
   formRef: 'elForm',
-  formModel: 'formData',
   size: 'small',
   labelPosition: 'right',
   labelWidth: 100,
-  formRules: 'rules',
   gutter: 15,
   disabled: false,
   span: 24,

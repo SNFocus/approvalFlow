@@ -1,4 +1,4 @@
-export default {
+{
   "basicSetting": {
     "flowName": "入职",
     "flowImg": 12,
@@ -262,33 +262,44 @@ export default {
     "fields": [
       {
         "cmpType": "common",
-        label: '组织机构',
-        tag: 'fc-org-select',
-        tagIcon: 'dept',
-        defaultValue: { dep: [{ "nodeId": 1, "deptId": 1, "deptName": "xxx公司" }] },
-        tabList: ['dep'],
-        buttonType: 'button',
-        title: '组织机构',
-        searchable: true,
-        maxNum: 1,
-        tagConfig: {
-          type: 'info',
-          closable: true,
-          'disable-transitions': false,
-          hit: false,
-          color: undefined,
-          size: 'small',
-          effect: 'light'
+        "label": "组织机构",
+        "tag": "fc-org-select",
+        "tagIcon": "dept",
+        "defaultValue": {
+          "dep": [
+            {
+              "nodeId": 1,
+              "deptId": 1,
+              "deptName": "xxxs公司"
+            }
+          ]
         },
-        style: { width: '100%' },
-        span: 24,
-        labelWidth: null,
-        disabled: false,
-        required: true,
-        regList: [],
-        changeTag: true,
-        proCondition: true,
-        asSummary: false,
+        "tabList": [
+          "dep"
+        ],
+        "buttonType": "button",
+        "title": "组织机构",
+        "searchable": true,
+        "maxNum": 1,
+        "tagConfig": {
+          "type": "info",
+          "closable": true,
+          "disable-transitions": false,
+          "hit": false,
+          "size": "small",
+          "effect": "light"
+        },
+        "style": {
+          "width": "100%"
+        },
+        "span": 24,
+        "labelWidth": null,
+        "disabled": false,
+        "required": true,
+        "regList": [],
+        "changeTag": true,
+        "proCondition": true,
+        "asSummary": false,
         "layout": "colFormItem",
         "formId": 20,
         "renderKey": 1590641662215,
@@ -552,11 +563,9 @@ export default {
       }
     ],
     "formRef": "elForm",
-    "formModel": "formData",
     "size": "small",
     "labelPosition": "right",
     "labelWidth": 100,
-    "formRules": "rules",
     "gutter": 15,
     "disabled": false,
     "span": 12,

@@ -51,7 +51,7 @@ function buildFormTemplate ( conf, child, type ) {
     labelPosition = `label-position="${conf.labelPosition}"`
   }
   const disabled = conf.disabled ? `:disabled="${conf.disabled}"` : ''
-  let str = `<el-form ref="${conf.formRef}" :model="${conf.formModel}" :rules="${conf.formRules}" size="${conf.size}" ${disabled} label-width="${conf.labelWidth}px" ${labelPosition}>
+  let str = `<el-form ref="${conf.formRef}" :model="formData" :rules="ruleList" size="${conf.size}" ${disabled} label-width="${conf.labelWidth}px" ${labelPosition}>
       ${child}
       ${buildFromBtns( conf, type )}
     </el-form>`
@@ -205,7 +205,7 @@ const tags = {
   'fc-calculate': function ( el ) {
     const { vModel } = attrBuilder( el )
     const showChinese = el.showChinese ? `:showChinese='${el.showChinese}'` : ''
-    const formData = `:formData="${confGlobal.formModel}"`
+    const formData = `:formData="formData"`
     const expression = `:expression="${el.vModel}Exps" `
     return createTagHTML( el.tag, vModel, showChinese, formData, expression )
   },
@@ -347,14 +347,14 @@ const tags = {
       labelWidth = `label-width="${el.labelWidth || confGlobal.labelWidth}px"`
       formSize = `form-size="${confGlobal.size}"`
     }
-    const formData = `:formData="${confGlobal.formModel}"`
-    return `<${el.tag} ${formData} ref="${el.vModel}" ${formSize} ${labelWidth} :config="tableRefs['${el.vModel}']" v-model="${confGlobal.formModel}.${el.vModel}"></${el.tag}>`
+    const formData = `:formData="formData"`
+    return `<${el.tag} ${formData} ref="${el.vModel}" ${formSize} ${labelWidth} :config="tableRefs['${el.vModel}']" v-model="formData.${el.vModel}"></${el.tag}>`
   }
 }
 
 function attrBuilder ( el ) {
   return {
-    vModel: `v-model="${confGlobal.formModel}.${el.vModel}"`,
+    vModel: `v-model="formData.${el.vModel}"`,
     clearable: el.clearable ? 'clearable' : '',
     placeholder: el.placeholder ? `placeholder="${el.placeholder}"` : '',
     width: el.style && el.style.width ? `:style="{width: '${el.style.width}'}"` : '',

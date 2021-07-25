@@ -11,3 +11,6 @@ export const GET_DEPT_TREE = data => get( BASE_URL + 'depChild.json', data )
 
 // 获取组织机构下人员信息
 export const GET_USER_BY_DEPT = data => get( BASE_URL + 'userData.json', data )
+
+// 获取Mock数据
+export const GET_MOCK_CONF = () => get(BASE_URL + 'mockConf.json')

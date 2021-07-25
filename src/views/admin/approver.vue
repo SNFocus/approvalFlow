@@ -22,7 +22,7 @@
       </div>
       <el-button size="small" class="publish-btn" @click="publish">发布</el-button>
     </header>
-    <section class="page__content">
+    <section class="page__content" v-if="mockData">
       <BasicSetting
         ref="basicSetting" 
         :conf="mockData.basicSetting"
@@ -65,7 +65,7 @@ import Process from "@/components/Process";
 import DynamicForm from "@/components/DynamicForm";
 import BasicSetting from '@/components/BasicSetting'
 import AdvancedSetting from '@/components/AdvancedSetting'
-import MockData from './mockData.js'
+import { GET_MOCK_CONF } from '../../api'
 const beforeUnload = function (e) {
   var confirmationMessage = '离开网站可能会丢失您编辑得内容';
   (e || window.event).returnValue = confirmationMessage;     // Gecko and Trident
@@ -82,7 +82,7 @@ export default {
   },
   data() {
     return {
-      mockData: MockData, // 可选择诸如 $route.param，Ajax获取数据等方式自行注入
+      mockData: null, // 可选择诸如 $route.param，Ajax获取数据等方式自行注入
       activeStep: "basicSetting", // 激活的步骤面板
       steps: [
         { label: "基础设置", key: "basicSetting" },
@@ -104,6 +104,9 @@ export default {
     translateX () {
       return `translateX(${this.steps.findIndex(t => t.key === this.activeStep) * 100}%)`
     }
+  },
+  mounted() {
+    GET_MOCK_CONF().then(data => this.mockData = data);
   },
   methods: {
     changeSteps(item) {

@@ -628,12 +628,6 @@
           <el-form-item label="表单名">
             <el-input v-model="formConf.formRef" placeholder="请输入表单名（ref）" />
           </el-form-item>
-          <!-- <el-form-item label="表单模型">
-            <el-input v-model="formConf.formModel" placeholder="请输入数据模型" />
-          </el-form-item>
-          <el-form-item label="校验模型">
-            <el-input v-model="formConf.formRules" placeholder="请输入校验模型" />
-          </el-form-item>-->
           <el-form-item label="表单尺寸">
             <el-radio-group v-model="formConf.size">
               <el-radio-button label="medium">中等</el-radio-button>

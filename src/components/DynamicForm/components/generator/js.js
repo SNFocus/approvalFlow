@@ -53,7 +53,7 @@ export function makeUpJs ( conf, type ) {
 
 function buildWatchInHook ( key, callbackStr, watchFuncList ) {
   watchFuncList.push( `this.$watch(function () {
-    return this.${confGlobal.formModel}.${key}
+    return this.formData.${key}
   }, ${callbackStr})` )
 }
 /**
@@ -137,7 +137,7 @@ function mixinMethod ( type ) {
               message: '请在控制台中查看数据输出',
               position: 'bottom-right'
             });
-            console.log('表单数据', this.${confGlobal.formModel})
+            console.log('表单数据', this.formData)
             // TODO 提交表单
           })
         },`,
@@ -155,7 +155,7 @@ function mixinMethod ( type ) {
           let valid = true
           Object.keys(this.tableRefs).forEach(vModel => {
             const res = this.$refs[vModel].submit()  // 返回false或表单数据
-            res ? (this.${confGlobal.formModel}[vModel] = res) : (valid = false)
+            res ? (this.formData[vModel] = res) : (valid = false)
           })
           return valid
         },`,
@@ -305,10 +305,10 @@ function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props,
       drawerVisible: false,
       drawerTitle: '',
       drawerText: '',
-      ${conf.formModel}: {
+      formData: {
         ${data}
       },
-      ${conf.formRules}: {
+      ruleList: {
         ${rules}
       },
       ${uploadVar}
@@ -319,7 +319,7 @@ function buildexport ( conf, type, data, rules, selectOptions, uploadVar, props,
   computed: {
     // 为了验证时能获取到表单数据
     vmFormData(){
-      return this.${conf.formModel}
+      return this.formData
     }
   },
   watch: {},
