@@ -149,15 +149,17 @@ export default {
       drawerText: '',
       drawerVisible: false,
       containerWidth: 66,
-      confGlobal: null,
+      confGlobal: this.$route.params.formData || null,
       formModel: {},
       ruleList: {}
     }
   },
   mounted(){
-    GET_MOCK_CONF().then(res => {
-      this.confGlobal = Object.freeze(res.formData);
-    });
+    if (!this.confGlobal) {
+      this.getConfigByAjax();
+    } else {
+      this.initDefaultData(this.confGlobal);
+    }
     _isMounted = true;
   },
   methods: {
@@ -239,15 +241,19 @@ export default {
                   </el-col>
       // 因为使用jsx时  el-form 的 model 一直无法正确填充，故采用createElement直接渲染
       return h('el-form', formObject, [content, btns]) 
+    },
+    initDefaultData(config) {
+      config.fields.forEach(field => {
+        this.formModel[field.vModel] = field.defaultValue;
+      });
+    },
+    getConfigByAjax() {
+      GET_MOCK_CONF().then(res => {
+        this.confGlobal = Object.freeze(res.formData);
+        this.initDefaultData(res.formData);
+      });
     }
   },
-
-  initDefaultData() {
-    this.confGlobal.fields.forEach(field => {
-      this.formModel[field.vModel] = field.defaultValue;
-    });
-  },
-
 
   render (h) {
     if (!this.confGlobal) {
