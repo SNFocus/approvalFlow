@@ -56,9 +56,6 @@
 ## 郑重感谢
 非常感谢JakHuang的[form-generator](https://github.com/JakHuang/form-generator)为我解决了很多问题，也从中学习到了很多。再者就是我fork`form-generator`版本和JakHuang现在的版本也有很大的区别，感兴趣的童鞋可以去JakHuang那儿看看。
 
-## 捐赠
-项目发布到现在收到了很多问题反馈和留言，感谢大家的关注，对此我也非常的开心。有同学留言希望能有捐赠通道表示对项目的认同，我也感到非常惊喜。再次表达对大家的感谢之情。
-![DTcMUs.png](./public/pay.png)
 
 
 
