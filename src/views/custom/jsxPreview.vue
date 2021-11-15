@@ -244,7 +244,7 @@ export default {
     },
     initDefaultData(config) {
       config.fields.forEach(field => {
-        this.formModel[field.vModel] = field.defaultValue;
+        this.$set(this.formModel, field.vModel, field.defaultValue);
       });
     },
     getConfigByAjax() {
