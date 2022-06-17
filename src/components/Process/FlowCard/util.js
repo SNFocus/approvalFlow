@@ -135,12 +135,36 @@ export class NodeUtils {
     }
     concatChild( prevNode, nodeData )
   }
-  // TODO:
-  // static copyNode ( nodeData, processData ) {
-  //   let prevNode = this.getPreviousNode( nodeData.prevId, processData )
-  //   let index = prevNode.conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId )
+  
 
-  // }
+  /**
+   * 复制条件节点
+   */
+  static copyNode ( nodeData, processData ) {
+    let prevNode = processData
+    let index = prevNode.conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId )
+    // idGenerator
+    let cons = prevNode.conditionNodes
+    let copy = JSON.parse(JSON.stringify(prevNode.conditionNodes[index]))
+    copy.nodeId = this.idGenerator();
+    copy.properties.title += '(复制)';
+    let nodeIdFun = (childNode,prevId) =>{
+      childNode.nodeId = this.idGenerator();
+      if(prevId){
+        childNode.prevId = prevId;
+      }
+      if(childNode.childNode){
+        nodeIdFun(childNode.childNode,childNode.nodeId)
+      }
+    }
+    nodeIdFun(copy);
+    prevNode.conditionNodes.splice(index+1,0,copy);
+    // 重新编排优先级
+    cons.forEach( ( c, i ) => c.properties.priority = i )
+  }
+
+
+
   /**
    * 添加审计节点（普通节点 approver）
    * @param { Object } data - 目标节点数据，在该数据节点之后添加审计节点
