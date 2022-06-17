@@ -135,7 +135,7 @@ export class NodeUtils {
     }
     concatChild( prevNode, nodeData )
   }
-  
+
 
   /**
    * 复制条件节点
@@ -155,6 +155,11 @@ export class NodeUtils {
       }
       if(childNode.childNode){
         nodeIdFun(childNode.childNode,childNode.nodeId)
+      }
+      if(childNode.conditionNodes && childNode.conditionNodes.length>0){
+        for (let item of childNode.conditionNodes) {
+          nodeIdFun(item,childNode.nodeId)
+        }
       }
     }
     nodeIdFun(copy);
