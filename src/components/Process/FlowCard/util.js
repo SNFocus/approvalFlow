@@ -141,7 +141,7 @@ export class NodeUtils {
    * 复制条件节点
    */
   static copyNode ( nodeData, processData ) {
-    let prevNode = processData
+    let prevNode = this.getPreviousNode( nodeData.prevId, processData );
     let index = prevNode.conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId )
     // idGenerator
     let cons = prevNode.conditionNodes
